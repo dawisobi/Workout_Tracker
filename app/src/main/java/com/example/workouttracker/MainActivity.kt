@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.workouttracker.ui.HomeScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,10 +19,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            WorkoutTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                }
+            WorkoutTrackerTheme(dynamicColor = false) {
+                HomeScreen()
             }
         }
     }

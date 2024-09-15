@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Workout Tracker</string>
+
+<!--    to be changed to include a variable read from the data lists-->
+    <string name="welcome_message">Hey Champion!</string>
+
+    <string name="add_exercise">Add New Exercise"</string>
 </resources>
