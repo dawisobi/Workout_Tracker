@@ -17,6 +17,16 @@
     <string name="distance">%s km</string>
     <string name="weight">%s kg</string>
 
+
+<!--    Achievements card labels-->
+    <string name="achievements_label">Your Achievements!</string>
+    <string name="achievement_title_most_time_week">Most time spent on training in a week:</string>
+    <string name="achievement_title_greatest_weight_lifted_week">Greatest weight lifted during training in a week:</string>
+    <string name="achievement_title_most_sessions_week">Most sessions done in a week:</string>
+    <string name="achievement_title_favourite_exercise">Favourite exercise:</string>
+    <string name="achievement_title_longest_walk">Longest distance walked:</string>
+    <string name="achievement_title_longest_cycling">Longest distance ridden:</string>"
+
 <!--  Bottom navigation bar labels  -->
     <string name="bottom_navBar_home">Home</string>
     <string name="bottom_navBar_today">Today</string>

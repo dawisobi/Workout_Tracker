@@ -31,6 +31,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +56,8 @@ fun HomeScreen(
         AddExerciseButtonHomeScreen()
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
         WorkoutHistoryCard()
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+        AchievementsCardHomeScreen()
     }
 }
 
@@ -304,7 +307,74 @@ fun WorkoutHistoryCard(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun AchievementsCardHomeScreen(modifier: Modifier = Modifier) {
+    Card(
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+        ) {
+            Text(
+                text = stringResource(R.string.achievements_label),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row() {
+                Text(
+                    text = stringResource(R.string.achievement_title_most_time_week),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Start
+                    )
+                Text(
+                    text = "5h 45min",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Row() {
+                Text(
+                    text = stringResource(R.string.achievement_title_most_time_week),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Start
+                )
+                Text(
+                    text = "5h 45min",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Row() {
+                Text(
+                    text = stringResource(R.string.achievement_title_most_time_week),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Start
+                )
+                Text(
+                    text = "5h 45min",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
 
+        }
+    }
+}
 
 
 @Preview(showBackground = true)
