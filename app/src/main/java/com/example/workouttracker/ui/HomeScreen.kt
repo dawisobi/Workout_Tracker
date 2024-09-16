@@ -35,7 +35,8 @@ fun HomeScreen(
     ) {
         Text(
             text = stringResource(R.string.welcome_message),
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
         Card(
@@ -57,8 +58,7 @@ fun HomeScreen(
                 }
                 Text(
                     text = stringResource(R.string.add_exercise),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

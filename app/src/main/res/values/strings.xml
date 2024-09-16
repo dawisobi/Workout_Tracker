@@ -1,8 +1,16 @@
 <resources>
     <string name="app_name">Workout Tracker</string>
 
-<!--    to be changed to include a variable read from the data lists-->
+<!--    to be changed to include a variable read from the data lists    -->
     <string name="welcome_message">Hey Champion!</string>
 
     <string name="add_exercise">Add New Exercise"</string>
+
+<!--  Bottom navigation bar labels  -->
+    <string name="bottom_navBar_home">Home</string>
+    <string name="bottom_navBar_today">Today</string>
+    <string name="bottom_navBar_routines">Routines</string>
+    <string name="bottom_navBar_calendar">Calendar</string>
+    <string name="bottom_navBar_profile">Profile</string>
+    <string name="bottom_navBar_settings">Settings</string>
 </resources>
