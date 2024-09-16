@@ -4,7 +4,18 @@
 <!--    to be changed to include a variable read from the data lists    -->
     <string name="welcome_message">Hey Champion!</string>
 
+<!--    Home screen cards labels-->
     <string name="add_exercise">Add New Exercise"</string>
+    <string name="workout_history">Workout History</string>
+    <string name="today_label">Today</string>
+    <string name="last_day_label">Yesterday</string> <!-- placeholder for last day -->
+<!--    PLACEHOLDERS -->
+    <string name="exercise_name_1">Gym</string>
+    <string name="exercise_name_2">Cycling</string>
+    <string name="exercise_name_3">Walking</string>"
+    <string name="time">%s min</string>
+    <string name="distance">%s km</string>
+    <string name="weight">%s kg</string>
 
 <!--  Bottom navigation bar labels  -->
     <string name="bottom_navBar_home">Home</string>
