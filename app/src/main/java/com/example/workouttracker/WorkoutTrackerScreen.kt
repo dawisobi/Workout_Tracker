@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.workouttracker.ui.HomeScreen
+import com.example.workouttracker.ui.TodayTrainingScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 enum class WorkoutTrackerScreen {
