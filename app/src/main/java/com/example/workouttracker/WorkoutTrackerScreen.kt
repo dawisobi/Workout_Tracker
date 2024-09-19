@@ -35,7 +35,7 @@ enum class WorkoutTrackerScreen {
 fun WorkoutTrackerApp() {
 
     Scaffold(
-        topBar = { TopBar() },
+//        topBar = { TopBar() },
         bottomBar = { BottomNavigationBar() }
     ) { innerPadding ->
         HomeScreen(
