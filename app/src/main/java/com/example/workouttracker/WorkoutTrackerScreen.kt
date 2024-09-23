@@ -53,10 +53,11 @@ enum class WorkoutTrackerScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WorkoutTrackerApp() {
+fun WorkoutTrackerApp(
+    navController: NavHostController = rememberNavController()
+) {
     // Create ViewModel
 //    val viewModel: WorkoutTrackerViewModel = viewModel()
-    val navController: NavHostController = rememberNavController()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = LunchTrayScreen.valueOf(
@@ -146,7 +147,7 @@ fun BottomNavigationBar(
 
         WorkoutTrackerScreen.entries.forEachIndexed { index,item ->
             NavigationBarItem(
-                icon = { Icon(painterResource(item.icon), contentDescription = null) },
+                icon = { Icon(painterResource(item.icon), contentDescription = stringResource(item.title)) },
                 label = { Text(stringResource(item.title)) },
                 onClick = {
                     selectedItem = index

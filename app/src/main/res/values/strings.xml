@@ -18,6 +18,9 @@
     <string name="weight">%s kg</string>
 
 
+<!--    Profile Screen -->
+
+
 <!--    Achievements card labels-->
     <string name="achievements_label">Your Achievements!</string>
     <string name="achievement_title_most_time_week">Most time spent on training in a week:</string>
