@@ -51,14 +51,11 @@ import java.util.Locale
 fun TodayTrainingScreen(
     modifier: Modifier = Modifier
 ) {
-    Column(
-//        modifier = modifier
-    ) {
+    Column {
         TodayDateLabel()
-//        HorizontalDivider()
         TodayStats(
             todayStats = TodayTrainingDataSource.todayTrainingStatsRow,
-            modifier = Modifier
+//            modifier = Modifier
         )
         HorizontalDivider()
         Text(
@@ -108,10 +105,15 @@ fun TodayStats(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.secondaryContainer)
+            .padding(
+                start = dimensionResource(R.dimen.padding_medium),
+                end = dimensionResource(R.dimen.padding_medium),
+                bottom = dimensionResource(R.dimen.padding_small)
+            )
     ) {
         todayStats.forEach { (title, value) ->
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .weight(1f)
             ) {
                 Text(
@@ -150,7 +152,7 @@ fun DayLayout(
     exerciseList.forEach { (exercise, time) ->
         Column(
             modifier = Modifier
-//                .padding(bottom = dimensionResource(R.dimen.padding_small)
+//                .padding(bottom = dimensionResource(R.dimen.padding_small))
                 .verticalScroll(rememberScrollState())
         ) {
             Row() {
