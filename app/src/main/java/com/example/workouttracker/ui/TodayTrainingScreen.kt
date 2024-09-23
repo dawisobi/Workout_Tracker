@@ -58,7 +58,7 @@ fun TodayTrainingScreen(
 //        HorizontalDivider()
         TodayStats(
             todayStats = TodayTrainingDataSource.todayTrainingStatsRow,
-            modifier = modifier
+            modifier = Modifier
         )
         HorizontalDivider()
         Text(
