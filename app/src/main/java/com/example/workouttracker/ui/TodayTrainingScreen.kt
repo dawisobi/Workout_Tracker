@@ -149,29 +149,56 @@ fun TrainingSessionCardsList(
 fun DayLayout(
     exerciseList: List<Pair<Exercise, String>> = TodayTrainingDataSource.todayTrainingSessions,
 ) {
-    exerciseList.forEach { (exercise, time) ->
-        Column(
-            modifier = Modifier
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ){
+        exerciseList.forEach { (exercise, time) ->
+            Column(
+                modifier = Modifier
 //                .padding(bottom = dimensionResource(R.dimen.padding_small))
-                .verticalScroll(rememberScrollState())
-        ) {
-            Row() {
-                Text(
-                    text = time,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(end = dimensionResource(R.dimen.padding_small))
-                )
+            ) {
+                Row() {
+                    Text(
+                        text = time,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = dimensionResource(R.dimen.padding_small))
+                    )
+                }
+                ExerciseCard(exercise = exercise)
             }
-            ExerciseCard(exercise = exercise)
         }
     }
 }
+
+//exerciseList.forEach { (exercise, time) ->
+//            Column(
+//                modifier = Modifier
+////                .padding(bottom = dimensionResource(R.dimen.padding_small))
+//            ) {
+//                Row() {
+//                    Text(
+//                        text = time,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        modifier = Modifier
+//                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+//                    )
+//                    HorizontalDivider(
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically)
+//                            .padding(end = dimensionResource(R.dimen.padding_small))
+//                    )
+//                }
+//                ExerciseCard(exercise = exercise)
+//            }
+//        }
+
 
 @Composable
 fun ExerciseCard(exercise: Exercise){
