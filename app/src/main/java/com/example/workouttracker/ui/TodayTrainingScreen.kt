@@ -65,25 +65,25 @@ fun TodayTrainingScreen(
     }
 }
 
-@Composable
-fun TodayDateLabel() {
-    val currentDate = Date()
-    val formatter = SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault())
-
-    Text(
-        text = formatter.format(currentDate),
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.secondaryContainer)
-            .padding(
-                start = dimensionResource(R.dimen.padding_medium),
-                top = dimensionResource(R.dimen.padding_medium),
-                end = dimensionResource(R.dimen.padding_medium),
-            )
-    )
-}
+//@Composable
+//fun TodayDateLabel() {
+//    val currentDate = Date()
+//    val formatter = SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault())
+//
+//    Text(
+//        text = formatter.format(currentDate),
+//        style = MaterialTheme.typography.headlineSmall,
+//        fontWeight = FontWeight.Bold,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(color = MaterialTheme.colorScheme.secondaryContainer)
+//            .padding(
+//                start = dimensionResource(R.dimen.padding_medium),
+//                top = dimensionResource(R.dimen.padding_medium),
+//                end = dimensionResource(R.dimen.padding_medium),
+//            )
+//    )
+//}
 
 @Composable
 fun TodayStats(
@@ -116,66 +116,66 @@ fun TodayStats(
     }
 }
 
-@Composable
-fun DayLayout(
-    exerciseList: List<Pair<Exercise, String>> = TodayTrainingDataSource.todayTrainingSessions,
-) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ){
-        exerciseList.forEach { (exercise, time) ->
-            Column {
-                Row {
-                    Text(
-                        text = time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                ExerciseCard(exercise = exercise)
-            }
-        }
-    }
-}
-
-
-@Composable
-fun ExerciseCard(exercise: Exercise){
-    Card(
-        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-        shape = RoundedCornerShape(30),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
-        ),
-        modifier = Modifier
-            .offset(y = (-10).dp)
-            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
-            .fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            Text(text = exercise.name)
-
-            if(exercise.type != "Gym") {
-                Text(text = exercise.distance.toString() + "km")
-            } else {
-                Text(text = exercise.weight.toString() + "kg")
-            }
-        }
-    }
-}
+//@Composable
+//fun DayLayout(
+//    exerciseList: List<Pair<Exercise, String>> = TodayTrainingDataSource.todayTrainingSessions,
+//) {
+//    Column(
+//        modifier = Modifier
+//            .verticalScroll(rememberScrollState())
+//    ){
+//        exerciseList.forEach { (exercise, time) ->
+//            Column {
+//                Row {
+//                    Text(
+//                        text = time,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        modifier = Modifier
+//                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+//                    )
+//                    HorizontalDivider(
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically)
+//                            .padding(end = dimensionResource(R.dimen.padding_small))
+//                    )
+//                }
+//                ExerciseCard(exercise = exercise)
+//            }
+//        }
+//    }
+//}
+//
+//
+//@Composable
+//fun ExerciseCard(exercise: Exercise){
+//    Card(
+//        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
+//        shape = RoundedCornerShape(30),
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+//        ),
+//        modifier = Modifier
+//            .offset(y = (-10).dp)
+//            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
+//            .fillMaxWidth()
+//    ) {
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(dimensionResource(R.dimen.padding_medium))
+//        ) {
+//            Text(text = exercise.name)
+//
+//            if(exercise.type != "Gym") {
+//                Text(text = exercise.distance.toString() + "km")
+//            } else {
+//                Text(text = exercise.weight.toString() + "kg")
+//            }
+//        }
+//    }
+//}
 
 //TO BE USED SOMEWHERE ELSE
 //@Composable

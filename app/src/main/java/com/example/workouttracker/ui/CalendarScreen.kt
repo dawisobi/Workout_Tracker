@@ -1,10 +1,9 @@
 package com.example.workouttracker.ui
 
 import android.os.Build
-import android.widget.CalendarView
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,53 +13,97 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.workouttracker.R
 import com.example.workouttracker.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.LocalDate
-import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(modifier: Modifier = Modifier) {
-    val calendarMonths = CalendarMonthsDataSource.calendarMonths
+//    val calendarMonths = CalendarMonthsDataSource.calendarMonths
+    var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
+    var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
 
-    CalendarLayout(modifier = modifier)
+    Column(
+        modifier = modifier
+    ) {
+        CalendarLayout(
+            selectedDay = selectedDay,
+            selectedMonth = selectedMonth,
+            onDaySelected = { day: Int, month: Int ->
+                selectedDay = day
+                selectedMonth = month
+            }
+        )
+        SelectedDayText(selectedDay, selectedMonth)
+        DayLayout()
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarLayout(modifier: Modifier = Modifier) {
+fun SelectedDayText(
+    selectedDay: Int,
+    selectedMonth: Int,
+){
+    val date = LocalDate.now().withDayOfMonth(selectedDay).withMonth(selectedMonth)
+    val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.getDefault())
+
+    Text(
+        text = date.format(formatter),
+        style = MaterialTheme.typography.labelLarge,
+//        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                vertical = dimensionResource(R.dimen.padding_medium)
+//                start = dimensionResource(R.dimen.padding_medium),
+//                top = dimensionResource(R.dimen.padding_medium),
+//                end = dimensionResource(R.dimen.padding_medium),
+
+            )
+    )
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun CalendarLayout(
+    selectedDay: Int,
+    selectedMonth: Int,
+    onDaySelected: (Int, Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(8)
     val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(8)
-    val offset = 3 // Number of days to offset
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
     val firstDayOfMonth = LocalDate.now().withDayOfMonth(1).dayOfWeek.value
     val firstDayOfMonthIndex = firstDayOfMonth - 1
-    //val today = LocalDate.now().dayOfMonth
+//    val offset = firstDayOfMonthIndex // Number of days to offset
+    val today = LocalDate.now().dayOfMonth
 
-    //Text(firstDayOfMonthIndex.toString())
 
     Column( modifier = modifier ) {
         Text(
@@ -94,39 +137,49 @@ fun CalendarLayout(modifier: Modifier = Modifier) {
         ) {
             items(numberOfDays + firstDayOfMonthIndex) { index ->
                 if (index >= firstDayOfMonthIndex) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier
+                            .clickable {
+                                onDaySelected(index - firstDayOfMonthIndex + 1, selectedMonth)
+                            }
+                    ) {
+                        Column {
                             Text(
                                 text = (index - firstDayOfMonthIndex + 1).toString(),
                                 modifier = Modifier
 //                                .fillMaxWidth()
                                     .fillMaxSize()
-                                    .padding(8.dp),
+                                    .padding(8.dp)
+                                    .then(
+//                                      Adding highlight to selected day
+                                        if (index - firstDayOfMonthIndex + 1 == selectedDay) Modifier
+                                            .background(
+                                                color = MaterialTheme.colorScheme.primaryContainer,
+                                                shape = MaterialTheme.shapes.large
+                                            )
+//                                      Adding highlight to current day
+                                        else if (index - firstDayOfMonthIndex + 1 == today) Modifier
+                                            .background(
+                                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                                shape = MaterialTheme.shapes.large
+                                            )
+                                        else Modifier
+                                    ),
                                 textAlign = TextAlign.Center
                             )
-                            if (index == 15) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.icon_image_dumbbell_48),
-                                    contentDescription = null,
+                            if (index < numberOfDays + firstDayOfMonthIndex) {
+                                HorizontalDivider(
+                                    color = Color.LightGray,
+                                    thickness = 1.dp,
                                     modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                        .padding(
-                                            bottom = dimensionResource(R.dimen.padding_tiny),
-                                        )
-                                )
+                                        .align(Alignment.CenterHorizontally))
                             }
-//                        if (index < numberOfDays + offset) {
-//                            HorizontalDivider(
-//                                color = Color.LightGray,
-//                                thickness = 1.dp,
-//                                modifier = Modifier
-//                                    .align(Alignment.CenterHorizontally))
-//                        }
+                        }
                     }
+
                 }
             }
         }
-
-//        AndroidView(factory = { CalendarView(it) })
     }
 }
 
@@ -136,9 +189,11 @@ fun CalendarLayout(modifier: Modifier = Modifier) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreenPreview() {
-    CalendarScreen(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    )
+    WorkoutTrackerTheme(dynamicColor = false) {
+        CalendarScreen(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+    }
 }

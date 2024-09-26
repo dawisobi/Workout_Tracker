@@ -45,7 +45,7 @@ enum class WorkoutTrackerScreen(
     @DrawableRes val icon: Int
 ) {
     Home(R.string.bottom_navBar_home, R.drawable.icon_home_fill),
-    Today(R.string.bottom_navBar_today, R.drawable.icon_checklist),
+//    Today(R.string.bottom_navBar_today, R.drawable.icon_checklist),
     Calendar(R.string.bottom_navBar_calendar, R.drawable.icon_calendar_fill),
     Profile(R.string.bottom_navBar_profile, R.drawable.icon_profile_fill),
 //    Settings(R.string.bottom_navBar_settings, R.drawable.icon_settings_fill)
@@ -80,13 +80,13 @@ fun WorkoutTrackerApp(
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
-            composable(route = WorkoutTrackerScreen.Today.name) {
-                TodayTrainingScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
-                )
-            }
+//            composable(route = WorkoutTrackerScreen.Today.name) {
+//                TodayTrainingScreen(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(dimensionResource(R.dimen.padding_medium))
+//                )
+//            }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 CalendarScreen(
                     modifier = Modifier
