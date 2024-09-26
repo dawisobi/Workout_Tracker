@@ -15,7 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +62,10 @@ fun CalendarScreen(modifier: Modifier = Modifier) {
             selectedDay = selectedDay,
             selectedMonth = selectedMonth,
             onDaySelected = { day: Int, month: Int ->
+                selectedDay = day
+                selectedMonth = month
+            },
+            onMonthChanged = { day: Int, month: Int ->
                 selectedDay = day
                 selectedMonth = month
             }
@@ -94,25 +107,52 @@ fun CalendarLayout(
     selectedDay: Int,
     selectedMonth: Int,
     onDaySelected: (Int, Int) -> Unit,
+    onMonthChanged: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(8)
-    val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(8)
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val firstDayOfMonth = LocalDate.now().withDayOfMonth(1).dayOfWeek.value
+    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
+    val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(selectedMonth - 1)
+    val firstDayOfMonth = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(1).dayOfWeek.value
     val firstDayOfMonthIndex = firstDayOfMonth - 1
-//    val offset = firstDayOfMonthIndex // Number of days to offset
     val today = LocalDate.now().dayOfMonth
 
 
-    Column( modifier = modifier ) {
-        Text(
-            text = monthName,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
+    Column {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth())
+                .fillMaxWidth()
+        ) {
+            IconButton(
+                onClick = {
+                    onMonthChanged(selectedDay, (selectedMonth - 1).takeIf { it > 0 } ?: 12)
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Previous Month"
+                )
+            }
+            Text(
+                text = monthName,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+//                    .fillMaxWidth()
+            )
+            IconButton(
+                onClick = { onMonthChanged(selectedDay, (selectedMonth + 1).takeIf { it < 13 } ?: 1) }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Next Month"
+                )
+            }
+        }
+
         // Day headers row
         Row(
             modifier = Modifier
