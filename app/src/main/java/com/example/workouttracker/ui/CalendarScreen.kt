@@ -1,6 +1,7 @@
 package com.example.workouttracker.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,7 +45,10 @@ import androidx.compose.ui.unit.dp
 import com.example.workouttracker.R
 import com.example.workouttracker.datasource.CalendarMonthsDataSource
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import java.time.DateTimeException
 import java.time.LocalDate
+import java.time.Month
+import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -80,8 +84,12 @@ fun CalendarScreen(modifier: Modifier = Modifier) {
 fun SelectedDayText(
     selectedDay: Int,
     selectedMonth: Int,
+    selectedYear: Int = LocalDate.now().year
 ){
-    val date = LocalDate.now().withDayOfMonth(selectedDay).withMonth(selectedMonth)
+//    val date = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(selectedDay)
+
+    val date = getDate(selectedYear, selectedMonth, selectedDay)
+
     val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.getDefault())
 
     Text(
@@ -99,7 +107,6 @@ fun SelectedDayText(
             )
     )
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -192,11 +199,14 @@ fun CalendarLayout(
                                     .padding(8.dp)
                                     .then(
 //                                      Adding highlight to selected day
-                                        if (index - firstDayOfMonthIndex + 1 == selectedDay) Modifier
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primaryContainer,
-                                                shape = MaterialTheme.shapes.large
-                                            )
+                                        if (index - firstDayOfMonthIndex + 1 == selectedDay) {
+                                            Log.d("CalendarScreen", "Selected day: $selectedDay")
+                                            Modifier
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                                    shape = MaterialTheme.shapes.large
+                                                )
+                                        }
 //                                      Adding highlight to current day
                                         else if (index - firstDayOfMonthIndex + 1 == today) Modifier
                                             .background(
@@ -223,7 +233,16 @@ fun CalendarLayout(
     }
 }
 
-
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getDate(year: Int, month: Int, day: Int): LocalDate {
+    return try {
+        LocalDate.of(year, month, day)
+    } catch (e: DateTimeException) {
+        LocalDate.of(year, month, 1).withDayOfMonth(
+            Month.of(month).length(Year.of(year).isLeap)
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @RequiresApi(Build.VERSION_CODES.O)
