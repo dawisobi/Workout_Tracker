@@ -222,11 +222,11 @@ fun CalendarLayout(
                                     color = Color.LightGray,
                                     thickness = 1.dp,
                                     modifier = Modifier
-                                        .align(Alignment.CenterHorizontally))
+                                        .align(Alignment.CenterHorizontally)
+                                )
                             }
                         }
                     }
-
                 }
             }
         }
