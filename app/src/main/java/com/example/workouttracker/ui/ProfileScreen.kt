@@ -21,13 +21,6 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Something will be here someday...",
-//        textAlign = TextAlign.Center,
-//        modifier = Modifier
-//            .fillMaxSize()
-//    )
-
     ProfileHeader(modifier)
 }
 
@@ -44,12 +37,6 @@ fun ProfileHeader(modifier: Modifier = Modifier) {
         )
     }
 }
-
-@Composable
-fun s() {
-
-}
-
 
 
 @Preview(showBackground = true)

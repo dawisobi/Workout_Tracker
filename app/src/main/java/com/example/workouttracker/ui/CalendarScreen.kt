@@ -79,24 +79,16 @@ fun SelectedDayText(
     selectedMonth: Int,
     selectedYear: Int = LocalDate.now().year
 ){
-//    val date = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(selectedDay)
-
     val date = getDate(selectedYear, selectedMonth, selectedDay)
-
     val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.getDefault())
 
     Text(
         text = date.format(formatter),
         style = MaterialTheme.typography.labelLarge,
-//        fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 vertical = dimensionResource(R.dimen.padding_medium)
-//                start = dimensionResource(R.dimen.padding_medium),
-//                top = dimensionResource(R.dimen.padding_medium),
-//                end = dimensionResource(R.dimen.padding_medium),
-
             )
     )
 }
@@ -141,7 +133,6 @@ fun CalendarLayout(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-//                    .fillMaxWidth()
             )
             IconButton(
                 onClick = { onMonthChanged(selectedDay, (selectedMonth + 1).takeIf { it < 13 } ?: 1) }
@@ -186,8 +177,8 @@ fun CalendarLayout(
                         Column {
                             Text(
                                 text = (index - firstDayOfMonthIndex + 1).toString(),
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier
-//                                .fillMaxWidth()
                                     .fillMaxSize()
                                     .padding(8.dp)
                                     .then(
@@ -201,14 +192,14 @@ fun CalendarLayout(
                                                 )
                                         }
 //                                      Adding highlight to current day
-                                        else if (index - firstDayOfMonthIndex + 1 == today && selectedMonth == LocalDate.now().monthValue) Modifier
-                                            .background(
-                                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                                shape = MaterialTheme.shapes.large
+                                        else if (index - firstDayOfMonthIndex + 1 == today && selectedMonth == LocalDate.now().monthValue)
+                                            Modifier
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.secondaryContainer,
+                                                    shape = MaterialTheme.shapes.large
                                             )
                                         else Modifier
-                                    ),
-                                textAlign = TextAlign.Center
+                                    )
                             )
                             if (index < numberOfDays + firstDayOfMonthIndex) {
                                 HorizontalDivider(

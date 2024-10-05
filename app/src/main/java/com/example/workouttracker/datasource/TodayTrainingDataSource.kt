@@ -4,11 +4,6 @@ import com.example.workouttracker.model.Exercise
 
 object TodayTrainingDataSource {
 
-    val todayTrainingStatsRow = listOf(
-        Pair("Sessions", "2"),
-        Pair("Exercises", "10"),
-        Pair("Time", "2h 12min")
-    )
 
     val todayTrainingSessions = listOf(
         Pair( Exercise(type = "Gym", name = "Bench Press", series = 3, reps = 12, weight = 65.0), "8:30"),
