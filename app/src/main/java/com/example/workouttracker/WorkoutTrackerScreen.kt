@@ -1,7 +1,9 @@
 package com.example.workouttracker
 
+import android.app.Activity
 import android.media.RouteListingPreference
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
@@ -19,11 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,6 +72,22 @@ fun WorkoutTrackerApp(
 //        topBar = { TopBar() },
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
+        BackHandler (
+            onBack = { navController.popBackStack(WorkoutTrackerScreen.Home.name, inclusive = false) }
+        )
+//        {
+////            if (navController.currentDestination?.route != WorkoutTrackerScreen.Home.name) {
+//////                pressBackAndNavigateToStart(navController)
+////                navController.popBackStack(WorkoutTrackerScreen.Home.name, inclusive = false)
+////            }
+////            else {
+////                (LocalContext.current as? Activity)?.finish()
+////            }
+//        }
+
+
+
+
         NavHost(
             navController = navController,
             startDestination = WorkoutTrackerScreen.Home.name,
@@ -134,7 +154,7 @@ fun WorkoutTrackerAppPreview() {
 fun BottomNavigationBar(
     navController: NavHostController
 ) {
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(0) }
 
     NavigationBar {
         val navigationBarColors = NavigationBarItemDefaults.colors(
@@ -158,4 +178,10 @@ fun BottomNavigationBar(
             )
         }
     }
+}
+
+private fun pressBackAndNavigateToStart (
+    navController: NavHostController,
+) {
+    navController.popBackStack(WorkoutTrackerScreen.Home.name, inclusive = false)
 }
