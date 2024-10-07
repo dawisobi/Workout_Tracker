@@ -1,6 +1,7 @@
 package com.example.workouttracker.model
 
 class Exercise(
+    val idExercise: Int,
     val type: String,
     val name: String,
     val description: String? = null,

@@ -6,12 +6,17 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,11 +52,19 @@ enum class WorkoutTrackerScreen(
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController()
 ) {
-    // Create ViewModel
-//    val viewModel: WorkoutTrackerViewModel = viewModel()
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = { BottomNavigationBar(navController) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { },
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.secondary
+            ) {
+                Icon(Icons.Filled.Add, "Small floating action button.")
+            }
+        },
+        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -118,7 +131,7 @@ fun BottomNavigationBar(
 @Preview(showBackground = true)
 @Composable
 fun WorkoutTrackerAppPreview() {
-    WorkoutTrackerTheme(){
+    WorkoutTrackerTheme(dynamicColor = false){
         WorkoutTrackerApp()
     }
 }
