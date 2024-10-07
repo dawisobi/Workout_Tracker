@@ -48,7 +48,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(modifier: Modifier = Modifier) {
-//    val calendarMonths = CalendarMonthsDataSource.calendarMonths
+
     var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
     var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
 

@@ -50,19 +50,11 @@ enum class WorkoutTrackerScreen(
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController()
 ) {
+//    var showSearchBar by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { },
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.secondary
-            ) {
-                Icon(Icons.Filled.Add, "Small floating action button.")
-            }
-        },
-        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End
+        floatingActionButton = { ActionButton( onClick = { } ) },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -93,6 +85,20 @@ fun WorkoutTrackerApp(
         }
     }
 }
+
+@Composable
+fun ActionButton(
+    onClick: () -> Unit
+) {
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondary
+    ) {
+        Icon(Icons.Filled.Add, "Small floating action button.")
+    }
+}
+
 
 @Composable
 fun BottomNavigationBar(
