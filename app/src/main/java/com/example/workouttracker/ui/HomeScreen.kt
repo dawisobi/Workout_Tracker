@@ -1,7 +1,9 @@
 package com.example.workouttracker.ui
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,15 +25,26 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
+import com.example.workouttracker.WorkoutTrackerApp
 import com.example.workouttracker.datasource.TodayTrainingDataSource
 import com.example.workouttracker.model.Exercise
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
@@ -41,31 +54,49 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(
+    workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(R.string.welcome_message),
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold
-        )
-        TodayDateLabel()
-        AddExerciseButtonHomeScreen()
-        Text(
-            text = "Today's Training:",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(
-                    top = dimensionResource(R.dimen.padding_medium),
-                    end = dimensionResource(R.dimen.padding_medium),
-                    bottom = dimensionResource(R.dimen.padding_small)
-                )
-        )
-        DayLayout()
+    val uiState = workoutTrackerViewModel.uiState.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.value.showDialog) {
+        showDialog = uiState.value.showDialog
+    }
+
+    Log.d("AddExerciseDialog", "showDialog(uiState): ${uiState.value.showDialog}")
+
+    Box(modifier = Modifier.fillMaxSize())
+    {
+        Log.d("AddExerciseDialog", "showDialog: $showDialog")
+        if(showDialog) {
+            AddExerciseDialogTest()
+        }
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start,
+            modifier = modifier
+        ) {
+
+            Text(
+                text = stringResource(R.string.welcome_message),
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold
+            )
+            TodayDateLabel()
+            AddExerciseButtonHomeScreen()
+            Text(
+                text = "Today's Training:",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_medium),
+                        end = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_small)
+                    )
+            )
+            DayLayout()
+        }
     }
 }
 
@@ -79,12 +110,15 @@ fun TodayDateLabel() {
         style = MaterialTheme.typography.headlineSmall,
         modifier = Modifier
             .fillMaxWidth()
-            .padding( vertical = dimensionResource(R.dimen.padding_small))
+            .padding(vertical = dimensionResource(R.dimen.padding_small))
     )
 }
 
 @Composable
 fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
+
+
+
     Card(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier = modifier
@@ -97,7 +131,7 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
                 .padding(dimensionResource(R.dimen.padding_small))
         ){
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 modifier = Modifier
                     .size(48.dp)
             ) {
@@ -190,5 +224,32 @@ fun HomeScreenPreview() {
                 .padding(dimensionResource(R.dimen.padding_medium))
                 .fillMaxSize()
         )
+    }
+}
+
+
+@Composable
+fun AddExerciseDialogTest(
+
+){
+    Log.d("AddExerciseDialog", "Dialog should pop up")
+    Dialog(
+        onDismissRequest = { /*TODO*/ }
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(375.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Add Exercise", textAlign = TextAlign.Center)
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.workouttracker
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.ui.CalendarScreen
 import com.example.workouttracker.ui.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
+import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 enum class WorkoutTrackerScreen(
@@ -48,13 +51,19 @@ enum class WorkoutTrackerScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutTrackerApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
 ) {
-//    var showSearchBar by remember { mutableStateOf(false) }
-
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
-        floatingActionButton = { ActionButton( onClick = { } ) },
+        floatingActionButton = {
+            ActionButton(
+                onClick = {
+                    Log.d("FAB", "FAB clicked")
+                    workoutTrackerViewModel.updateShowDialog(true)
+                    Log.d("AddExerciseDialog", "showDialog: ${workoutTrackerViewModel.uiState.value.showDialog}")
+                }
+            )},
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -91,7 +100,7 @@ fun ActionButton(
     onClick: () -> Unit
 ) {
     FloatingActionButton(
-        onClick = { onClick() },
+        onClick =  { onClick() },
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.secondary
     ) {
