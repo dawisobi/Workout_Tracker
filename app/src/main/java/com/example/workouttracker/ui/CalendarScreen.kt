@@ -78,7 +78,6 @@ fun CalendarScreen(
         DayLayout()
     }
     if(showDialog) {
-        Log.d("AddExerciseDialog", "HomeScreen.kt -> showDialog: $showDialog")
         AddExerciseDialog { workoutTrackerViewModel.updateShowDialog(false) }
     }
 }

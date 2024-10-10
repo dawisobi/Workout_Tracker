@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,6 +21,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -53,16 +57,21 @@ fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController(),
     workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
 ) {
+    val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
+
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
         floatingActionButton = {
-            ActionButton(
-                onClick = {
-                    Log.d("FAB", "FAB clicked")
-                    workoutTrackerViewModel.updateShowDialog(true)
-                    Log.d("AddExerciseDialog", "showDialog: ${workoutTrackerViewModel.uiState.value.showDialog}")
-                }
-            )
+            if(currentRoute.value?.destination?.route == WorkoutTrackerScreen.Home.name
+                || currentRoute.value?.destination?.route == WorkoutTrackerScreen.Calendar.name) {
+                ActionButton(
+                    onClick = {
+                        Log.d("FAB", "FAB clicked")
+                        workoutTrackerViewModel.updateShowDialog(true)
+                    },
+//                    fabVisible = true
+                )
+            }
                                },
     ) { innerPadding ->
         NavHost(
@@ -99,15 +108,22 @@ fun WorkoutTrackerApp(
 
 @Composable
 fun ActionButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+//    fabVisible: Boolean = true
 ) {
-    FloatingActionButton(
-        onClick =  { onClick() },
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.secondary
-    ) {
-        Icon(Icons.Filled.Add, "Small floating action button.")
-    }
+//    AnimatedVisibility(
+//        visible = fabVisible,
+//        enter = scaleIn(),
+//        exit = scaleOut(),
+//    ) {
+        FloatingActionButton(
+            onClick = { onClick() },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.secondary
+        ) {
+            Icon(Icons.Filled.Add, "Small floating action button.")
+        }
+//    }
 }
 
 
