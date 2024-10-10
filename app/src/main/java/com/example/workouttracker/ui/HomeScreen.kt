@@ -2,6 +2,7 @@ package com.example.workouttracker.ui
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,46 +58,41 @@ fun HomeScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState = workoutTrackerViewModel.uiState.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
+    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+    val showDialog = workoutTrackerUiState.showDialog
 
-    LaunchedEffect(uiState.value.showDialog) {
-        showDialog = uiState.value.showDialog
+    Log.d("AddExerciseDialog", "showDialog(uiState): ${workoutTrackerUiState.showDialog}")
+    Log.d("AddExerciseDialog", "showDialog: $showDialog")
+
+    Column(
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
+        modifier = modifier
+    ) {
+
+        Text(
+            text = stringResource(R.string.welcome_message),
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold
+        )
+        TodayDateLabel()
+        AddExerciseButtonHomeScreen()
+        Text(
+            text = "Today's Training:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(
+                    top = dimensionResource(R.dimen.padding_medium),
+                    end = dimensionResource(R.dimen.padding_medium),
+                    bottom = dimensionResource(R.dimen.padding_small)
+                )
+        )
+        DayLayout()
     }
 
-    Log.d("AddExerciseDialog", "showDialog(uiState): ${uiState.value.showDialog}")
-
-    Box(modifier = Modifier.fillMaxSize())
-    {
-        Log.d("AddExerciseDialog", "showDialog: $showDialog")
-        if(showDialog) {
-            AddExerciseDialogTest()
-        }
-        Column(
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start,
-            modifier = modifier
-        ) {
-
-            Text(
-                text = stringResource(R.string.welcome_message),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
-            TodayDateLabel()
-            AddExerciseButtonHomeScreen()
-            Text(
-                text = "Today's Training:",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(
-                        top = dimensionResource(R.dimen.padding_medium),
-                        end = dimensionResource(R.dimen.padding_medium),
-                        bottom = dimensionResource(R.dimen.padding_small)
-                    )
-            )
-            DayLayout()
-        }
+    if(showDialog) {
+        Log.d("AddExerciseDialog", "HomeScreen.kt -> showDialog: $showDialog")
+        AddExerciseDialog { workoutTrackerViewModel.updateShowDialog(false) }
     }
 }
 
@@ -116,8 +112,6 @@ fun TodayDateLabel() {
 
 @Composable
 fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
-
-
 
     Card(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
@@ -224,32 +218,5 @@ fun HomeScreenPreview() {
                 .padding(dimensionResource(R.dimen.padding_medium))
                 .fillMaxSize()
         )
-    }
-}
-
-
-@Composable
-fun AddExerciseDialogTest(
-
-){
-    Log.d("AddExerciseDialog", "Dialog should pop up")
-    Dialog(
-        onDismissRequest = { /*TODO*/ }
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Add Exercise", textAlign = TextAlign.Center)
-            }
-        }
     }
 }

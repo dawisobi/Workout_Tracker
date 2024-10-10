@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -63,7 +62,8 @@ fun WorkoutTrackerApp(
                     workoutTrackerViewModel.updateShowDialog(true)
                     Log.d("AddExerciseDialog", "showDialog: ${workoutTrackerViewModel.uiState.value.showDialog}")
                 }
-            )},
+            )
+                               },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -72,6 +72,7 @@ fun WorkoutTrackerApp(
         ) {
             composable(route = WorkoutTrackerScreen.Home.name) {
                 HomeScreen(
+                    workoutTrackerViewModel = workoutTrackerViewModel,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
@@ -79,6 +80,7 @@ fun WorkoutTrackerApp(
             }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 CalendarScreen(
+                    workoutTrackerViewModel = workoutTrackerViewModel,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))

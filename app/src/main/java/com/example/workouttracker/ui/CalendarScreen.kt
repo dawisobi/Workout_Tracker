@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.datasource.CalendarMonthsDataSource
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
@@ -47,7 +49,12 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarScreen(modifier: Modifier = Modifier) {
+fun CalendarScreen(
+    workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
+    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+    val showDialog = workoutTrackerUiState.showDialog
 
     var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
     var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
@@ -69,6 +76,10 @@ fun CalendarScreen(modifier: Modifier = Modifier) {
         )
         SelectedDayText(selectedDay, selectedMonth)
         DayLayout()
+    }
+    if(showDialog) {
+        Log.d("AddExerciseDialog", "HomeScreen.kt -> showDialog: $showDialog")
+        AddExerciseDialog { workoutTrackerViewModel.updateShowDialog(false) }
     }
 }
 
