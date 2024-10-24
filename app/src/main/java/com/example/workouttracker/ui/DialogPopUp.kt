@@ -30,8 +30,9 @@ fun AddExerciseDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
+//                .fillMaxWidth()
+                .fillMaxSize()
+//                .height(375.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -72,6 +73,6 @@ fun AddExerciseContent() {
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = { Log.d("AddExerciseDialog", "onDismiss") } )
+        AddExerciseDialog( onDismiss = {  } )
     }
 }

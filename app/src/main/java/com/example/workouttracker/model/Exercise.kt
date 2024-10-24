@@ -1,5 +1,8 @@
 package com.example.workouttracker.model
 
+
+//TrainingSessionDone ????
+//add date variable
 class Exercise(
     val idExercise: Int,
     val type: String,
