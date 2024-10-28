@@ -1,6 +1,7 @@
 package com.example.workouttracker.ui
 
 import androidx.lifecycle.ViewModel
+import com.example.workouttracker.model.Exercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,4 +16,5 @@ class WorkoutTrackerViewModel : ViewModel() {
     fun updateShowDialog(newShowDialog: Boolean) {
         _uiState.update { currentState -> currentState.copy(showDialog = newShowDialog) }
     }
+
 }

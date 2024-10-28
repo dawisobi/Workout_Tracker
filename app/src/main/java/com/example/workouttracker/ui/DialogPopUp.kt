@@ -1,43 +1,69 @@
 package com.example.workouttracker.ui
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.example.workouttracker.model.Exercise
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
+
 
 @Composable
 fun AddExerciseDialog(
     onDismiss: () -> Unit
 ){
+    val deviceScreenWidth = LocalContext.current.resources.displayMetrics.xdpi
+    val deviceScreenHeight = LocalContext.current.resources.displayMetrics.ydpi
+    Log.d("AddExerciseDialog", "Device screen width: $deviceScreenWidth")
+    Log.d("AddExerciseDialog", "Device screen width: ${deviceScreenWidth*0.9}")
+
     Dialog(
-        onDismissRequest = { onDismiss() }
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        ),
     ) {
         Card(
             modifier = Modifier
 //                .fillMaxWidth()
-                .fillMaxSize()
+//                .fillMaxSize()
+                .size((deviceScreenWidth * 0.8).dp, (deviceScreenHeight * 0.8).dp)
+//                .width((deviceScreenWidth * 0.9).dp)
 //                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+//                .padding(30.dp),
+            ,shape = RoundedCornerShape(16.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -51,7 +77,7 @@ fun AddExerciseDialog(
 fun AddExerciseContent() {
     Column {
         Text(
-            text = "Add Exercise",
+            text = "Select Exercise",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.SemiBold
         )
@@ -64,10 +90,33 @@ fun AddExerciseContent() {
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
         )
+        DisplayExercisesList(exerciseList = exerciseDb)
     }
 }
 
+@Composable
+fun DisplayExercisesList(exerciseList: List<Exercise>) {
+    val exerciseListSorted = exerciseList.sortedBy { it.name }
 
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+//            .border(1.dp, color = androidx.compose.material3.MaterialTheme.colorScheme.outline)
+    ) {
+        items(exerciseListSorted) { exercise ->
+            Row(
+
+            ) {
+                Text(
+                    text = exercise.name,
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+            }
+            HorizontalDivider()
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
