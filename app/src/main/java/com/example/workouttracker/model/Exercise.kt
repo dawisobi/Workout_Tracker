@@ -1,16 +1,11 @@
 package com.example.workouttracker.model
 
+import androidx.annotation.DrawableRes
 
-//TrainingSessionDone ????
-//add date variable
 class Exercise(
-    val idExercise: Int,
+    val exerciseId: Int,
     val type: String,
     val name: String,
     val description: String? = null,
-    val series: Int? = null,
-    val reps: Int? = null,
-    val weight: Double? = null, // in kilograms
-    val distance: Double? = null, // in kilometers
-    val duration: Double? = null // in minutes
+    @DrawableRes val imageExercise: Int? = null
 )
