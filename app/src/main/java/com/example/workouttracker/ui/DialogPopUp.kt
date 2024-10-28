@@ -1,18 +1,17 @@
 package com.example.workouttracker.ui
 
 import android.util.Log
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,7 +84,7 @@ fun AddExerciseContent() {
         Text(
             text = "Select Exercise",
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Bold
         )
         OutlinedTextField(
             value = "",
@@ -104,20 +102,26 @@ fun AddExerciseContent() {
 @Composable
 fun DisplayExercisesList(exerciseList: List<Exercise>) {
     val exerciseListSorted = exerciseList.sortedBy { it.name }
+    val listState = rememberLazyListState()
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
-//            .border(1.dp, color = androidx.compose.material3.MaterialTheme.colorScheme.outline)
     ) {
         items(exerciseListSorted) { exercise ->
             Row(
-
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        Log.d("AddExerciseDialog", "Exercise selected: ${exercise.name}")
+                    }
             ) {
                 Text(
                     text = exercise.name,
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
-                        .padding(vertical = 12.dp)
+                        .padding(vertical = 12.dp, horizontal = 12.dp)
                 )
             }
             HorizontalDivider()
