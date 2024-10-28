@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,10 +38,16 @@ import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 fun AddExerciseDialog(
     onDismiss: () -> Unit
 ){
-    val deviceScreenWidth = LocalContext.current.resources.displayMetrics.xdpi
-    val deviceScreenHeight = LocalContext.current.resources.displayMetrics.ydpi
+    val configuration = LocalConfiguration.current
+    val deviceScreenWidth = configuration.screenWidthDp
+    val deviceScreenHeight = configuration.screenHeightDp
+
+//    val deviceScreenWidth = LocalContext.current.resources.displayMetrics.widthPixels
+//    val deviceScreenHeight = LocalContext.current.resources.displayMetrics.heightPixels
     Log.d("AddExerciseDialog", "Device screen width: $deviceScreenWidth")
-    Log.d("AddExerciseDialog", "Device screen width: ${deviceScreenWidth*0.9}")
+    Log.d("AddExerciseDialog", "Device screen width * 0.9: ${deviceScreenWidth*0.9}")
+    Log.d("AddExerciseDialog", "Device screen height: $deviceScreenHeight")
+    Log.d("AddExerciseDialog", "Device screen height * 0.9: ${deviceScreenHeight*0.9}")
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -54,7 +61,7 @@ fun AddExerciseDialog(
             modifier = Modifier
 //                .fillMaxWidth()
 //                .fillMaxSize()
-                .size((deviceScreenWidth * 0.8).dp, (deviceScreenHeight * 0.8).dp)
+                .size((deviceScreenWidth * 0.9).dp, (deviceScreenHeight * 0.9).dp)
 //                .width((deviceScreenWidth * 0.9).dp)
 //                .height(375.dp)
 //                .padding(30.dp),
