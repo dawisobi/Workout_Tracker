@@ -81,7 +81,7 @@ fun HomeScreen(
     }
 
     if(showDialog) {
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) }, workoutTrackerViewModel) //{ workoutTrackerViewModel.updateShowDialog(false) }
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) }) //{ workoutTrackerViewModel.updateShowDialog(false) }
     }
 }
 

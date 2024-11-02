@@ -78,7 +78,7 @@ fun CalendarScreen(
         DayLayout()
     }
     if(showDialog) {
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) }, workoutTrackerViewModel)
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) })
     }
 }
 

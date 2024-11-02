@@ -40,7 +40,6 @@ import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 @Composable
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
-    workoutTrackerViewModel: WorkoutTrackerViewModel
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
@@ -78,14 +77,18 @@ fun AddExerciseDialog(
                 verticalArrangement = Arrangement.Top,
                 //horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AddExerciseContent(workoutTrackerViewModel)
+                AddExerciseContent(
+                    onDismiss = onDismiss,
+                )
             }
         }
     }
 }
 
 @Composable
-fun AddExerciseContent(workoutTrackerViewModel: WorkoutTrackerViewModel) {
+fun AddExerciseContent(
+    onDismiss: () -> Unit,
+) {
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -101,8 +104,7 @@ fun AddExerciseContent(workoutTrackerViewModel: WorkoutTrackerViewModel) {
             )
 
             IconButton(
-                onClick = {
-                    workoutTrackerViewModel.updateShowDialog(newShowDialog = false)
+                onClick = { onDismiss()
                     Log.d("AddExerciseDialog", "Close button clicked")
                 }
             ){
@@ -160,6 +162,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>) {
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel() )
+        AddExerciseDialog( onDismiss = {  })
     }
 }
