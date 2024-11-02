@@ -45,8 +45,8 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    modifier: Modifier = Modifier
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showDialog = workoutTrackerUiState.showDialog
