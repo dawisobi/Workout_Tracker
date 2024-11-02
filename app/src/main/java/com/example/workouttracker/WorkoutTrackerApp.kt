@@ -5,9 +5,6 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -67,7 +64,7 @@ fun WorkoutTrackerApp(
                 ActionButton(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
-                        workoutTrackerViewModel.updateShowDialog(true)
+                        workoutTrackerViewModel.updateExerciseListDialogState(true)
                     },
 //                    fabVisible = true
                 )

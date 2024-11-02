@@ -40,17 +40,20 @@ import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 @Composable
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
+    workoutTrackerViewModel: WorkoutTrackerViewModel
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
     val deviceScreenHeight = configuration.screenHeightDp
 
+    Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
+
 //    val deviceScreenWidth = LocalContext.current.resources.displayMetrics.widthPixels
 //    val deviceScreenHeight = LocalContext.current.resources.displayMetrics.heightPixels
-    Log.d("AddExerciseDialog", "Device screen width: $deviceScreenWidth")
-    Log.d("AddExerciseDialog", "Device screen width * 0.9: ${deviceScreenWidth*0.9}")
-    Log.d("AddExerciseDialog", "Device screen height: $deviceScreenHeight")
-    Log.d("AddExerciseDialog", "Device screen height * 0.9: ${deviceScreenHeight*0.9}")
+//    Log.d("AddExerciseDialog", "Device screen width: $deviceScreenWidth")
+//    Log.d("AddExerciseDialog", "Device screen width * 0.9: ${deviceScreenWidth*0.9}")
+//    Log.d("AddExerciseDialog", "Device screen height: $deviceScreenHeight")
+//    Log.d("AddExerciseDialog", "Device screen height * 0.9: ${deviceScreenHeight*0.9}")
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -79,6 +82,7 @@ fun AddExerciseDialog(
             ) {
                 AddExerciseContent(
                     onDismiss = onDismiss,
+                    workoutTrackerViewModel = workoutTrackerViewModel
                 )
             }
         }
@@ -88,6 +92,7 @@ fun AddExerciseDialog(
 @Composable
 fun AddExerciseContent(
     onDismiss: () -> Unit,
+    workoutTrackerViewModel: WorkoutTrackerViewModel
 ) {
     Column {
         Row(
@@ -104,7 +109,8 @@ fun AddExerciseContent(
             )
 
             IconButton(
-                onClick = { onDismiss()
+                onClick = {
+                    onDismiss()
                     Log.d("AddExerciseDialog", "Close button clicked")
                 }
             ){
@@ -124,12 +130,12 @@ fun AddExerciseContent(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
         )
-        DisplayExercisesList(exerciseList = exerciseDb)
+        DisplayExercisesList(exerciseList = exerciseDb, workoutTrackerViewModel = workoutTrackerViewModel)
     }
 }
 
 @Composable
-fun DisplayExercisesList(exerciseList: List<Exercise>) {
+fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
     val exerciseListSorted = exerciseList.sortedBy { it.name }
     val listState = rememberLazyListState()
 
@@ -144,6 +150,8 @@ fun DisplayExercisesList(exerciseList: List<Exercise>) {
                     .fillMaxWidth()
                     .clickable {
                         Log.d("AddExerciseDialog", "Exercise selected: ${exercise.name}")
+                        workoutTrackerViewModel.updateSelectedExercise(exercise)
+                        workoutTrackerViewModel.updateExerciseDetailsDialogState(true)
                     }
             ) {
                 Text(
@@ -162,6 +170,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>) {
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  })
+        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel())
     }
 }

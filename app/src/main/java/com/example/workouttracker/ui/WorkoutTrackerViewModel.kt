@@ -13,8 +13,16 @@ class WorkoutTrackerViewModel : ViewModel() {
     val uiState: StateFlow<WorkoutTrackerUiState> = _uiState.asStateFlow()
 
 
-    fun updateShowDialog(newShowDialog: Boolean) {
-        _uiState.update { currentState -> currentState.copy(showDialog = newShowDialog) }
+    fun updateExerciseListDialogState(newShowExerciseListDialogState: Boolean) {
+        _uiState.update { currentState -> currentState.copy(showExerciseListDialog = newShowExerciseListDialogState) }
+    }
+
+    fun updateExerciseDetailsDialogState(newShowExerciseDetailsDialogState: Boolean) {
+        _uiState.update { currentState -> currentState.copy(showExerciseDetailsDialog = newShowExerciseDetailsDialogState) }
+    }
+
+    fun updateSelectedExercise(newSelectedExercise: Exercise) {
+        _uiState.update { currentState -> currentState.copy(selectedExercise = newSelectedExercise) }
     }
 
 }

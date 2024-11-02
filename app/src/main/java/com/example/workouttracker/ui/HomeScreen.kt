@@ -49,10 +49,11 @@ fun HomeScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    val showDialog = workoutTrackerUiState.showDialog
+    val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
+    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
-    Log.d("AddExerciseDialog", "showDialog(uiState): ${workoutTrackerUiState.showDialog}")
-    Log.d("AddExerciseDialog", "showDialog: $showDialog")
+//    Log.d("AddExerciseDialog", "showDialog(uiState): ${workoutTrackerUiState.showExerciseListDialog}")
+//    Log.d("AddExerciseDialog", "showDialog: $showExerciseListDialog")
 
     Column(
         verticalArrangement = Arrangement.Top,
@@ -80,8 +81,13 @@ fun HomeScreen(
         DayLayout()
     }
 
-    if(showDialog) {
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) }) //{ workoutTrackerViewModel.updateShowDialog(false) }
+    if(showExerciseListDialog) {
+        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel) //{ workoutTrackerViewModel.updateShowDialog(false) }
+    }
+    if(showExerciseDetailsDialog) {
+        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
+        ExerciseDetailsDialog(onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) }, exercise = workoutTrackerUiState.selectedExercise!!)
     }
 }
 

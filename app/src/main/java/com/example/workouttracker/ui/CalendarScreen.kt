@@ -50,11 +50,12 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(
+    modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    modifier: Modifier = Modifier
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    val showDialog = workoutTrackerUiState.showDialog
+    val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
+    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
     var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
@@ -77,8 +78,14 @@ fun CalendarScreen(
         SelectedDayText(selectedDay, selectedMonth)
         DayLayout()
     }
-    if(showDialog) {
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateShowDialog(false) })
+
+    if(showExerciseListDialog) {
+        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel) //{ workoutTrackerViewModel.updateShowDialog(false) }
+    }
+    if(showExerciseDetailsDialog) {
+        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
+        ExerciseDetailsDialog(onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) }, exercise = workoutTrackerUiState.selectedExercise!!)
     }
 }
 
