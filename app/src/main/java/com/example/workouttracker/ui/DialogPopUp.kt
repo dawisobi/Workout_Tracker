@@ -13,8 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +38,8 @@ import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 
 @Composable
 fun AddExerciseDialog(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    workoutTrackerViewModel: WorkoutTrackerViewModel
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
@@ -70,22 +75,42 @@ fun AddExerciseDialog(
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                //horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AddExerciseContent()
+                AddExerciseContent(workoutTrackerViewModel)
             }
         }
     }
 }
 
 @Composable
-fun AddExerciseContent() {
+fun AddExerciseContent(workoutTrackerViewModel: WorkoutTrackerViewModel) {
     Column {
-        Text(
-            text = "Select Exercise",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+            Text(
+                text = "Select Exercise",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+
+            IconButton(
+                onClick = {
+                    workoutTrackerViewModel.updateShowDialog(newShowDialog = false)
+                    Log.d("AddExerciseDialog", "Close button clicked")
+                }
+            ){
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close"
+                )
+            }
+        }
+
         OutlinedTextField(
             value = "",
             onValueChange = { },
@@ -133,6 +158,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>) {
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  } )
+        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel() )
     }
 }
