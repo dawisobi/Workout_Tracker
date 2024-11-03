@@ -1,5 +1,6 @@
 package com.example.workouttracker.ui
 
+import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 import com.example.workouttracker.model.Exercise
 
 data class WorkoutTrackerUiState(
@@ -9,5 +10,6 @@ data class WorkoutTrackerUiState(
 
     val selectedExercise: Exercise? = null,
 
+    var foundExercises: MutableList<Exercise> = exerciseDb.toMutableList()
 
 )

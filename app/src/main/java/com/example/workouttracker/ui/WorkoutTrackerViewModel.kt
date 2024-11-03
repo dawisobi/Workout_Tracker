@@ -2,6 +2,7 @@ package com.example.workouttracker.ui
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-private var foundExercises: MutableList<Exercise> = exerciseDb.toMutableList()
 
+//private var foundExercises: MutableList<Exercise> = mutableListOf()
+
+private var foundExercises = mutableStateListOf<Exercise>()
 
 class WorkoutTrackerViewModel : ViewModel() {
 
@@ -40,19 +43,34 @@ class WorkoutTrackerViewModel : ViewModel() {
         searchedExercise = newSearchedExercise
     }
 
+    private fun resetSearchedExercise() {
+        searchedExercise = ""
+    }
+
+    private fun resetFoundExercisesList() {
+        foundExercises.clear()
+        foundExercises.addAll(exerciseDb)
+    }
+
+    fun resetSearchDialogState() {
+        resetSearchedExercise()
+        resetFoundExercisesList()
+    }
+
     fun updateExercisesList() {
         Log.d("WorkoutTrackerViewModel", "updateExercisesList() called")
         updateFoundExercisesList(searchedExercise)
         Log.d("WorkoutTrackerViewModel", "updateExercisesList() foundExercises: ${foundExercises.size}")
+        _uiState.update { currentState -> currentState.copy(foundExercises = foundExercises) }
 //        for (exercise in foundExercises) {
 //            Log.d("WorkoutTrackerViewModel", exercise.name)
 //        }
 
     }
 
-    fun getExercisesList(): List<Exercise> {
-        return foundExercises
-    }
+//    fun getExercisesList(): List<Exercise> {
+//        return _uiState.value.foundExercises
+//    }
 
 }
 
@@ -65,6 +83,7 @@ private fun updateFoundExercisesList(searchedExercise: String): List<Exercise> {
     for (exercise in exercisesList) {
         if (isMatchingExercise(exercise, searchedExercise)) {
             foundExercises.add(exercise)
+            Log.d("WorkoutTrackerViewModel", exercise.name)
         }
     }
     return foundExercises

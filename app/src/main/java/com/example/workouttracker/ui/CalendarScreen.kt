@@ -81,7 +81,7 @@ fun CalendarScreen(
 
     if(showExerciseListDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel) //{ workoutTrackerViewModel.updateShowDialog(false) }
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel, exerciseList = workoutTrackerUiState.foundExercises) //{ workoutTrackerViewModel.updateShowDialog(false) }
     }
     if(showExerciseDetailsDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")

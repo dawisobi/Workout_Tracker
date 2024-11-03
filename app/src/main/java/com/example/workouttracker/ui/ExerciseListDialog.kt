@@ -43,7 +43,8 @@ import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 @Composable
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
-    workoutTrackerViewModel: WorkoutTrackerViewModel
+    workoutTrackerViewModel: WorkoutTrackerViewModel,
+    exerciseList: MutableList<Exercise>
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
@@ -77,12 +78,16 @@ fun AddExerciseDialog(
                 //horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AddExerciseContent(
-                    onDismiss = onDismiss,
+                    onDismiss = {
+                        onDismiss()
+                        workoutTrackerViewModel.resetSearchDialogState()
+                        },
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     searchedExerciseName = workoutTrackerViewModel.searchedExercise,
                     onSearchedExerciseChange = { workoutTrackerViewModel.updateSearchedExercise(it) },
                     onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
-                    exerciseList = workoutTrackerViewModel.getExercisesList()
+//                    exerciseList = workoutTrackerViewModel.getExercisesList(),
+                    exerciseList = exerciseList
                 )
             }
         }
@@ -96,7 +101,7 @@ fun AddExerciseContent(
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
     onKeyboardSearch: () -> Unit,
-    exerciseList: List<Exercise>
+    exerciseList: MutableList<Exercise>
 ) {
     Column {
         Row(
@@ -115,6 +120,7 @@ fun AddExerciseContent(
             IconButton(
                 onClick = {
                     onDismiss()
+
                     Log.d("AddExerciseDialog", "Close button clicked")
                 }
             ){
@@ -184,6 +190,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel())
+        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = exerciseDb.toMutableList())
     }
 }

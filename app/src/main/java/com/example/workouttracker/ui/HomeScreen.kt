@@ -83,11 +83,16 @@ fun HomeScreen(
 
     if(showExerciseListDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel) //{ workoutTrackerViewModel.updateShowDialog(false) }
+        AddExerciseDialog(
+            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)},
+            workoutTrackerViewModel = workoutTrackerViewModel,
+            exerciseList = workoutTrackerUiState.foundExercises) //{ workoutTrackerViewModel.updateShowDialog(false) }
     }
     if(showExerciseDetailsDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
-        ExerciseDetailsDialog(onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) }, exercise = workoutTrackerUiState.selectedExercise!!)
+        ExerciseDetailsDialog(
+            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+            exercise = workoutTrackerUiState.selectedExercise!!)
     }
 }
 
