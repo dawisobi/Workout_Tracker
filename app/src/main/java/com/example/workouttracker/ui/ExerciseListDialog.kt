@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -27,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,13 +50,6 @@ fun AddExerciseDialog(
     val deviceScreenHeight = configuration.screenHeightDp
 
     Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
-
-//    val deviceScreenWidth = LocalContext.current.resources.displayMetrics.widthPixels
-//    val deviceScreenHeight = LocalContext.current.resources.displayMetrics.heightPixels
-//    Log.d("AddExerciseDialog", "Device screen width: $deviceScreenWidth")
-//    Log.d("AddExerciseDialog", "Device screen width * 0.9: ${deviceScreenWidth*0.9}")
-//    Log.d("AddExerciseDialog", "Device screen height: $deviceScreenHeight")
-//    Log.d("AddExerciseDialog", "Device screen height * 0.9: ${deviceScreenHeight*0.9}")
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -82,7 +78,11 @@ fun AddExerciseDialog(
             ) {
                 AddExerciseContent(
                     onDismiss = onDismiss,
-                    workoutTrackerViewModel = workoutTrackerViewModel
+                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    searchedExerciseName = workoutTrackerViewModel.searchedExercise,
+                    onSearchedExerciseChange = { workoutTrackerViewModel.updateSearchedExercise(it) },
+                    onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
+                    exerciseList = workoutTrackerViewModel.getExercisesList()
                 )
             }
         }
@@ -92,7 +92,11 @@ fun AddExerciseDialog(
 @Composable
 fun AddExerciseContent(
     onDismiss: () -> Unit,
-    workoutTrackerViewModel: WorkoutTrackerViewModel
+    workoutTrackerViewModel: WorkoutTrackerViewModel,
+    searchedExerciseName: String,
+    onSearchedExerciseChange: (String) -> Unit,
+    onKeyboardSearch: () -> Unit,
+    exerciseList: List<Exercise>
 ) {
     Column {
         Row(
@@ -122,15 +126,25 @@ fun AddExerciseContent(
         }
 
         OutlinedTextField(
-            value = "",
-            onValueChange = { },
+            value = searchedExerciseName,
+            singleLine = true,
+            onValueChange = onSearchedExerciseChange,
             label = { Text("Search") },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
+                .padding(vertical = 4.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    Log.d("AddExerciseDialog", "Search button clicked: $searchedExerciseName")
+                    onKeyboardSearch()
+                }
+            )
         )
-        DisplayExercisesList(exerciseList = exerciseDb, workoutTrackerViewModel = workoutTrackerViewModel)
+        DisplayExercisesList(exerciseList = exerciseList, workoutTrackerViewModel = workoutTrackerViewModel)
     }
 }
 
