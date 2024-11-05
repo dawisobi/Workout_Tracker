@@ -83,7 +83,7 @@ private fun updateFoundExercisesList(searchedExercise: String): List<Exercise> {
     for (exercise in exercisesList) {
         if (isMatchingExercise(exercise, searchedExercise)) {
             foundExercises.add(exercise)
-            Log.d("WorkoutTrackerViewModel", exercise.name)
+//            Log.d("WorkoutTrackerViewModel", exercise.name)
         }
     }
     return foundExercises

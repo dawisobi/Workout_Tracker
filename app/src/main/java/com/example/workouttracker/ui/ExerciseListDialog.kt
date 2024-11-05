@@ -27,7 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -84,7 +86,10 @@ fun AddExerciseDialog(
                         },
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     searchedExerciseName = workoutTrackerViewModel.searchedExercise,
-                    onSearchedExerciseChange = { workoutTrackerViewModel.updateSearchedExercise(it) },
+                    onSearchedExerciseChange = {
+                        workoutTrackerViewModel.updateSearchedExercise(it)
+                        workoutTrackerViewModel.updateExercisesList()
+                                               },
                     onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
 //                    exerciseList = workoutTrackerViewModel.getExercisesList(),
                     exerciseList = exerciseList
@@ -147,6 +152,7 @@ fun AddExerciseContent(
                 onSearch = {
                     Log.d("AddExerciseDialog", "Search button clicked: $searchedExerciseName")
                     onKeyboardSearch()
+
                 }
             )
         )
@@ -156,40 +162,58 @@ fun AddExerciseContent(
 
 @Composable
 fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
-    val exerciseListSorted = exerciseList.sortedBy { it.name }
-    val listState = rememberLazyListState()
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        items(exerciseListSorted) { exercise ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        Log.d("AddExerciseDialog", "Exercise selected: ${exercise.name}")
-                        workoutTrackerViewModel.updateSelectedExercise(exercise)
-                        workoutTrackerViewModel.updateExerciseDetailsDialogState(true)
-                    }
-            ) {
-                Text(
-                    text = exercise.name,
-                    fontWeight = FontWeight.SemiBold,
+    if(exerciseList.isEmpty()){
+        Log.d("AddExerciseDialog", "No exercises found")
+        Text(
+            text = "No exercises matching the provided phrase were found.",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 20.dp).fillMaxWidth()
+        )
+    } else {
+        Log.d("AddExerciseDialog", "Exercises found: ${exerciseList.size}")
+
+        val exerciseListSorted = exerciseList.sortedBy { it.name }
+        val listState = rememberLazyListState()
+
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            items(exerciseListSorted) { exercise ->
+                Row(
                     modifier = Modifier
-                        .padding(vertical = 12.dp, horizontal = 12.dp)
-                )
+                        .fillMaxWidth()
+                        .clickable {
+                            Log.d("AddExerciseDialog", "Exercise selected: ${exercise.name}")
+                            workoutTrackerViewModel.updateSelectedExercise(exercise)
+                            workoutTrackerViewModel.updateExerciseDetailsDialogState(true)
+                        }
+                ) {
+                    Text(
+                        text = exercise.name,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(12.dp)
+                    )
+                }
+                HorizontalDivider()
             }
-            HorizontalDivider()
         }
     }
+
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = exerciseDb.toMutableList())
+        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = mutableListOf())//exerciseDb.toMutableList())
     }
 }
