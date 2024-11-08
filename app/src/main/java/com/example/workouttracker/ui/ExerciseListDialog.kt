@@ -206,8 +206,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
             }
         }
     }
-
-
 }
 
 @Preview(showBackground = true)

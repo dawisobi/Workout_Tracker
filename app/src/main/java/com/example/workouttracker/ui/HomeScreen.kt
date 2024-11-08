@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.datasource.TodayTrainingDataSource
-import com.example.workouttracker.model.Exercise_TrainingSession
+import com.example.workouttracker.model.ExerciseTrainingSession
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -149,7 +149,7 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun DayLayout(
-    exerciseList: List<Pair<Exercise_TrainingSession, String>> = TodayTrainingDataSource.todayTrainingSessions,
+    exerciseList: List<Pair<ExerciseTrainingSession, String>> = TodayTrainingDataSource.todayTrainingSessions,
 ) {
     Column(
         modifier = Modifier
@@ -179,7 +179,7 @@ fun DayLayout(
 }
 
 @Composable
-fun ExerciseCard(exercise: Exercise_TrainingSession){
+fun ExerciseCard(exercise: ExerciseTrainingSession){
     Card(
         border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
         shape = RoundedCornerShape(30),

@@ -3,7 +3,8 @@ package com.example.workouttracker.model
 
 //TrainingSessionDone ????
 //add date variable
-class Exercise_TrainingSession(
+//change exercise variables to single variable with type Exercise????
+class ExerciseTrainingSession(
     val idExercise: Int,
     val type: String,
     val name: String,
