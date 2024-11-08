@@ -1,6 +1,7 @@
 package com.example.workouttracker.ui
 
 import android.util.Log
+import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,11 +64,20 @@ fun ExerciseDetailsDialog(
                 Text(text = "Exercise: ${exercise.name}")
                 exercise.description?.let { Text(text = "Description: ${exercise.description}") }
 
-                DateAndTimeRow(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
+                DateAndTimeRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
                 )
 
+
+                CancelAndConfirmButtons(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    onCancelClick = { Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
+                    onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
+                )
 
             }
         }
@@ -155,7 +169,48 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
     }
 }
 
+@Composable
+fun CancelAndConfirmButtons(
+    onCancelClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
+    val cancelColor = Color(0xFFBA1A1A)
+    val confirmColor = Color(0xFF3ba858)
+
+//    val cancelColor = MaterialTheme.colorScheme.onPrimary
+//    val confirmColor = MaterialTheme.colorScheme.primaryContainer
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            onClick = { onCancelClick() },
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = cancelColor,
+                contentColor = Color.Black
+//                containerColor = MaterialTheme.colorScheme.error,
+//                contentColor = MaterialTheme.colorScheme.onError
+            ),
+        ) {
+            Text(text = "Cancel")
+        }
+
+        Button(
+            onClick = { onConfirmClick() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = confirmColor,
+                contentColor = Color.Black
+            ),
+        ) {
+            Text(text = "Confirm")
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
