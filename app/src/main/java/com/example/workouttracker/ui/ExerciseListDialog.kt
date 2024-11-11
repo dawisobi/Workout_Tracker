@@ -1,6 +1,8 @@
 package com.example.workouttracker.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +44,7 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
@@ -99,6 +102,7 @@ fun AddExerciseDialog(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddExerciseContent(
     onDismiss: () -> Unit,
@@ -160,6 +164,7 @@ fun AddExerciseContent(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
 
@@ -208,6 +213,7 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun AddExerciseDialogPreview(){

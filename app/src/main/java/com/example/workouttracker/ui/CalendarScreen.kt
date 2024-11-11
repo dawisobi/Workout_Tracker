@@ -85,7 +85,14 @@ fun CalendarScreen(
     }
     if(showExerciseDetailsDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
-        ExerciseDetailsDialog(onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) }, exercise = workoutTrackerUiState.selectedExercise!!)
+        ExerciseDetailsDialog(
+            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+            exercise = workoutTrackerUiState.selectedExercise!!,
+            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") },
+            onDateUpdate = { Log.d("ExerciseDetailsDialog", "Date should be updated") },
+            onTimeUpdate = { Log.d("ExerciseDetailsDialog", "Time should be updated") },
+            currentDateTime = workoutTrackerUiState.currentDateTime
+        )
     }
 }
 

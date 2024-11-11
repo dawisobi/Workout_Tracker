@@ -1,7 +1,9 @@
 package com.example.workouttracker.ui
 
+import android.os.Build
 import android.util.Log
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +17,25 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,14 +49,19 @@ import androidx.compose.ui.window.Dialog
 import com.example.workouttracker.R
 import com.example.workouttracker.model.Exercise
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExerciseDetailsDialog(
     onDismiss: () -> Unit,
+    onConfirmClick: () -> Unit,
+    onDateUpdate: () -> Unit,
+    onTimeUpdate: () -> Unit,
+    currentDateTime: LocalDateTime,
     exercise: Exercise
 ){
-//    var reps = 0
-//    var series = 0
 
     Log.d("AddExerciseDialog", "ExerciseDetailsDialog Opened")
 
@@ -64,19 +80,27 @@ fun ExerciseDetailsDialog(
                 Text(text = "Exercise: ${exercise.name}")
                 exercise.description?.let { Text(text = "Description: ${exercise.description}") }
 
+                val contentModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+
                 DateAndTimeRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
+                    currentDateTime = currentDateTime,
+                    onDateUpdate = { onDateUpdate() },
+                    onTimeUpdate = { onTimeUpdate() },
+                    modifier = contentModifier,
                 )
 
+                SetsAndRepsList(
+                    modifier = contentModifier
+                )
 
                 CancelAndConfirmButtons(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    onCancelClick = { Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
-                    onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
+                    modifier = contentModifier,
+                    onCancelClick = { onDismiss()
+                        Log.d("ExerciseDetailsDialog", "Cancel button clicked")
+                    },
+                    onConfirmClick = { onConfirmClick() }
                 )
 
             }
@@ -84,8 +108,18 @@ fun ExerciseDetailsDialog(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateAndTimeRow(modifier: Modifier = Modifier){
+fun DateAndTimeRow(
+    currentDateTime: LocalDateTime,
+    onDateUpdate: () -> Unit,
+    onTimeUpdate: () -> Unit,
+    modifier: Modifier = Modifier
+){
+
+    //val datePickerState = rememberDatePickerState()
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -100,7 +134,7 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
             //.padding(6.dp)
         ){
             IconButton(
-                onClick = { Log.d("ExerciseDetailsDialog", "Date should be set to the current day") },
+                onClick = { onDateUpdate() },
                 modifier = Modifier
                     .size(34.dp)
             ) {
@@ -116,10 +150,13 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
                     .weight(1f)
                     .fillMaxWidth()
                     .height(34.dp)
-                    .clickable { Log.d("ExerciseDetailsDialog", "Date picker should show up here") }
+//                    .clickable {
+//
+//                        Log.d("ExerciseDetailsDialog", "Date picker should show up here\nProbably not tbh")
+//                    }
             ){
                 Text(
-                    text = "2024-11-07",
+                    text = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(currentDateTime),
                     fontWeight = FontWeight.Bold,
 //                                textAlign = Center,
                     modifier = Modifier
@@ -138,7 +175,7 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
             //.padding(6.dp)
         ){
             IconButton(
-                onClick = { Log.d("ExerciseDetailsDialog", "Time should be set to the current time") },
+                onClick = { onTimeUpdate() },
                 modifier = Modifier
                     .size(34.dp)
             ) {
@@ -154,10 +191,10 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
                     .weight(1f)
                     .fillMaxWidth()
                     .height(34.dp)
-                    .clickable { Log.d("ExerciseDetailsDialog", "Time picker should show up here") }
+//                    .clickable { Log.d("ExerciseDetailsDialog", "Time picker should show up here\nProbably not tbh") }
             ){
                 Text(
-                    text = "23:56",
+                    text = DateTimeFormatter.ofPattern("HH:mm").format(currentDateTime),
                     fontWeight = FontWeight.Bold,
 //                                textAlign = Center,
                     modifier = Modifier
@@ -168,6 +205,71 @@ fun DateAndTimeRow(modifier: Modifier = Modifier){
         }
     }
 }
+
+@Composable
+fun SetsAndRepsList(
+    modifier: Modifier = Modifier
+) {
+    var setsList = mutableListOf(Pair(10, 60), Pair(8, 62.5), Pair(6, 65))
+    var repetition = 1
+
+    Column(
+        modifier = modifier,
+//        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                //.padding(horizontal = 25.dp)
+        ) {
+            Text(text = "Set", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+            Text(text = "Reps", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+            Text(text = "Weight", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+        }
+
+        repeat(setsList.size) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                .padding(horizontal = 25.dp)
+            ) {
+                Text(text = repetition.toString(), textAlign = Center, modifier = Modifier.weight(1f))
+                Text(
+                    text = setsList[repetition - 1].first.toString(),
+                    textAlign = Center,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${setsList[repetition - 1].second} kg",
+                    textAlign = Center,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+
+            repetition++
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(start = 10.dp, top = 5.dp)
+                .clickable {
+                    setsList.add(Pair(10, 60))
+                    Log.d("ExerciseDetailsDialog", "Add set button clicked")
+                    Log.d("ExerciseDetailsDialog", "setsList: $setsList")
+                }
+        ){
+            Icon(painter = painterResource(id = R.drawable.rounded_add_circle_24), contentDescription = "Add")
+            Text(text = "Add set", modifier = Modifier.padding(start = 5.dp))
+        }
+    }
+}
+
 
 @Composable
 fun CancelAndConfirmButtons(
@@ -184,17 +286,15 @@ fun CancelAndConfirmButtons(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceAround,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
             onClick = { onCancelClick() },
-            shape = RoundedCornerShape(10.dp),
+            //shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = cancelColor,
                 contentColor = Color.Black
-//                containerColor = MaterialTheme.colorScheme.error,
-//                contentColor = MaterialTheme.colorScheme.onError
             ),
         ) {
             Text(text = "Cancel")
@@ -212,10 +312,18 @@ fun CancelAndConfirmButtons(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun ExerciseDetailsDialogPreview() {
     WorkoutTrackerTheme(dynamicColor = false) {
-        ExerciseDetailsDialog(onDismiss = { }, exercise = Exercise(exerciseId = 1, type = "Athletics", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),)
+        ExerciseDetailsDialog(
+            onDismiss = { },
+            exercise = Exercise(exerciseId = 1, type = "Athletics", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
+            onConfirmClick = { },
+            onDateUpdate = { },
+            onTimeUpdate = { },
+            currentDateTime = LocalDateTime.now()
+        )
     }
 }

@@ -6,6 +6,8 @@ package com.example.workouttracker.model
 //change exercise variables to single variable with type Exercise????
 class ExerciseTrainingSession(
     val idExercise: Int,
+//    val date: String,
+//    val time: String,
     val type: String,
     val name: String,
     val description: String? = null,

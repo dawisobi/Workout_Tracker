@@ -1,6 +1,8 @@
 package com.example.workouttracker.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,9 +42,11 @@ import com.example.workouttracker.datasource.TodayTrainingDataSource
 import com.example.workouttracker.model.ExerciseTrainingSession
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -52,8 +56,6 @@ fun HomeScreen(
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
-//    Log.d("AddExerciseDialog", "showDialog(uiState): ${workoutTrackerUiState.showExerciseListDialog}")
-//    Log.d("AddExerciseDialog", "showDialog: $showExerciseListDialog")
 
     Column(
         verticalArrangement = Arrangement.Top,
@@ -86,14 +88,24 @@ fun HomeScreen(
         AddExerciseDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)},
             workoutTrackerViewModel = workoutTrackerViewModel,
-            exerciseList = workoutTrackerUiState.foundExercises) //{ workoutTrackerViewModel.updateShowDialog(false) }
+            exerciseList = workoutTrackerUiState.foundExercises
+        ) //{ workoutTrackerViewModel.updateShowDialog(false) }
     }
     if(showExerciseDetailsDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-            exercise = workoutTrackerUiState.selectedExercise!!)
+            exercise = workoutTrackerUiState.selectedExercise!!,
+            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") },
+            onDateUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
+                Log.d("ExerciseDetailsDialog", "Date should be updated to ${DateTimeFormatter.ofPattern("yyyy-MM-dd").format(workoutTrackerUiState.currentDateTime)}") },
+            onTimeUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
+                Log.d("ExerciseDetailsDialog", "Time should be updated to ${DateTimeFormatter.ofPattern("HH:mm").format(workoutTrackerUiState.currentDateTime)}") },
+            currentDateTime = workoutTrackerUiState.currentDateTime
+
+        )
     }
+
 }
 
 @Composable
@@ -209,6 +221,7 @@ fun ExerciseCard(exercise: ExerciseTrainingSession){
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {

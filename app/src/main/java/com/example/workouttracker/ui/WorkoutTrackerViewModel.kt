@@ -1,6 +1,8 @@
 package com.example.workouttracker.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,12 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDateTime
 
 
 //private var foundExercises: MutableList<Exercise> = mutableListOf()
 
 private var foundExercises = mutableStateListOf<Exercise>()
 
+@RequiresApi(Build.VERSION_CODES.O)
 class WorkoutTrackerViewModel : ViewModel() {
 
     //variable for the searched exercise text in the dialog
@@ -71,6 +75,10 @@ class WorkoutTrackerViewModel : ViewModel() {
 //    fun getExercisesList(): List<Exercise> {
 //        return _uiState.value.foundExercises
 //    }
+
+    fun updateCurrentDateTime() {
+        _uiState.update { currentState -> currentState.copy(currentDateTime = LocalDateTime.now()) }
+    }
 
 }
 
