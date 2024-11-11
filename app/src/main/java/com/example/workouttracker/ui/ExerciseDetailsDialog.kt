@@ -21,7 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -262,7 +261,7 @@ fun SetsAndRepsList(
                             painter = painterResource(id = R.drawable.icon_bin),
                             contentDescription = null,
                             tint = Color.DarkGray,
-                            )
+                        )
                     }
                 } else {
                     Icon(painter = painterResource(id = R.drawable.icon_bin), contentDescription = null, tint = Color.Transparent)
@@ -278,7 +277,6 @@ fun SetsAndRepsList(
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp)
                 .clickable { onSetAdd()
-//                    setsList.add(Pair(10, 60))
                     Log.d("ExerciseDetailsDialog", "Add set button clicked")
                     Log.d("ExerciseDetailsDialog", "setsList: $setsList")
                 }
