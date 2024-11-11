@@ -2,7 +2,6 @@ package com.example.workouttracker.ui
 
 import android.os.Build
 import android.util.Log
-import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,32 +9,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +47,11 @@ fun ExerciseDetailsDialog(
     onDateUpdate: () -> Unit,
     onTimeUpdate: () -> Unit,
     currentDateTime: LocalDateTime,
-    exercise: Exercise
+    exercise: Exercise,
+//    setsCount: Int,
+    setsList: List<Pair<Int, Double>>,
+    onSetAdd: () -> Unit,
+    onSetRemoval: () -> Unit,
 ){
 
     Log.d("AddExerciseDialog", "ExerciseDetailsDialog Opened")
@@ -92,7 +83,10 @@ fun ExerciseDetailsDialog(
                 )
 
                 SetsAndRepsList(
-                    modifier = contentModifier
+                    modifier = contentModifier,
+                    setsList = setsList,
+                    onSetAdd = { onSetAdd() },
+                    onSetRemoval = { onSetRemoval() }
                 )
 
                 CancelAndConfirmButtons(
@@ -208,10 +202,14 @@ fun DateAndTimeRow(
 
 @Composable
 fun SetsAndRepsList(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+//    setsCount: Int = 3,
+    setsList: List<Pair<Int, Double>> = listOf(Pair(0, 0.0)),
+    onSetAdd: () -> Unit,
+    onSetRemoval: () -> Unit
 ) {
-    var setsList = mutableListOf(Pair(10, 60), Pair(8, 62.5), Pair(6, 65))
-    var repetition = 1
+    //var setsList = mutableListOf(Pair(10, 60), Pair(8, 62.5), Pair(6, 65))
+    var setCount = 1
 
     Column(
         modifier = modifier,
@@ -227,6 +225,8 @@ fun SetsAndRepsList(
             Text(text = "Set", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
             Text(text = "Reps", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
             Text(text = "Weight", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+            Icon(painter = painterResource(id = R.drawable.icon_bin), contentDescription = null, tint = Color.Transparent)
+
         }
 
         repeat(setsList.size) {
@@ -237,29 +237,48 @@ fun SetsAndRepsList(
                     .fillMaxWidth()
 //                .padding(horizontal = 25.dp)
             ) {
-                Text(text = repetition.toString(), textAlign = Center, modifier = Modifier.weight(1f))
                 Text(
-                    text = setsList[repetition - 1].first.toString(),
+                    text = setCount.toString(),
                     textAlign = Center,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "${setsList[repetition - 1].second} kg",
+                    text = setsList[setCount - 1].first.toString(),
                     textAlign = Center,
                     modifier = Modifier.weight(1f)
                 )
+                Text(
+                    text = "${setsList[setCount - 1].second} kg",
+                    textAlign = Center,
+                    modifier = Modifier.weight(1f)
+                )
+                if(setCount == setsList.size && setsList.size > 1) {
+                    IconButton(
+                        onClick = { onSetRemoval()
+                            Log.d("ExerciseDetailsDialog", "Remove set button clicked")},
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_bin),
+                            contentDescription = null,
+                            tint = Color.DarkGray,
+                            )
+                    }
+                } else {
+                    Icon(painter = painterResource(id = R.drawable.icon_bin), contentDescription = null, tint = Color.Transparent)
+                }
             }
             HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
 
-            repetition++
+            setCount++
         }
 
         Row(
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp)
-                .clickable {
-                    setsList.add(Pair(10, 60))
+                .clickable { onSetAdd()
+//                    setsList.add(Pair(10, 60))
                     Log.d("ExerciseDetailsDialog", "Add set button clicked")
                     Log.d("ExerciseDetailsDialog", "setsList: $setsList")
                 }
@@ -323,7 +342,10 @@ fun ExerciseDetailsDialogPreview() {
             onConfirmClick = { },
             onDateUpdate = { },
             onTimeUpdate = { },
-            currentDateTime = LocalDateTime.now()
+            currentDateTime = LocalDateTime.now(),
+            setsList = listOf(Pair(10, 60.0), Pair(8, 62.5)),
+            onSetAdd = { },
+            onSetRemoval = { }
         )
     }
 }

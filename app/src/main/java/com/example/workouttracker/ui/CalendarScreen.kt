@@ -91,7 +91,12 @@ fun CalendarScreen(
             onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") },
             onDateUpdate = { Log.d("ExerciseDetailsDialog", "Date should be updated") },
             onTimeUpdate = { Log.d("ExerciseDetailsDialog", "Time should be updated") },
-            currentDateTime = workoutTrackerUiState.currentDateTime
+            currentDateTime = workoutTrackerUiState.currentDateTime,
+            setsList = workoutTrackerUiState.setsList, //listOf(Pair(10, 60.0), Pair(8, 62.5), Pair(6, 65.0)),
+            onSetAdd = { workoutTrackerViewModel.addSet(10, 60.0)
+                Log.d("ExerciseDetailsDialog", "Sets count should increase") },
+            onSetRemoval = { workoutTrackerViewModel.removeLastSet()
+                Log.d("ExerciseDetailsDialog", "Sets count should decrease") }
         )
     }
 }
