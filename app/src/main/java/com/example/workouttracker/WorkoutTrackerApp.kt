@@ -106,13 +106,7 @@ fun WorkoutTrackerApp(
 @Composable
 fun ActionButton(
     onClick: () -> Unit,
-//    fabVisible: Boolean = true
 ) {
-//    AnimatedVisibility(
-//        visible = fabVisible,
-//        enter = scaleIn(),
-//        exit = scaleOut(),
-//    ) {
         FloatingActionButton(
             onClick = { onClick() },
             containerColor = MaterialTheme.colorScheme.secondaryContainer,

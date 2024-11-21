@@ -97,14 +97,14 @@ fun HomeScreen(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
             onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") },
-            onDateUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
-                Log.d("ExerciseDetailsDialog", "Date should be updated to ${DateTimeFormatter.ofPattern("yyyy-MM-dd").format(workoutTrackerUiState.currentDateTime)}") },
-            onTimeUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
-                Log.d("ExerciseDetailsDialog", "Time should be updated to ${DateTimeFormatter.ofPattern("HH:mm").format(workoutTrackerUiState.currentDateTime)}") },
-            currentDateTime = workoutTrackerUiState.currentDateTime,
-            setsList = workoutTrackerUiState.setsList,
-            onSetAdd = { workoutTrackerViewModel.addSet(0, 0.0) },
-            onSetRemoval = { workoutTrackerViewModel.removeLastSet() }
+//            onDateUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
+//                Log.d("ExerciseDetailsDialog", "Date should be updated to ${DateTimeFormatter.ofPattern("yyyy-MM-dd").format(workoutTrackerUiState.currentDateTime)}") },
+//            onTimeUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
+//                Log.d("ExerciseDetailsDialog", "Time should be updated to ${DateTimeFormatter.ofPattern("HH:mm").format(workoutTrackerUiState.currentDateTime)}") },
+//            currentDateTime = workoutTrackerUiState.currentDateTime,
+//            setsList = workoutTrackerUiState.setsList,
+            onSetAdd = { /*workoutTrackerViewModel.addSet(0, 0.0)*/ },
+            onSetRemoval = { /*workoutTrackerViewModel.removeLastSet()*/ }
 
         )
     }
