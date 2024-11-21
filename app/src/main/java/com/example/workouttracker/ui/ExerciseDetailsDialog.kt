@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,18 +26,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,7 +40,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.workouttracker.R
 import com.example.workouttracker.model.Exercise
-import com.example.workouttracker.model.SetDetails
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -56,17 +48,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ExerciseDetailsDialog(
     exerciseDetailsViewModel: ExerciseDetailsViewModel = ExerciseDetailsViewModel(),
-
     onDismiss: () -> Unit,
     onConfirmClick: () -> Unit,
-//    onDateUpdate: () -> Unit,
-//    onTimeUpdate: () -> Unit,
-    currentDateTime: LocalDateTime = LocalDateTime.now(),
     exercise: Exercise,
-//    setsCount: Int,
-//    setsList: List<Pair<Int, Double>>,
-    onSetAdd: () -> Unit,
-    onSetRemoval: () -> Unit,
 ){
 
     val exerciseDetailsUiState by exerciseDetailsViewModel.uiState.collectAsState()
@@ -92,17 +76,13 @@ fun ExerciseDetailsDialog(
                     .padding(top = 10.dp)
 
                 DateAndTimeRow(
-                    currentDateTime = currentDateTime,
-                    onDateUpdate = { /*onDateUpdate()*/ },
-                    onTimeUpdate = { /*onTimeUpdate()*/ },
+                    currentDateTime = exerciseDetailsUiState.currentDateTime,
+                    onDateTimeUpdate = { exerciseDetailsViewModel.updateCurrentDateTime() },
                     modifier = contentModifier,
                 )
 
                 SetsAndRepsList(
                     modifier = contentModifier,
-//                    setsList = exerciseDetailsUiState.setsDetails,
-//                    onSetAdd = { onSetAdd() },
-//                    onSetRemoval = { onSetRemoval() }
                     onSetAdd = { exerciseDetailsViewModel.addSet() },
                     onSetRemoval = { exerciseDetailsViewModel.removeLastSet() },
                     setCounter = exerciseDetailsUiState.setsCount,
@@ -125,17 +105,12 @@ fun ExerciseDetailsDialog(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateAndTimeRow(
     currentDateTime: LocalDateTime,
-    onDateUpdate: () -> Unit,
-    onTimeUpdate: () -> Unit,
+    onDateTimeUpdate: () -> Unit,
     modifier: Modifier = Modifier
 ){
-
-    //val datePickerState = rememberDatePickerState()
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -147,10 +122,9 @@ fun DateAndTimeRow(
             modifier = Modifier
                 .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                 .weight(1f)
-            //.padding(6.dp)
         ){
             IconButton(
-                onClick = { onDateUpdate() },
+                onClick = { onDateTimeUpdate() },
                 modifier = Modifier
                     .size(34.dp)
             ) {
@@ -166,18 +140,11 @@ fun DateAndTimeRow(
                     .weight(1f)
                     .fillMaxWidth()
                     .height(34.dp)
-//                    .clickable {
-//
-//                        Log.d("ExerciseDetailsDialog", "Date picker should show up here\nProbably not tbh")
-//                    }
             ){
                 Text(
                     text = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(currentDateTime),
                     fontWeight = FontWeight.Bold,
-//                                textAlign = Center,
                     modifier = Modifier
-//                                    .padding(end = 8.dp)
-//                                    .weight(1f)
                 )
             }
 
@@ -188,10 +155,9 @@ fun DateAndTimeRow(
             modifier = Modifier
                 .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                 .weight(1f)
-            //.padding(6.dp)
         ){
             IconButton(
-                onClick = { onTimeUpdate() },
+                onClick = { onDateTimeUpdate() },
                 modifier = Modifier
                     .size(34.dp)
             ) {
@@ -207,44 +173,27 @@ fun DateAndTimeRow(
                     .weight(1f)
                     .fillMaxWidth()
                     .height(34.dp)
-//                    .clickable { Log.d("ExerciseDetailsDialog", "Time picker should show up here\nProbably not tbh") }
             ){
                 Text(
                     text = DateTimeFormatter.ofPattern("HH:mm").format(currentDateTime),
                     fontWeight = FontWeight.Bold,
-//                                textAlign = Center,
                     modifier = Modifier
                         .padding(end = 17.dp)
-//                                    .weight(1f)
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetsAndRepsList(
     modifier: Modifier = Modifier,
-//    setsCount: Int = 3,
-//    setsList: List<Pair<Int, Double>> = listOf(Pair(0, 0.0)),
-//    setsList: MutableList<SetDetails>,
     setCounter: Int,
     repsTextList: MutableList<String>,
     weightTextList: MutableList<String>,
     onSetAdd: () -> Unit,
     onSetRemoval: () -> Unit
 ) {
-//    var setsList = mutableListOf(Pair(10, 60), Pair(8, 62.5), Pair(6, 65))
-//    var setCount = setCounter
-//    Log.d("ExerciseDetailsDialog", "setCount at SetsAndRepsList called: $setCount")
-
-
-//    var setCounter by remember { mutableStateOf(setCounter) }
-
-//    var repsTextList = remember { repsTextList.toMutableStateList() }
-
-//    Log.d("ExerciseDetailsDialog", "textList: $repsTextList")
 
     Column(
         modifier = modifier,
@@ -277,7 +226,7 @@ fun SetsAndRepsList(
                 BasicTextField(
                     value = repsTextList[index],
                     onValueChange = { newText -> repsTextList[index] = newText },
-                    textStyle = androidx.compose.ui.text.TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
@@ -286,11 +235,26 @@ fun SetsAndRepsList(
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                 )
 
-                Text(
-                    text = "${weightTextList[index]} kg",
-                    textAlign = Center,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f).fillMaxWidth()
+                ){
+                    BasicTextField(
+                        value = weightTextList[index],
+                        onValueChange = { newText -> weightTextList[index] = newText },
+                        textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 4.dp)
+                            .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    )
+                    Text(text = "kg")
+                }
+
+
                 if(index == setCounter - 1 && setCounter > 1) {
                     IconButton(
                         onClick = {
@@ -318,9 +282,8 @@ fun SetsAndRepsList(
             modifier = Modifier
                 .padding(start = 10.dp, top = 5.dp)
                 .clickable {
-//                    textList.add("0")
                     repsTextList.add("0")
-                    weightTextList.add("0.0")
+                    weightTextList.add("0")
                     onSetAdd()
                     Log.d("ExerciseDetailsDialog", "Add set button clicked")
                     Log.d("ExerciseDetailsDialog", "repsTextList: ${repsTextList.toString()}")
@@ -353,7 +316,6 @@ fun CancelAndConfirmButtons(
     ) {
         Button(
             onClick = { onCancelClick() },
-            //shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = cancelColor,
                 contentColor = Color.Black
@@ -383,12 +345,6 @@ fun ExerciseDetailsDialogPreview() {
             onDismiss = { },
             exercise = Exercise(exerciseId = 1, type = "Athletics", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
             onConfirmClick = { },
-//            onDateUpdate = { },
-//            onTimeUpdate = { },
-            currentDateTime = LocalDateTime.now(),
-//            setsList = listOf(Pair(10, 60.0), Pair(8, 62.5)),
-            onSetAdd = { },
-            onSetRemoval = { }
         )
     }
 }

@@ -2,7 +2,6 @@ package com.example.workouttracker.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateListOf
 import com.example.workouttracker.model.SetDetails
 import java.time.LocalDateTime
 

@@ -20,7 +20,7 @@ class ExerciseDetailsViewModel {
 
     var setsRepsList = mutableStateListOf<String>("0")
         private set
-    var setsWeightList = mutableStateListOf<String>("0.0")
+    var setsWeightList = mutableStateListOf<String>("0")
         private set
 
     fun resetExerciseDetails() {
@@ -30,17 +30,12 @@ class ExerciseDetailsViewModel {
 
         // Add a default value
         setsRepsList.add("0")
-        setsWeightList.add("0.0")
+        setsWeightList.add("0")
     }
 
     fun updateCurrentDateTime() {
         _uiState.update { currentState -> currentState.copy(currentDateTime = LocalDateTime.now()) }
     }
-
-//    fun getSetDetails(index: Int): SetDetails {
-//        val setDetails: SetDetails = SetDetails[index]
-//        return setDetails
-//    }
 
     fun getSetCount(): Int {
         Log.d("ExerciseDetailsViewModel", "getSetCount called, returning: ${_uiState.value.setsCount}")
