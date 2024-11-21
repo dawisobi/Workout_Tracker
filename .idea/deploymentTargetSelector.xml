@@ -4,24 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="verifyStartDestination()">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-23T22:49:38.287767Z">
+        <DropdownSelection timestamp="2024-10-10T23:27:29.717109600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\sobie\.android\avd\Pixel_Tablet_API_35.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="WorkoutTrackerNavHost_navigateToTodayScreen()">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-23T22:57:01.095752100Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\sobie\.android\avd\Pixel_Tablet_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=GY6LVCUCFICA8XGM" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -39,6 +25,15 @@
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="workoutTrackerNavHost_navigateToTodayScreen()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="CalendarScreenLayoutTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="calendarScreen_pressPreviousMonthButton()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="calendarScreen_selectLastDayOfMonth_cycleThroughMonths()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
