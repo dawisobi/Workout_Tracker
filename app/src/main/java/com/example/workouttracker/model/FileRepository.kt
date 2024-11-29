@@ -53,7 +53,6 @@ class FileRepository {
                     destination.outputStream().use { output ->
                         Log.d("FileDownload", "Starting file copy")
                         input.copyTo(output)
-    //                    Log.d("FileDownload", "File downloaded successfully")
 
                         // Check if the file is downloaded and has content
                         if (destination.exists() && destination.length() > 0) {

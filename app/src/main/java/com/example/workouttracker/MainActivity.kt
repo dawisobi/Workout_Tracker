@@ -31,9 +31,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val destinationFile = File(filesDir, "ExercisesDatabase.sqlite")
+        val destinationFile = File(filesDir, "ExercisesDatabase.db")
         val fileUrl =
-            "https://www.dropbox.com/scl/fi/h6j958c0p6bfca31qds3j/ExercisesDatabase_v1.sqlite?rlkey=emgd7hzexqclhn1ug1uc1rl1m&st=ad2djz9u&dl=0"
+            "https://www.dropbox.com/scl/fi/4n9mjq8bonqdyr5rhfm38/ExercisesDatabase.db?rlkey=vcsaj9xsricp8ynxmof2595sh&st=8ca6nihi&dl=1"
 
         viewModel.downloadFile(fileUrl, destinationFile)
 
@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
             if (success) {
                 // File downloaded successfully
                 Toast.makeText(this, "File downloaded successfully", Toast.LENGTH_SHORT).show()
+
+                // Testing the database creation and data
+                viewModel.getDataFromDatabase(this)
             } else {
                 // File download failed
                 Toast.makeText(this, "File download failed", Toast.LENGTH_SHORT).show()
