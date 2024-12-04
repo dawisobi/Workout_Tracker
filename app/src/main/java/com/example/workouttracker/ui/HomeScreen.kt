@@ -42,7 +42,6 @@ import com.example.workouttracker.datasource.TodayTrainingDataSource
 import com.example.workouttracker.model.ExerciseTrainingSession
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -96,16 +95,7 @@ fun HomeScreen(
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") },
-            onDateUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
-                Log.d("ExerciseDetailsDialog", "Date should be updated to ${DateTimeFormatter.ofPattern("yyyy-MM-dd").format(workoutTrackerUiState.currentDateTime)}") },
-            onTimeUpdate = { workoutTrackerViewModel.updateCurrentDateTime()
-                Log.d("ExerciseDetailsDialog", "Time should be updated to ${DateTimeFormatter.ofPattern("HH:mm").format(workoutTrackerUiState.currentDateTime)}") },
-            currentDateTime = workoutTrackerUiState.currentDateTime,
-            setsList = workoutTrackerUiState.setsList,
-            onSetAdd = { workoutTrackerViewModel.addSet(0, 0.0) },
-            onSetRemoval = { workoutTrackerViewModel.removeLastSet() }
-
+            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
         )
     }
 

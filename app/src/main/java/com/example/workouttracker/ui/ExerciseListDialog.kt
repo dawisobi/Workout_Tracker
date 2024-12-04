@@ -1,5 +1,6 @@
 package com.example.workouttracker.ui
 
+import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -18,7 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,7 +44,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.workouttracker.model.Exercise
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
-import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -58,7 +60,9 @@ fun AddExerciseDialog(
     Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
 
     Dialog(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = {
+            onDismiss()
+            workoutTrackerViewModel.resetSearchDialogState() },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
@@ -67,12 +71,7 @@ fun AddExerciseDialog(
     ) {
         Card(
             modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxSize()
                 .size((deviceScreenWidth * 0.9).dp, (deviceScreenHeight * 0.9).dp)
-//                .width((deviceScreenWidth * 0.9).dp)
-//                .height(375.dp)
-//                .padding(30.dp),
             ,shape = RoundedCornerShape(16.dp)
         ) {
             Column(
@@ -80,21 +79,17 @@ fun AddExerciseDialog(
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top,
-                //horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AddExerciseContent(
                     onDismiss = {
                         onDismiss()
-                        workoutTrackerViewModel.resetSearchDialogState()
-                        },
+                        workoutTrackerViewModel.resetSearchDialogState() },
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     searchedExerciseName = workoutTrackerViewModel.searchedExercise,
                     onSearchedExerciseChange = {
                         workoutTrackerViewModel.updateSearchedExercise(it)
-                        workoutTrackerViewModel.updateExercisesList()
-                                               },
+                        workoutTrackerViewModel.updateExercisesList() },
                     onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
-//                    exerciseList = workoutTrackerViewModel.getExercisesList(),
                     exerciseList = exerciseList
                 )
             }
@@ -145,6 +140,11 @@ fun AddExerciseContent(
             singleLine = true,
             onValueChange = onSearchedExerciseChange,
             label = { Text("Search") },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
+            trailingIcon = { if(searchedExerciseName.isNotEmpty()){
+                IconButton(onClick = { workoutTrackerViewModel.resetSearchDialogState() }) {
+                    Icon(Icons.Filled.Clear, contentDescription = "Clear") }
+            } },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -177,7 +177,9 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
             fontStyle = FontStyle.Italic,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Start,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 20.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 20.dp)
+                .fillMaxWidth()
         )
     } else {
         Log.d("AddExerciseDialog", "Exercises found: ${exerciseList.size}")

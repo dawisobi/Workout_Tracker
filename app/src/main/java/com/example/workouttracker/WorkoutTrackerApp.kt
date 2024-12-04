@@ -64,6 +64,9 @@ fun WorkoutTrackerApp(
                 ActionButton(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
+//                        workoutTrackerViewModel.updateExercisesList()
+                        workoutTrackerViewModel.resetSearchDialogState()
+                        Log.d("FAB", "Exercises list updated")
                         workoutTrackerViewModel.updateExerciseListDialogState(true)
                     },
 //                    fabVisible = true
@@ -106,13 +109,7 @@ fun WorkoutTrackerApp(
 @Composable
 fun ActionButton(
     onClick: () -> Unit,
-//    fabVisible: Boolean = true
 ) {
-//    AnimatedVisibility(
-//        visible = fabVisible,
-//        enter = scaleIn(),
-//        exit = scaleOut(),
-//    ) {
         FloatingActionButton(
             onClick = { onClick() },
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
