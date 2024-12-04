@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                 // File downloaded successfully
                 Toast.makeText(this, "File downloaded successfully", Toast.LENGTH_SHORT).show()
 
-                // Testing the database creation and data
+                // Populating
                 viewModel.getDataFromDatabase(this)
             } else {
                 // File download failed
