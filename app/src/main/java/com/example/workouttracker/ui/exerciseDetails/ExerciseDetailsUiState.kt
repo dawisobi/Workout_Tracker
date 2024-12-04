@@ -1,8 +1,8 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.exerciseDetails
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.workouttracker.model.SetDetails
+import com.example.workouttracker.data.model.SetDetails
 import java.time.LocalDateTime
 
 

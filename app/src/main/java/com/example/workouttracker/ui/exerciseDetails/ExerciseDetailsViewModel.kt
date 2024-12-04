@@ -1,10 +1,10 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.exerciseDetails
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
-import com.example.workouttracker.model.SetDetails
+import com.example.workouttracker.data.model.SetDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

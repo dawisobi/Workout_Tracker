@@ -1,6 +1,5 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.exerciseList
 
-import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -34,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -42,7 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.workouttracker.model.Exercise
+import com.example.workouttracker.data.database.ExerciseDatabase
+import com.example.workouttracker.data.model.Exercise
+import com.example.workouttracker.data.repository.ExerciseRepository
+import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 
@@ -51,7 +54,8 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
     workoutTrackerViewModel: WorkoutTrackerViewModel,
-    exerciseList: MutableList<Exercise>
+    exerciseList: MutableList<Exercise>,
+    exerciseListViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
@@ -220,6 +224,8 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = mutableListOf())//exerciseDb.toMutableList())
+        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = mutableListOf(), exerciseListViewModel = ExerciseViewModel(
+            ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
+        )//exerciseDb.toMutableList())
     }
 }

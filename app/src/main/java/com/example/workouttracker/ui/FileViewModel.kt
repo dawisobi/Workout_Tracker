@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
-import com.example.workouttracker.model.Exercise
-import com.example.workouttracker.model.FileRepository
+import com.example.workouttracker.data.datasource.ExercisesDatabase.exerciseDb
+import com.example.workouttracker.data.model.Exercise
+import com.example.workouttracker.data.model.FileRepository
 import kotlinx.coroutines.launch
 import java.io.File
 

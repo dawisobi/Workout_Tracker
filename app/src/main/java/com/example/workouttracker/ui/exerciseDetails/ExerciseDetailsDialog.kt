@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.exerciseDetails
 
 import android.os.Build
 import android.util.Log
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.workouttracker.R
-import com.example.workouttracker.model.Exercise
+import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

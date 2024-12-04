@@ -8,18 +8,41 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import com.example.workouttracker.model.FileRepository
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.workouttracker.data.database.ExerciseDatabase
+import com.example.workouttracker.data.model.FileRepository
+import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.ui.FileViewModel
 import com.example.workouttracker.ui.ViewModelFactory
+import com.example.workouttracker.ui.exerciseList.ExerciseViewModel
+import com.example.workouttracker.ui.exerciseList.ExerciseViewModelFactory
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.io.File
 
 class MainActivity : ComponentActivity() {
 
+//    private val fileRepository = FileRepository()
+////    private val exerciseRepository = ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao())
+//
+//    private val viewModel: FileViewModel by viewModels {
+//        ViewModelFactory(fileRepository)
+//    }
+
+//    private val viewModel: FileViewModel by viewModels {
+//        ViewModelFactory(fileRepository, exerciseRepository)
+//    }
+
+//    private val exerciseViewModel: ExerciseViewModel by viewModels {
+//        ViewModelFactory(fileRepository, exerciseRepository)
+//    }
+
     private val viewModel: FileViewModel by viewModels {
         ViewModelFactory(FileRepository())
     }
-
+//    val exerciseListViewModel: ExerciseViewModel by viewModels {
+//        ExerciseViewModelFactory(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {

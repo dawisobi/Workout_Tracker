@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.calendar
 
 import android.os.Build
 import android.util.Log
@@ -38,7 +38,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.homeScreen.DayLayout
+import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.exerciseDetails.ExerciseDetailsDialog
+import com.example.workouttracker.ui.exerciseList.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
 import java.time.LocalDate

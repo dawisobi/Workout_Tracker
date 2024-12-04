@@ -33,8 +33,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.workouttracker.ui.CalendarScreen
-import com.example.workouttracker.ui.HomeScreen
+import com.example.workouttracker.ui.calendar.CalendarScreen
+import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme

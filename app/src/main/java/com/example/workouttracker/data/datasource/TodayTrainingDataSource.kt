@@ -1,6 +1,6 @@
-package com.example.workouttracker.datasource
+package com.example.workouttracker.data.datasource
 
-import com.example.workouttracker.model.ExerciseTrainingSession
+import com.example.workouttracker.data.model.ExerciseTrainingSession
 
 object TodayTrainingDataSource {
 

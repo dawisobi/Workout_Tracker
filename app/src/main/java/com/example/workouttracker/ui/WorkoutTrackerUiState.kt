@@ -2,8 +2,8 @@ package com.example.workouttracker.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
-import com.example.workouttracker.model.Exercise
+import com.example.workouttracker.data.datasource.ExercisesDatabase.exerciseDb
+import com.example.workouttracker.data.model.Exercise
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)

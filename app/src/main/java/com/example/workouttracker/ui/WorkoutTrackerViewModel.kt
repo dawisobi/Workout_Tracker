@@ -10,8 +10,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.workouttracker.datasource.ExercisesDatabase.exerciseDb
-import com.example.workouttracker.model.Exercise
+import com.example.workouttracker.data.datasource.ExercisesDatabase.exerciseDb
+import com.example.workouttracker.data.model.Exercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
