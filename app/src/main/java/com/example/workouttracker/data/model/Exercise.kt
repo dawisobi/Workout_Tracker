@@ -17,10 +17,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "exercises")
 class Exercise(
-    @PrimaryKey @ColumnInfo(name = "exerciseId") val exerciseId: Int,
-    @ColumnInfo(name = "type") val type: String,
-    @ColumnInfo(name = "muscle") val muscle: String,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "description") val description: String? = null,
+    @PrimaryKey val exerciseId: Int,
+    val type: String,
+    val muscle: String,
+    val name: String,
+    val description: String? = null,
 //    @Ignore @DrawableRes val imageExercise: Int? = null
 )

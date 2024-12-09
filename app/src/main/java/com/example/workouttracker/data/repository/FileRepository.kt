@@ -1,4 +1,4 @@
-package com.example.workouttracker.data.model
+package com.example.workouttracker.data.repository
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers

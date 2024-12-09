@@ -2,9 +2,7 @@ package com.example.workouttracker.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.workouttracker.data.model.FileRepository
-import com.example.workouttracker.data.repository.ExerciseRepository
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModel
+import com.example.workouttracker.data.repository.FileRepository
 
 class ViewModelFactory(
     private val fileRepository: FileRepository,

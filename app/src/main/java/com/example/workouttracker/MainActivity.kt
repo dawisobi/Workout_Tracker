@@ -8,15 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.example.workouttracker.data.database.ExerciseDatabase
-import com.example.workouttracker.data.model.FileRepository
-import com.example.workouttracker.data.repository.ExerciseRepository
+import com.example.workouttracker.data.repository.FileRepository
 import com.example.workouttracker.ui.FileViewModel
 import com.example.workouttracker.ui.ViewModelFactory
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModel
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModelFactory
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.io.File
 

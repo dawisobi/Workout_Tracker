@@ -2,7 +2,6 @@ package com.example.workouttracker.ui.homeScreen
 
 import android.os.Build
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -39,24 +38,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.datasource.TodayTrainingDataSource
 import com.example.workouttracker.data.model.ExerciseTrainingSession
-import com.example.workouttracker.data.model.FileRepository
-import com.example.workouttracker.data.repository.ExerciseRepository
-import com.example.workouttracker.ui.FileViewModel
-import com.example.workouttracker.ui.ViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetails.ExerciseDetailsDialog
 import com.example.workouttracker.ui.exerciseList.AddExerciseDialog
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.activity.viewModels
-import androidx.compose.ui.platform.LocalContext
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModelFactory
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
