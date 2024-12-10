@@ -1,6 +1,5 @@
 package com.example.workouttracker.ui
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,11 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workouttracker.data.datasource.ExercisesDatabase.exerciseDb
 import com.example.workouttracker.data.model.Exercise
-import com.example.workouttracker.data.repository.FileRepository
+import com.example.workouttracker.data.repository.FileDownloadRepository
 import kotlinx.coroutines.launch
 import java.io.File
 
-class FileViewModel(private val fileRepository: FileRepository) : ViewModel() {
+class FileViewModel(private val fileDownloadRepository: FileDownloadRepository) : ViewModel() {
 
     private val _fileDownloadStatus = MutableLiveData<Boolean>()
     val fileDownloadStatus: LiveData<Boolean> get() = _fileDownloadStatus
@@ -21,20 +20,26 @@ class FileViewModel(private val fileRepository: FileRepository) : ViewModel() {
     // Function to download the file
     fun downloadFile(url: String, destination: File) {
         viewModelScope.launch {
-            val success = fileRepository.downloadFile(url, destination)
+            val success = fileDownloadRepository.downloadFile(url, destination)
             _fileDownloadStatus.postValue(success)
         }
     }
 
-    fun getDataFromDatabase(context: Context) {
+    fun getDataFromDatabase(
+//        context: Context
+        fileDestination: File
+    ) {
 
         try{
             val exercisesList = exerciseDb
 
 //            val exercisesList = mutableListOf<Exercise>()
-            val databasePath = File(context.filesDir, "ExercisesDatabase.db").absolutePath
+
+//            val databasePath = File(context.filesDir, "ExercisesDatabase.db").absolutePath
+            val databasePath = fileDestination.absolutePath
+
 //            Log.d("WorkoutTrackerViewModel", "getDataFromDatabase() filesDir = ${context.filesDir}")
-            Log.d("WorkoutTrackerViewModel", "getDataFromDatabase() databasePath: $databasePath")
+            Log.d("FileViewModel", "getDataFromDatabase() databasePath: $databasePath")
 //            Log.d("WorkoutTrackerViewModel", "getDataFromDatabase() databasePath exists: ${File(databasePath).exists()} with size: ${File(databasePath).length()}")
 
             val db = SQLiteDatabase.openDatabase(databasePath, null, SQLiteDatabase.OPEN_READONLY)

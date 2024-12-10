@@ -12,4 +12,8 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercises WHERE name LIKE :searchQuery")
     fun searchExercises(searchQuery: String): List<Exercise>
+
+    @Query("SELECT * FROM exercises WHERE exerciseId = :id")
+    fun getExerciseById(id: Int): Exercise
+
 }

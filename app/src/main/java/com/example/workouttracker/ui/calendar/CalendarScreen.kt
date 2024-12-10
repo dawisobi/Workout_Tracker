@@ -80,7 +80,7 @@ fun CalendarScreen(
             }
         )
         SelectedDayText(selectedDay, selectedMonth)
-        DayLayout()
+//        DayLayout()
     }
 
     if(showExerciseListDialog) {

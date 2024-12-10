@@ -26,8 +26,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -38,8 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.data.datasource.TodayTrainingDataSource
 import com.example.workouttracker.data.model.ExerciseTrainingSession
+import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetails.ExerciseDetailsDialog
 import com.example.workouttracker.ui.exerciseList.AddExerciseDialog
@@ -53,13 +59,47 @@ import java.util.Locale
 fun HomeScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
+    var triggerRecomposition by remember { mutableStateOf(false) }
+
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 //    val exerciseListViewModel: ExerciseViewModel by viewModels {
 //        ExerciseViewModelFactory(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
 //    }
+//    val context = LocalContext.current
+//    val factory = ViewModelFactory(
+//        FileRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(context).exerciseDao()), TrainingSessionsRepository(
+//            PerformedTrainingSessionsDatabase.getDatabase(context).trainingSessionDao())
+//    )
+//    val trainingSessionViewModel = ViewModelProvider(, factory)[TrainingSessionViewModel::class.java]
+
+    //val trainingSessionViewModel : TrainingSessionViewModel = viewModel()
+
+//    val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
+//        ViewModelFactory(FileRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(context).exerciseDao()), TrainingSessionsRepository(
+//            PerformedTrainingSessionsDatabase.getDatabase(context).trainingSessionDao()))
+//    }
+
+    val performedExercises by trainingSessionViewModel.searchResults.observeAsState()
+//    var performedExercises : List<ExerciseTrainingSession>? = trainingSessionViewModel.searchResults.value
+    Log.d("HomeScreen", "Obtaining performed exercises... ${performedExercises?.toString()}")
+
+//    var trainingSessions by remember { mutableStateOf<List<ExerciseTrainingSession>?>(null) }
+//    Log.d("HomeScreen", "Obtaining performed exercises... ${trainingSessions?.toString()}")
+
+//    SideEffect{
+//        Log.d("HomeScreen", "Obtaining performed exercises...")
+//        triggerRecomposition = !triggerRecomposition
+//    }
+
+    LaunchedEffect(key1 = Unit) {
+        trainingSessionViewModel.getTrainingSessionsByDate("2024-12-10")
+//        trainingSessions = trainingSessionViewModel.getTrainingSessionsByDate("2024-12-10")
+    }
 
     Column(
         verticalArrangement = Arrangement.Top,
@@ -84,13 +124,26 @@ fun HomeScreen(
                     bottom = dimensionResource(R.dimen.padding_small)
                 )
         )
-        DayLayout()
+
+        if(performedExercises.isNullOrEmpty()) {
+            Text(text = "No performed exercises found")
+            Log.d("HomeScreen", "No performed exercises found")
+        } else {
+            DayLayout(performedExercises as MutableList<ExerciseTrainingSession>)
+        }
+//        performedExercises?.let {
+//            Log.d("HomeScreen", "Calling DayLayout() with performedExercise: $it")
+//            DayLayout(it as MutableList<ExerciseTrainingSession>)
+//        } ?. run {
+//            Log.d("HomeScreen", "No performed exercises found")
+//        }
+//        DayLayout(trainingSessionViewModel.searchResults.value as MutableList<ExerciseTrainingSession>)
     }
 
     if(showExerciseListDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
         AddExerciseDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)},
+            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
             workoutTrackerViewModel = workoutTrackerViewModel,
             exerciseList = workoutTrackerUiState.foundExercises,
 //            exerciseListViewModel =
@@ -104,7 +157,6 @@ fun HomeScreen(
             onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
         )
     }
-
 }
 
 @Composable
@@ -160,17 +212,17 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun DayLayout(
-    exerciseList: List<Pair<ExerciseTrainingSession, String>> = TodayTrainingDataSource.todayTrainingSessions,
+    exerciseList: MutableList<ExerciseTrainingSession>,// = TodayTrainingDataSource.todayTrainingSessions,
 ) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ){
-        exerciseList.forEach { (exercise, time) ->
+        exerciseList.forEach { trainingSession ->
             Column {
                 Row {
                     Text(
-                        text = time,
+                        text = trainingSession.date,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(R.dimen.padding_small))
@@ -181,7 +233,7 @@ fun DayLayout(
                             .padding(end = dimensionResource(R.dimen.padding_small))
                     )
                 }
-                ExerciseCard(exercise = exercise)
+                ExerciseCard(exercise = trainingSession)
             }
         }
         //add space at the bottom of the list so FAB does not block content at the bottom
@@ -209,13 +261,13 @@ fun ExerciseCard(exercise: ExerciseTrainingSession){
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            Text(text = exercise.name)
-
-            if(exercise.type != "Gym") {
-                Text(text = exercise.distance.toString() + "km")
-            } else {
-                Text(text = exercise.weight.toString() + "kg")
-            }
+            Text(text = "exercise ID: ${exercise.idExercise.toString()}")
+//
+//            if(exercise.type != "Gym") {
+//                Text(text = exercise.distance.toString() + "km")
+//            } else {
+//                Text(text = exercise.weight.toString() + "kg")
+//            }
         }
     }
 }

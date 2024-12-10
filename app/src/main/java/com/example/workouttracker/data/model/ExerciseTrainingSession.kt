@@ -2,6 +2,7 @@ package com.example.workouttracker.data.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
@@ -24,8 +25,9 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "training_sessions",
-    primaryKeys = ["idSession"],
-    foreignKeys = [ForeignKey(entity = Exercise::class, parentColumns = ["exerciseId"], childColumns = ["idExercise"])]
+    //primaryKeys = ["idSession"],
+//    foreignKeys = [ForeignKey(entity = Exercise::class, parentColumns = ["exerciseId"], childColumns = ["idExercise"], onDelete = ForeignKey.CASCADE)],
+//    indices = [Index("idExercise")]
 )
 class ExerciseTrainingSession(
     @PrimaryKey(autoGenerate = true) val idSession: Int,

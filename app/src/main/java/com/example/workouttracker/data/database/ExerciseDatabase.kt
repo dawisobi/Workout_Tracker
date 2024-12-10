@@ -1,6 +1,7 @@
 package com.example.workouttracker.data.database
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -23,6 +24,9 @@ abstract class ExerciseDatabase : RoomDatabase() {
                     ExerciseDatabase::class.java,
                     "exercise_database"
                 ).build()
+
+                Log.d("ExerciseDatabase.kt", "ExerciseDatabase::getDatabase() called, instance: $instance")
+
                 INSTANCE = instance
                 instance
             }
