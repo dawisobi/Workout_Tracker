@@ -103,7 +103,7 @@ fun ExerciseDetailsDialog(
                         Log.d("ExerciseDetailsDialog", "Cancel button clicked")
                     },
                     onConfirmClick = {
-                        val trainingSessionToAdd: ExerciseTrainingSession = ExerciseTrainingSession(
+                        val trainingSessionToAdd = ExerciseTrainingSession(
                             date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
                             time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
                             idExercise = exercise.exerciseId,

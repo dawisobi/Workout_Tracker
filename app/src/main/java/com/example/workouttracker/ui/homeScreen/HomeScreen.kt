@@ -62,31 +62,15 @@ fun HomeScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
-//    var triggerRecomposition by remember { mutableStateOf(false) }
-
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
 
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
-//    val exerciseListViewModel: ExerciseViewModel by viewModels {
-//        ExerciseViewModelFactory(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
-//    }
-//    val context = LocalContext.current
-//    val factory = ViewModelFactory(
-//        FileRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(context).exerciseDao()), TrainingSessionsRepository(
-//            PerformedTrainingSessionsDatabase.getDatabase(context).trainingSessionDao())
-//    )
-//    val trainingSessionViewModel = ViewModelProvider(, factory)[TrainingSessionViewModel::class.java]
 
-    //val trainingSessionViewModel : TrainingSessionViewModel = viewModel()
-
-//    val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
-//        ViewModelFactory(FileRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(context).exerciseDao()), TrainingSessionsRepository(
-//            PerformedTrainingSessionsDatabase.getDatabase(context).trainingSessionDao()))
-//    }
-
-    val performedExercises by trainingSessionViewModel.searchResults.observeAsState()
+//    val performedExercises by trainingSessionViewModel.searchResults.observeAsState()
 //    var performedExercises : List<ExerciseTrainingSession>? = trainingSessionViewModel.searchResults.value
+    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
+
     Log.d("HomeScreen", "Obtaining performed exercises... ${performedExercises?.toString()}")
 
 //    var trainingSessions by remember { mutableStateOf<List<ExerciseTrainingSession>?>(null) }
@@ -217,7 +201,7 @@ fun DayLayout(
             Column {
                 Row {
                     Text(
-                        text = trainingSession.date,
+                        text = trainingSession.time,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(R.dimen.padding_small))
@@ -257,6 +241,7 @@ fun ExerciseCard(exercise: ExerciseTrainingSession){
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(text = "exercise ID: ${exercise.idExercise.toString()}")
+            Text(text = exercise.weight.toString() + "kg")
 //
 //            if(exercise.type != "Gym") {
 //                Text(text = exercise.distance.toString() + "km")

@@ -9,7 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import com.example.workouttracker.data.database.ExerciseDatabase
-import com.example.workouttracker.data.database.PerformedTrainingSessionsDatabase
+import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.FileDownloadRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
@@ -47,11 +47,11 @@ class MainActivity : ComponentActivity() {
 //    private val fileViewModel = ViewModelProvider(this, factory)[FileViewModel::class.java]
 
     private val fileViewModel : FileViewModel by viewModels {
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(PerformedTrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
     private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(PerformedTrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -83,9 +83,5 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "File download failed", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-
-
     }
 }

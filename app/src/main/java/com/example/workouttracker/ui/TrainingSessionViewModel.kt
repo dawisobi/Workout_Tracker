@@ -6,16 +6,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {
-    private val _searchResults = MutableLiveData<List<ExerciseTrainingSession>>()
-    val searchResults: LiveData<List<ExerciseTrainingSession>> = _searchResults
 
-    suspend fun getTrainingSessionsByDate(date: String) {
+    private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
+    val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
+
+    fun getTrainingSessionsByDate(date: String) {
         viewModelScope.launch {
-            val list = trainingSessionRepository.getTrainingSessionsByDate(date)
-            _searchResults.postValue(list)
+            trainingSessionRepository.getTrainingSessionsByDate(date).collect { list ->
+                _searchResults.value = list
+            }
         }
     }
 
@@ -25,17 +30,19 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
         }
     }
 
-    suspend fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
+    fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         viewModelScope.launch {
             trainingSessionRepository.deleteTrainingSessionById(trainingSession)
         }
     }
 
+
     //for debug purposes
-    suspend fun getAllTrainingSessions() {
+    fun getAllTrainingSessions() {
         viewModelScope.launch {
-            val list = trainingSessionRepository.getAllTrainingSessions()
-            _searchResults.postValue(list)
+            trainingSessionRepository.getAllTrainingSessions().collect { list ->
+                _searchResults.value = list
+            }
         }
     }
 }
