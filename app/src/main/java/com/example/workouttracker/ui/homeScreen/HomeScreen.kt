@@ -51,6 +51,7 @@ import com.example.workouttracker.ui.exerciseDetails.ExerciseDetailsDialog
 import com.example.workouttracker.ui.exerciseList.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
@@ -61,7 +62,7 @@ fun HomeScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
-    var triggerRecomposition by remember { mutableStateOf(false) }
+//    var triggerRecomposition by remember { mutableStateOf(false) }
 
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
 
@@ -97,7 +98,7 @@ fun HomeScreen(
 //    }
 
     LaunchedEffect(key1 = Unit) {
-        trainingSessionViewModel.getTrainingSessionsByDate("2024-12-10")
+        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
 //        trainingSessions = trainingSessionViewModel.getTrainingSessionsByDate("2024-12-10")
     }
 
@@ -131,13 +132,6 @@ fun HomeScreen(
         } else {
             DayLayout(performedExercises as MutableList<ExerciseTrainingSession>)
         }
-//        performedExercises?.let {
-//            Log.d("HomeScreen", "Calling DayLayout() with performedExercise: $it")
-//            DayLayout(it as MutableList<ExerciseTrainingSession>)
-//        } ?. run {
-//            Log.d("HomeScreen", "No performed exercises found")
-//        }
-//        DayLayout(trainingSessionViewModel.searchResults.value as MutableList<ExerciseTrainingSession>)
     }
 
     if(showExerciseListDialog) {
@@ -154,7 +148,8 @@ fun HomeScreen(
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
+            onConfirmClick = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+            trainingSessionViewModel = trainingSessionViewModel
         )
     }
 }

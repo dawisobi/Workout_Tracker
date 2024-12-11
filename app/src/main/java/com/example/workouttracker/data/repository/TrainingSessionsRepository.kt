@@ -17,4 +17,14 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         Log.d("TrainingSessionsRepository", "getAllTrainingSessions() called")
         return trainingSessionDao.getAllTrainingSessions()
     }
+
+    //Insert training session into database
+    suspend fun insertTrainingSession(trainingSession: ExerciseTrainingSession) {
+        trainingSessionDao.insertTrainingSession(trainingSession)
+    }
+
+    //Delete training session from database by id
+    suspend fun deleteTrainingSessionById(trainingSession: ExerciseTrainingSession) {
+        trainingSessionDao.deleteTrainingSession(trainingSession)
+    }
 }

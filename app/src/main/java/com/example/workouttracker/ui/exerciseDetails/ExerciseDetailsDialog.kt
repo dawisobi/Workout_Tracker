@@ -39,7 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.workouttracker.R
+import com.example.workouttracker.data.dao.TrainingSessionDao
 import com.example.workouttracker.data.model.Exercise
+import com.example.workouttracker.data.model.ExerciseTrainingSession
+import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -51,6 +55,7 @@ fun ExerciseDetailsDialog(
     onDismiss: () -> Unit,
     onConfirmClick: () -> Unit,
     exercise: Exercise,
+    trainingSessionViewModel: TrainingSessionViewModel? = null
 ){
 
     val exerciseDetailsUiState by exerciseDetailsViewModel.uiState.collectAsState()
@@ -97,7 +102,19 @@ fun ExerciseDetailsDialog(
                         onDismiss()
                         Log.d("ExerciseDetailsDialog", "Cancel button clicked")
                     },
-                    onConfirmClick = { onConfirmClick() }
+                    onConfirmClick = {
+                        val trainingSessionToAdd: ExerciseTrainingSession = ExerciseTrainingSession(
+                            date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
+                            time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
+                            idExercise = exercise.exerciseId,
+                            sets = exerciseDetailsUiState.setsCount.toString(),
+                            reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
+                            weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
+                        )
+                        trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
+                        onConfirmClick()
+                        Log.d("ExerciseDetailsDialog", "Confirm button clicked")
+                    }
                 )
             }
         }
@@ -345,6 +362,7 @@ fun ExerciseDetailsDialogPreview() {
             onDismiss = { },
             exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
             onConfirmClick = { },
+            //trainingSessionViewModel = DummyTrainingSessionViewModel()
         )
     }
 }

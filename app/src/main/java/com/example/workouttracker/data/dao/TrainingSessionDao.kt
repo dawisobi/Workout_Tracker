@@ -1,6 +1,7 @@
 package com.example.workouttracker.data.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.workouttracker.data.model.ExerciseTrainingSession
@@ -20,4 +21,8 @@ interface TrainingSessionDao {
 
     @Insert
     suspend fun insertTrainingSession(trainingSession: ExerciseTrainingSession)
+
+    @Delete
+    suspend fun deleteTrainingSession(session: ExerciseTrainingSession)
+
 }

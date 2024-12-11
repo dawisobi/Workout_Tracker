@@ -19,6 +19,18 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
         }
     }
 
+    fun insertTrainingSession(trainingSession: ExerciseTrainingSession) {
+        viewModelScope.launch {
+            trainingSessionRepository.insertTrainingSession(trainingSession)
+        }
+    }
+
+    suspend fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
+        viewModelScope.launch {
+            trainingSessionRepository.deleteTrainingSessionById(trainingSession)
+        }
+    }
+
     //for debug purposes
     suspend fun getAllTrainingSessions() {
         viewModelScope.launch {

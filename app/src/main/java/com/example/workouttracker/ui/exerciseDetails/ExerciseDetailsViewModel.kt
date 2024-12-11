@@ -74,4 +74,13 @@ class ExerciseDetailsViewModel {
         Log.d("ExerciseDetailsViewModel", "setsCount: ${_uiState.value.setsCount}, setsDetails: ${_uiState.value.setsDetails}")
     }
 
+
+
+    fun convertRepsToString(setsDetailsList: MutableList<SetDetails>): String {
+        return setsDetailsList.joinToString(",") { it.repsCount.toString() }
+    }
+
+    fun convertWeightToString(setsDetailsList: MutableList<SetDetails>): String {
+        return setsDetailsList.joinToString(",") { it.weight.toString() }
+    }
 }

@@ -30,13 +30,13 @@ import androidx.room.PrimaryKey
 //    indices = [Index("idExercise")]
 )
 class ExerciseTrainingSession(
-    @PrimaryKey(autoGenerate = true) val idSession: Int,
+    @PrimaryKey(autoGenerate = true) val idSession: Int = 0,
     val idExercise: Int,
     val date: String,
     val time: String,
     val sets: String? = null, //only for type = gym
     val reps: String? = null, // only for type = gym
-    val weight: Double? = null, // in kilograms, only for type = gym
+    val weight: String? = null, // in kilograms, only for type = gym
     val distance: Double? = null, // in kilometers, only for type = athletics
     val duration: Double? = null // in minutes, only for type = athletics
 )
