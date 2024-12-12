@@ -63,27 +63,15 @@ fun HomeScreen(
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
-//    val performedExercises by trainingSessionViewModel.searchResults.observeAsState()
-//    var performedExercises : List<ExerciseTrainingSession>? = trainingSessionViewModel.searchResults.value
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
     Log.d("HomeScreen", "Obtaining performed exercises... ${performedExercises?.toString()}")
 
-//    var trainingSessions by remember { mutableStateOf<List<ExerciseTrainingSession>?>(null) }
-//    Log.d("HomeScreen", "Obtaining performed exercises... ${trainingSessions?.toString()}")
-
-//    SideEffect{
-//        Log.d("HomeScreen", "Obtaining performed exercises...")
-//        triggerRecomposition = !triggerRecomposition
-//    }
-
     LaunchedEffect(key1 = Unit) {
         trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
-//        trainingSessions = trainingSessionViewModel.getTrainingSessionsByDate("2024-12-10")
     }
 
     Column(
@@ -132,7 +120,9 @@ fun HomeScreen(
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+            onConfirmClick = {
+                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+                workoutTrackerViewModel.updateExerciseListDialogState(false) },
             trainingSessionViewModel = trainingSessionViewModel
         )
     }

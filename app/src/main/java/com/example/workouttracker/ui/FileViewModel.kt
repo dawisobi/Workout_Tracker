@@ -25,6 +25,7 @@ class FileViewModel(private val fileDownloadRepository: FileDownloadRepository) 
         }
     }
 
+    // This seems to be redundant when Room for ExerciseList will be implemented
     fun getDataFromDatabase(
 //        context: Context
         fileDestination: File

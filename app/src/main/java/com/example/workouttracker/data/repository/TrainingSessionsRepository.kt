@@ -8,13 +8,13 @@ import kotlinx.coroutines.flow.Flow
 class TrainingSessionsRepository(private val trainingSessionDao: TrainingSessionDao) {
 
     // Obtain training sessions
-    suspend fun getTrainingSessionsByDate(date: String): Flow<List<ExerciseTrainingSession>> {
+    fun getTrainingSessionsByDate(date: String): Flow<List<ExerciseTrainingSession>> {
         Log.d("TrainingSessionsRepository", "getTrainingSessionsByDate() called, date: $date")
         return trainingSessionDao.getTrainingSessionsByDate(date)
     }
 
     // Obtain all training sessions for debug purposes
-    suspend fun getAllTrainingSessions(): Flow<List<ExerciseTrainingSession>> {
+    fun getAllTrainingSessions(): Flow<List<ExerciseTrainingSession>> {
         Log.d("TrainingSessionsRepository", "getAllTrainingSessions() called")
         return trainingSessionDao.getAllTrainingSessions()
     }

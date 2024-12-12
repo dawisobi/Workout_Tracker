@@ -6,6 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.workouttracker.data.dao.ExerciseDao
+import com.example.workouttracker.data.dao.TrainingSessionDao
 import com.example.workouttracker.data.model.Exercise
 
 @Database(entities = [Exercise::class], version = 1, exportSchema = false)
@@ -14,40 +15,14 @@ abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
 
     companion object {
-        @Volatile
-        private var INSTANCE: ExerciseDatabase? = null
+        private var Instance: ExerciseDatabase? = null
 
         fun getDatabase(context: Context): ExerciseDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    ExerciseDatabase::class.java,
-                    "exercise_database"
-                ).build()
-
-                Log.d("ExerciseDatabase.kt", "ExerciseDatabase::getDatabase() called, instance: $instance")
-
-                INSTANCE = instance
-                instance
+            return Instance ?: synchronized(this) {
+                Room.databaseBuilder(context.applicationContext, ExerciseDatabase::class.java, "exercise_database")
+                    .build()
+                    .also { Instance = it }
             }
         }
     }
-
-
-//    @Volatile
-//    private var INSTANCE: ExerciseDatabase? = null
-//
-//    fun getDatabase(context: Context): ExerciseDatabase {
-//        return INSTANCE ?: synchronized(this) {
-//            val instance = Room.databaseBuilder(
-//                context.applicationContext,
-//                ExerciseDatabase::class.java,
-//                "exercise_database"
-//            ).build()
-//            INSTANCE = instance
-//
-//            // return instance
-//            instance
-//        }
-//    }
 }
