@@ -32,7 +32,7 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
 
     fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         viewModelScope.launch {
-            trainingSessionRepository.deleteTrainingSessionById(trainingSession)
+            trainingSessionRepository.deleteTrainingSession(trainingSession)
         }
     }
 

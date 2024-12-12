@@ -27,13 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -47,8 +42,8 @@ import com.example.workouttracker.R
 import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
-import com.example.workouttracker.ui.exerciseDetails.ExerciseDetailsDialog
-import com.example.workouttracker.ui.exerciseList.AddExerciseDialog
+import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
+import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
 import java.time.LocalDate

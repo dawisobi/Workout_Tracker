@@ -24,8 +24,8 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         trainingSessionDao.insertTrainingSession(trainingSession)
     }
 
-    //Delete training session from database by id
-    suspend fun deleteTrainingSessionById(trainingSession: ExerciseTrainingSession) {
+    //Delete training session from database
+    suspend fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         trainingSessionDao.deleteTrainingSession(trainingSession)
     }
 }

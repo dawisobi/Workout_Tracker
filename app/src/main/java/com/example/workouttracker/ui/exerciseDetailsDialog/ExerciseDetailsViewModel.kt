@@ -1,9 +1,10 @@
-package com.example.workouttracker.ui.exerciseDetails
+package com.example.workouttracker.ui.exerciseDetailsDialog
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.ViewModel
 import com.example.workouttracker.data.model.SetDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ExerciseDetailsViewModel {
+class ExerciseDetailsViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExerciseDetailsUiState())
     val uiState: StateFlow<ExerciseDetailsUiState> = _uiState.asStateFlow()

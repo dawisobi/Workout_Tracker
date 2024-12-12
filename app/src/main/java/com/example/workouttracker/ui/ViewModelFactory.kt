@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.FileDownloadRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
-import com.example.workouttracker.ui.exerciseList.ExerciseViewModel
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 
 //class ViewModelFactory(
 //    private val fileRepository: FileRepository,

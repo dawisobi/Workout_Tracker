@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui.exerciseList
+package com.example.workouttracker.ui.exerciseListDialog
 
 import android.os.Build
 import android.util.Log

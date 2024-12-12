@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui.exerciseDetails
+package com.example.workouttracker.ui.exerciseDetailsDialog
 
 import android.os.Build
 import androidx.annotation.RequiresApi
