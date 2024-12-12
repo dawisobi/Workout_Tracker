@@ -42,6 +42,7 @@ import com.example.workouttracker.R
 import com.example.workouttracker.data.dao.TrainingSessionDao
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.model.ExerciseTrainingSession
+import com.example.workouttracker.data.model.SetDetails
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
@@ -55,7 +56,7 @@ fun ExerciseDetailsDialog(
     onDismiss: () -> Unit,
     onConfirmClick: () -> Unit,
     exercise: Exercise,
-    trainingSessionViewModel: TrainingSessionViewModel? = null
+    trainingSessionViewModel: TrainingSessionViewModel? = null //null for preview
 ){
 
     val exerciseDetailsUiState by exerciseDetailsViewModel.uiState.collectAsState()
@@ -103,6 +104,8 @@ fun ExerciseDetailsDialog(
                         Log.d("ExerciseDetailsDialog", "Cancel button clicked")
                     },
                     onConfirmClick = {
+                        exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
+
                         val trainingSessionToAdd = ExerciseTrainingSession(
                             date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
                             time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
@@ -111,6 +114,7 @@ fun ExerciseDetailsDialog(
                             reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
                             weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
                         )
+                        Log.d("ExerciseDetailsDialog", "setsRepsList: ${exerciseDetailsViewModel.setsRepsList}, setsWeightList: ${exerciseDetailsViewModel.setsWeightList}")
                         trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
                         onConfirmClick()
                         Log.d("ExerciseDetailsDialog", "Confirm button clicked")
@@ -224,8 +228,7 @@ fun SetsAndRepsList(
             Text(text = "Set", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
             Text(text = "Reps", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
             Text(text = "Weight", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
-            Icon(painter = painterResource(id = R.drawable.icon_bin), contentDescription = null, tint = Color.Transparent)
-
+            Icon(painter = painterResource(id = R.drawable.icon_bin), contentDescription = null, tint = Color.Transparent) //Just to make headers align with respective columns
         }
 
         repeat(setCounter) { index ->
@@ -362,7 +365,6 @@ fun ExerciseDetailsDialogPreview() {
             onDismiss = { },
             exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
             onConfirmClick = { },
-            //trainingSessionViewModel = DummyTrainingSessionViewModel()
         )
     }
 }

@@ -50,6 +50,12 @@ class ExerciseDetailsViewModel {
         _uiState.update { currentState -> currentState.copy(setsDetails = currentState.setsDetails.also { it[index] = newSetDetails }) }
     }
 
+    fun updateSetsDetailsOnConfirm() {
+        _uiState.value.setsDetails.forEachIndexed { index, setDetails ->
+            updateSpecificSetDetails(index, SetDetails(setsRepsList[index].toInt(), setsWeightList[index].toDouble()))
+        }
+    }
+
     fun addSet() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -76,11 +82,12 @@ class ExerciseDetailsViewModel {
 
 
 
-    fun convertRepsToString(setsDetailsList: MutableList<SetDetails>): String {
+
+    fun convertRepsToString(setsDetailsList: List<SetDetails>): String {
         return setsDetailsList.joinToString(",") { it.repsCount.toString() }
     }
 
-    fun convertWeightToString(setsDetailsList: MutableList<SetDetails>): String {
+    fun convertWeightToString(setsDetailsList: List<SetDetails>): String {
         return setsDetailsList.joinToString(",") { it.weight.toString() }
     }
 }

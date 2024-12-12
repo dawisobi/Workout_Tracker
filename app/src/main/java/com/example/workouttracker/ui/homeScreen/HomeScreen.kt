@@ -121,6 +121,7 @@ fun HomeScreen(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
             onConfirmClick = {
+                // Hide both dialogs
                 workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
                 workoutTrackerViewModel.updateExerciseListDialogState(false) },
             trainingSessionViewModel = trainingSessionViewModel
