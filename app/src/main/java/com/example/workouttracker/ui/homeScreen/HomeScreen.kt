@@ -31,10 +31,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,7 +66,7 @@ fun HomeScreen(
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
-    Log.d("HomeScreen", "Obtaining performed exercises... ${performedExercises?.toString()}")
+    Log.d("HomeScreen", "Obtaining performed exercises... $performedExercises")
 
     LaunchedEffect(key1 = Unit) {
         trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
@@ -93,8 +96,16 @@ fun HomeScreen(
                 )
         )
 
-        if(performedExercises.isNullOrEmpty()) {
-            Text(text = "No performed exercises found")
+        if(performedExercises.isEmpty()) {
+            Text(
+                text = "No training sessions for today",
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+            )
             Log.d("HomeScreen", "No performed exercises found")
         } else {
             DayLayout(performedExercises as MutableList<ExerciseTrainingSession>)
