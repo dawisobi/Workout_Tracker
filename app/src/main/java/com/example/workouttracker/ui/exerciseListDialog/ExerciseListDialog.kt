@@ -29,6 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,14 +57,23 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
     workoutTrackerViewModel: WorkoutTrackerViewModel,
-    exerciseList: MutableList<Exercise>,
+    //exerciseList: MutableList<Exercise>,
     exerciseListViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
 ){
     val configuration = LocalConfiguration.current
     val deviceScreenWidth = configuration.screenWidthDp
     val deviceScreenHeight = configuration.screenHeightDp
 
+    val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList())
+
+    LaunchedEffect(key1 = Unit) {
+        exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
+    }
+
+
     Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
+
+
 
     Dialog(
         onDismissRequest = {
@@ -92,9 +104,11 @@ fun AddExerciseDialog(
                     searchedExerciseName = workoutTrackerViewModel.searchedExercise,
                     onSearchedExerciseChange = {
                         workoutTrackerViewModel.updateSearchedExercise(it)
-                        workoutTrackerViewModel.updateExercisesList() },
+                        workoutTrackerViewModel.updateExercisesList()
+                        exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
+                                               },
                     onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
-                    exerciseList = exerciseList
+                    exerciseList = foundExercisesList
                 )
             }
         }
@@ -109,7 +123,8 @@ fun AddExerciseContent(
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
     onKeyboardSearch: () -> Unit,
-    exerciseList: MutableList<Exercise>
+//    exerciseList: MutableList<Exercise>
+    exerciseList: List<Exercise>
 ) {
     Column {
         Row(
@@ -160,7 +175,6 @@ fun AddExerciseContent(
                 onSearch = {
                     Log.d("AddExerciseDialog", "Search button clicked: $searchedExerciseName")
                     onKeyboardSearch()
-
                 }
             )
         )
@@ -188,7 +202,6 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
     } else {
         Log.d("AddExerciseDialog", "Exercises found: ${exerciseList.size}")
 
-        val exerciseListSorted = exerciseList.sortedBy { it.name }
         val listState = rememberLazyListState()
 
         LazyColumn(
@@ -196,7 +209,7 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            items(exerciseListSorted) { exercise ->
+            items(exerciseList) { exercise ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -224,8 +237,10 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
 @Composable
 fun AddExerciseDialogPreview(){
     WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog( onDismiss = {  }, workoutTrackerViewModel = WorkoutTrackerViewModel(), exerciseList = mutableListOf(), exerciseListViewModel = ExerciseViewModel(
-            ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
-        )//exerciseDb.toMutableList())
+        AddExerciseDialog(
+            onDismiss = {  },
+            workoutTrackerViewModel = WorkoutTrackerViewModel(),
+            exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
+        )
     }
 }

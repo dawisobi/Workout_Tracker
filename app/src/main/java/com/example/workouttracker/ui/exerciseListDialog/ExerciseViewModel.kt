@@ -36,14 +36,3 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
         }
     }
 }
-
-//class ExerciseViewModelFactory(private val repository: ExerciseRepository) : ViewModelProvider.Factory {
-//
-//    @Suppress("UNCHECKED_CAST")
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(ExerciseViewModel::class.java)) {
-//            return ExerciseViewModel(repository) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
-//    }
-//}

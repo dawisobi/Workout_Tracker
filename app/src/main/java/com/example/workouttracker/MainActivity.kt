@@ -2,6 +2,7 @@ package com.example.workouttracker
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,36 +22,13 @@ import java.io.File
 
 class MainActivity : ComponentActivity() {
 
-//    private val fileRepository = FileRepository()
-////    private val exerciseRepository = ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao())
-//
-//    private val viewModel: FileViewModel by viewModels {
-//        ViewModelFactory(fileRepository)
-//    }
-
-//    private val viewModel: FileViewModel by viewModels {
-//        ViewModelFactory(fileRepository, exerciseRepository)
-//    }
-
-//    private val exerciseViewModel: ExerciseViewModel by viewModels {
-//        ViewModelFactory(fileRepository, exerciseRepository)
-//    }
-
-//    private val viewModel: FileViewModel by viewModels {
-//        ViewModelFactory(FileRepository())
-//    }
-//    val exerciseListViewModel: ExerciseViewModel by viewModels {
-//        ExerciseViewModelFactory(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
-//    }
-
-//    private val factory = ViewModelFactory(FileRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(PerformedTrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
-//    private val fileViewModel = ViewModelProvider(this, factory)[FileViewModel::class.java]
-
     private val fileViewModel : FileViewModel by viewModels {
+        Log.d("MainActivity", "FileViewModel created")
         ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
     private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
+        Log.d("MainActivity", "TrainingSessionViewModel created")
         ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
@@ -61,13 +39,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             WorkoutTrackerTheme(dynamicColor = false) {
                 WorkoutTrackerApp(trainingSessionViewModel = trainingSessionViewModel)
+                Log.d("MainActivity", "onCreate() called")
             }
         }
 
-//        val destinationFile = File(filesDir, "ExercisesDatabase.db")
-        val destinationFile = File(getDatabasePath("ExercisesDatabase.db").parentFile, "ExercisesDatabase.db")
+        val destinationFile = File(getDatabasePath("exercise_database").parentFile, "exercise_database")
         val fileUrl =
-            "https://www.dropbox.com/scl/fi/4n9mjq8bonqdyr5rhfm38/ExercisesDatabase.db?rlkey=vcsaj9xsricp8ynxmof2595sh&st=8ca6nihi&dl=1"
+            "https://www.dropbox.com/scl/fi/fsbkrvslzei9z0j931hqk/exercise_database1.db?rlkey=6upmlu21idup13pzn6jgo5w7b&st=3rgj82uo&dl=1"
 
         fileViewModel.downloadFile(fileUrl, destinationFile)
 
@@ -75,9 +53,6 @@ class MainActivity : ComponentActivity() {
             if (success) {
                 // File downloaded successfully
                 Toast.makeText(this, "File downloaded successfully", Toast.LENGTH_SHORT).show()
-
-                // Populating
-                fileViewModel.getDataFromDatabase( fileDestination = destinationFile )//this)
             } else {
                 // File download failed
                 Toast.makeText(this, "File download failed", Toast.LENGTH_SHORT).show()

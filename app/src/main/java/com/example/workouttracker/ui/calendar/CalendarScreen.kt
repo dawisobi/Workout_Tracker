@@ -84,7 +84,7 @@ fun CalendarScreen(
 
     if(showExerciseListDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel, exerciseList = workoutTrackerUiState.foundExercises) //{ workoutTrackerViewModel.updateShowDialog(false) }
+        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel)
     }
     if(showExerciseDetailsDialog) {
         Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
@@ -124,7 +124,6 @@ fun CalendarLayout(
     selectedMonth: Int,
     onDaySelected: (Int, Int) -> Unit,
     onMonthChanged: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
     val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)

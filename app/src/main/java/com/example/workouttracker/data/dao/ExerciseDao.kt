@@ -10,7 +10,7 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     fun getAllExercises(): Flow<List<Exercise>>
 
-    @Query("SELECT * FROM exercises WHERE name LIKE :searchQuery ORDER BY name ASC")
+    @Query("SELECT * FROM exercises WHERE name LIKE '%' || :searchQuery || '%' ORDER BY name ASC")
     fun searchExercises(searchQuery: String): Flow<List<Exercise>>
 
     @Query("SELECT * FROM exercises WHERE exerciseId = :id")

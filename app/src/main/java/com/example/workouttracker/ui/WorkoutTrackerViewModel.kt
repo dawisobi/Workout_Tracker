@@ -1,7 +1,5 @@
 package com.example.workouttracker.ui
 
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -16,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.io.File
 
 private var foundExercises = mutableStateListOf<Exercise>()
 
@@ -71,14 +68,9 @@ class WorkoutTrackerViewModel : ViewModel() {
         updateFoundExercisesList(searchedExercise)
         Log.d("WorkoutTrackerViewModel", "updateExercisesList() foundExercises: ${foundExercises.size}")
         _uiState.update { currentState -> currentState.copy(foundExercises = foundExercises) }
-//        for (exercise in foundExercises) {
-//            Log.d("WorkoutTrackerViewModel", exercise.name)
-//        }
-
     }
 
 }
-
 
 
 private fun updateFoundExercisesList(searchedExercise: String): List<Exercise> {

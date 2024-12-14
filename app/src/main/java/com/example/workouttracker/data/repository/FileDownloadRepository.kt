@@ -44,10 +44,6 @@ class FileDownloadRepository {
                 }
             }
 
-//            val connection = withContext(Dispatchers.IO) {
-//                URL(url).openConnection()
-//            } as HttpURLConnection
-//            val connection = URL(url).openConnection() as HttpURLConnection
             connection?.inputStream?.use { input ->
                 withContext(Dispatchers.IO) {
                     destination.outputStream().use { output ->
