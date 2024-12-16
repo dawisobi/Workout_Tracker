@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
 import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
@@ -55,6 +56,7 @@ import java.util.Locale
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
@@ -83,16 +85,21 @@ fun CalendarScreen(
     }
 
     if(showExerciseListDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel)
+        AddExerciseDialog(
+            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            workoutTrackerViewModel = workoutTrackerViewModel
+        )
     }
     if(showExerciseDetailsDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
-            )
+            onConfirmClick = {
+                // Hide both dialogs on confirm
+                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+                workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            trainingSessionViewModel = trainingSessionViewModel
+        )
     }
 }
 

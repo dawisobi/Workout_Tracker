@@ -15,7 +15,7 @@ class ExerciseRepository(private val exerciseDao: ExerciseDao) {
 
     // Search exercises using searchQuery
     fun searchExercises(searchQuery: String): Flow<List<Exercise>> {
-        Log.d("ExerciseRepository", "searchExercises() called, searchQuery: $searchQuery")
+        Log.d("ExerciseRepository", "searchExercises() called, searchQuery: '$searchQuery'")
         return exerciseDao.searchExercises(searchQuery)
     }
 

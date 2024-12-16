@@ -1,14 +1,11 @@
 package com.example.workouttracker.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {

@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,7 +58,6 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 fun AddExerciseDialog(
     onDismiss: () -> Unit,
     workoutTrackerViewModel: WorkoutTrackerViewModel,
-    //exerciseList: MutableList<Exercise>,
     exerciseListViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
 ){
     val configuration = LocalConfiguration.current
@@ -70,15 +70,11 @@ fun AddExerciseDialog(
         exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
     }
 
-
     Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
 
 
-
     Dialog(
-        onDismissRequest = {
-            onDismiss()
-            workoutTrackerViewModel.resetSearchDialogState() },
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
@@ -97,17 +93,16 @@ fun AddExerciseDialog(
                 verticalArrangement = Arrangement.Top,
             ) {
                 AddExerciseContent(
-                    onDismiss = {
-                        onDismiss()
-                        workoutTrackerViewModel.resetSearchDialogState() },
+                    onDismiss = { onDismiss() },
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     searchedExerciseName = workoutTrackerViewModel.searchedExercise,
                     onSearchedExerciseChange = {
                         workoutTrackerViewModel.updateSearchedExercise(it)
-                        workoutTrackerViewModel.updateExercisesList()
-                        exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
-                                               },
-                    onKeyboardSearch = { workoutTrackerViewModel.updateExercisesList() },
+                        exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise) },
+                    onSearchClear = {
+                        workoutTrackerViewModel.resetSearchedExercise()
+                        exerciseListViewModel.getAllExercises() },
+//                    onKeyboardSearch = { }, //workoutTrackerViewModel.updateExercisesList() },
                     exerciseList = foundExercisesList
                 )
             }
@@ -122,17 +117,18 @@ fun AddExerciseContent(
     workoutTrackerViewModel: WorkoutTrackerViewModel,
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
-    onKeyboardSearch: () -> Unit,
-//    exerciseList: MutableList<Exercise>
+    onSearchClear: () -> Unit,
+//    onKeyboardSearch: () -> Unit,
     exerciseList: List<Exercise>
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(
                 text = "Select Exercise",
                 style = MaterialTheme.typography.titleLarge,
@@ -140,13 +136,8 @@ fun AddExerciseContent(
                 fontWeight = FontWeight.Bold
             )
 
-            IconButton(
-                onClick = {
-                    onDismiss()
-
-                    Log.d("AddExerciseDialog", "Close button clicked")
-                }
-            ){
+            IconButton( onClick = { onDismiss() })
+            {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Close"
@@ -160,21 +151,19 @@ fun AddExerciseContent(
             onValueChange = onSearchedExerciseChange,
             label = { Text("Search") },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-            trailingIcon = { if(searchedExerciseName.isNotEmpty()){
-                IconButton(onClick = { workoutTrackerViewModel.resetSearchDialogState() }) {
-                    Icon(Icons.Filled.Clear, contentDescription = "Clear") }
-            } },
+            trailingIcon = {
+                if(searchedExerciseName.isNotEmpty()){
+                    IconButton(onClick = { onSearchClear() }) {
+                        Icon(Icons.Filled.Clear, contentDescription = "Clear") } } },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Search
-            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    Log.d("AddExerciseDialog", "Search button clicked: $searchedExerciseName")
-                    onKeyboardSearch()
+                    focusManager.clearFocus()
+//                    onKeyboardSearch()
                 }
             )
         )
@@ -240,7 +229,6 @@ fun AddExerciseDialogPreview(){
         AddExerciseDialog(
             onDismiss = {  },
             workoutTrackerViewModel = WorkoutTrackerViewModel(),
-            exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
         )
     }
 }

@@ -66,12 +66,9 @@ fun WorkoutTrackerApp(
                 ActionButton(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
-//                        workoutTrackerViewModel.updateExercisesList()
-                        workoutTrackerViewModel.resetSearchDialogState()
-                        Log.d("FAB", "Exercises list updated")
+                        workoutTrackerViewModel.resetSearchedExercise()
                         workoutTrackerViewModel.updateExerciseListDialogState(true)
                     },
-//                    fabVisible = true
                 )
             }
                                },
@@ -93,6 +90,7 @@ fun WorkoutTrackerApp(
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 CalendarScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
+                    trainingSessionViewModel = trainingSessionViewModel,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
@@ -120,7 +118,6 @@ fun ActionButton(
         ) {
             Icon(Icons.Filled.Add, "Small floating action button.")
         }
-//    }
 }
 
 
@@ -146,7 +143,7 @@ fun BottomNavigationBar(
                 onClick = {
                     selectedItem = index
                     navController.navigate(item.name)
-                }, // Update selected item on click
+                },
                 selected = selectedItem == index, // Check if this item is selected
                 colors = navigationBarColors
             )

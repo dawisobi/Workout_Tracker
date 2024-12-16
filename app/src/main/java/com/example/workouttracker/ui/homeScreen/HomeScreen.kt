@@ -113,16 +113,12 @@ fun HomeScreen(
     }
 
     if(showExerciseListDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
         AddExerciseDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
-            workoutTrackerViewModel = workoutTrackerViewModel,
-            //exerciseList = workoutTrackerUiState.foundExercises,
-//            exerciseListViewModel =
-        ) //{ workoutTrackerViewModel.updateShowDialog(false) }
+            workoutTrackerViewModel = workoutTrackerViewModel
+        )
     }
     if(showExerciseDetailsDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
@@ -188,7 +184,7 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun DayLayout(
-    exerciseList: MutableList<ExerciseTrainingSession>,// = TodayTrainingDataSource.todayTrainingSessions,
+    exerciseList: MutableList<ExerciseTrainingSession>,
 ) {
     Column(
         modifier = Modifier
