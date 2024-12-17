@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,28 +56,26 @@ fun ExerciseDetailsDialog(
     exercise: Exercise,
     trainingSessionViewModel: TrainingSessionViewModel? = null //null for preview
 ){
-
-    val exerciseDetailsUiState by exerciseDetailsViewModel.uiState.collectAsState()
     Log.d("AddExerciseDialog", "ExerciseDetailsDialog Opened")
 
-    Dialog(
-        onDismissRequest = { onDismiss() },
-    ) {
-        Card(
-            shape = RoundedCornerShape(16.dp)
-        ) {
+    val exerciseDetailsUiState by exerciseDetailsViewModel.uiState.collectAsState()
+    val contentModifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 10.dp)
+
+    Dialog( onDismissRequest = { onDismiss() } )
+    {
+        Card( shape = RoundedCornerShape(16.dp))
+        {
             Column(
-                modifier = Modifier
-                    .padding(16.dp),
+                modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = "Exercise: ${exercise.name}")
-                exercise.description?.let { Text(text = "Description: ${exercise.description}") }
+                Text(text = exercise.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
 
-                val contentModifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
+                if(exercise.type == "Gym") Text(text = "Muscle: ${exercise.muscle}", style = MaterialTheme.typography.titleMedium)
+                else if (exercise.type == "Athletics") Text(text = "Type: ${exercise.type}", style = MaterialTheme.typography.titleMedium)
 
                 DateAndTimeRow(
                     currentDateTime = exerciseDetailsUiState.currentDateTime,
@@ -84,39 +83,62 @@ fun ExerciseDetailsDialog(
                     modifier = contentModifier,
                 )
 
-                SetsAndRepsList(
-                    modifier = contentModifier,
-                    onSetAdd = { exerciseDetailsViewModel.addSet() },
-                    onSetRemoval = { exerciseDetailsViewModel.removeLastSet() },
-                    setCounter = exerciseDetailsUiState.setsCount,
-                    repsTextList = exerciseDetailsViewModel.setsRepsList,
-                    weightTextList = exerciseDetailsViewModel.setsWeightList
-                )
+                if(exercise.type == "Gym"){
+                    SetsAndRepsList(
+                        modifier = contentModifier,
+                        onSetAdd = { exerciseDetailsViewModel.addSet() },
+                        onSetRemoval = { exerciseDetailsViewModel.removeLastSet() },
+                        setCounter = exerciseDetailsUiState.setsCount,
+                        repsTextList = exerciseDetailsViewModel.setsRepsList,
+                        weightTextList = exerciseDetailsViewModel.setsWeightList
+                    )
 
-                CancelAndConfirmButtons(
-                    modifier = contentModifier,
-                    onCancelClick = {
-                        //exerciseDetailsViewModel.resetExerciseDetails()
-                        onDismiss()
-                        Log.d("ExerciseDetailsDialog", "Cancel button clicked")
-                    },
-                    onConfirmClick = {
-                        exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
+                    CancelAndConfirmButtons(
+                        modifier = contentModifier,
+                        onCancelClick = { onDismiss(); Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
+                        onConfirmClick = {
+                            exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
 
-                        val trainingSessionToAdd = ExerciseTrainingSession(
-                            date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
-                            time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
-                            idExercise = exercise.exerciseId,
-                            sets = exerciseDetailsUiState.setsCount.toString(),
-                            reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
-                            weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
-                        )
-                        Log.d("ExerciseDetailsDialog", "setsRepsList: ${exerciseDetailsViewModel.setsRepsList}, setsWeightList: ${exerciseDetailsViewModel.setsWeightList}")
-                        trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
-                        onConfirmClick()
-                        Log.d("ExerciseDetailsDialog", "Confirm button clicked")
-                    }
-                )
+                            val trainingSessionToAdd = ExerciseTrainingSession(
+                                date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
+                                time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
+                                idExercise = exercise.exerciseId,
+                                sets = exerciseDetailsUiState.setsCount.toString(),
+                                reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
+                                weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
+                            )
+
+                            trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
+                            onConfirmClick()
+                            Log.d("ExerciseDetailsDialog", "Confirm button clicked")
+                        }
+                    )
+                } else if(exercise.type == "Athletics") {
+                    AthleticsSessionDetails(
+                        modifier = contentModifier,
+                    )
+
+                    CancelAndConfirmButtons(
+                        modifier = contentModifier,
+                        onCancelClick = { onDismiss(); Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
+                        onConfirmClick = {
+                            exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
+
+                            val trainingSessionToAdd = ExerciseTrainingSession(
+                                date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
+                                time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
+                                idExercise = exercise.exerciseId,
+                                sets = exerciseDetailsUiState.setsCount.toString(),
+                                reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
+                                weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
+                            )
+
+                            trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
+                            onConfirmClick()
+                            Log.d("ExerciseDetailsDialog", "Confirm button clicked")
+                        }
+                    )
+                }
             }
         }
     }
@@ -204,6 +226,70 @@ fun DateAndTimeRow(
 }
 
 @Composable
+fun AthleticsSessionDetails(
+    modifier: Modifier,
+//    onCancelClick: () -> Unit,
+//    onConfirmClick: () -> Unit
+) {
+    Column(modifier = modifier) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Distance", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+            Text(text = "Duration", fontWeight = FontWeight.Bold, textAlign = Center, modifier = Modifier.weight(1f))
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f).fillMaxWidth()
+            ){
+                BasicTextField(
+                    value = "",
+                    onValueChange = {  },
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 24.dp, end = 4.dp)
+                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp)),
+                )
+                Text(text = "km", modifier = Modifier.padding(end = 24.dp))
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f).fillMaxWidth()
+            ){
+                BasicTextField(
+                    value = "",
+                    onValueChange = {  },
+                    textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 24.dp, end = 4.dp)
+                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp)),
+                )
+                Text(text = "min", modifier = Modifier.padding(end = 24.dp))
+            }
+        }
+        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+    }
+}
+
+
+@Composable
 fun SetsAndRepsList(
     modifier: Modifier = Modifier,
     setCounter: Int,
@@ -255,7 +341,9 @@ fun SetsAndRepsList(
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f).fillMaxWidth()
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 ){
                     BasicTextField(
                         value = weightTextList[index],
@@ -361,6 +449,7 @@ fun ExerciseDetailsDialogPreview() {
         ExerciseDetailsDialog(
             onDismiss = { },
             exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
+//            exercise = Exercise(exerciseId = 1, type = "Gym", muscle = "Chest", name = "Bench Press", description = "Lorem Ipsum Dolor Sit Amet"),
             onConfirmClick = { },
         )
     }

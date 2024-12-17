@@ -132,7 +132,7 @@ fun AddExerciseContent(
             Text(
                 text = "Select Exercise",
                 style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
+                //textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold
             )
 
