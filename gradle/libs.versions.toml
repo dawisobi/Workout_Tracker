@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.1"
+agp = "8.7.3"
 androidxJunit = "1.1.5"
 composeBomVersion = "2023.05.01"
 kotlin = "2.1.0"
