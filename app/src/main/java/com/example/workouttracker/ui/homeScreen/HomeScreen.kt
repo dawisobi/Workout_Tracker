@@ -61,6 +61,10 @@ fun HomeScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
+    LaunchedEffect(key1 = Unit) {
+        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
+    }
+
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
@@ -69,9 +73,7 @@ fun HomeScreen(
 
     Log.d("HomeScreen", "Obtaining performed exercises... $performedExercises")
 
-    LaunchedEffect(key1 = Unit) {
-        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
-    }
+
 
     Column(
         verticalArrangement = Arrangement.Top,

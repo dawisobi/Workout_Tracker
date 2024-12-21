@@ -1,7 +1,13 @@
 package com.example.workouttracker.ui
 
+import android.util.Log
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,9 +84,11 @@ fun ExerciseCard(
     exerciseViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
 ){
     var exerciseData by remember { mutableStateOf<Exercise?>(null) }
+    var isExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(exercise.idExercise) {
         exerciseData = exerciseViewModel.getExerciseById(exercise.idExercise)
+        Log.d("ExerciseCard", "Exercise data loaded for exercise ID ${exercise.idExercise}")
     }
 
 
@@ -89,27 +102,109 @@ fun ExerciseCard(
             .offset(y = (-10).dp)
             .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
             .fillMaxWidth()
+            .clickable { isExpanded = !isExpanded }
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
     ) {
-        Column() {
-
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                exerciseData?.let {
+                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                }
 
-            exerciseData?.let {
-                Text(text = it.name)
+                if(!isExpanded) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "Arrow Down")
+                } else {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "Arrow Down")
+                }
 
-//                if(it.type == "Gym") {
-//                    Text(text = exercise.weight.toString() + "kg")
-//                } else {
-//                    Text(text = exercise.distance.toString() + "km")
-//                }
             }
+
+            if (isExpanded) {
+                exerciseData?.let {
+                    if(it.type == "Gym") { ExerciseTypeGym(exercise) }
+                    else { ExerciseTypeAthletics(exercise) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ExerciseTypeGym(
+    exercise: ExerciseTrainingSession
+){
+    exercise.sets?.toInt()?.let {
+
+        val repsList = exercise.reps?.split(",")
+        val weightList = exercise.weight?.split(",")
+
+        repeat(it) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.weight(1f)
+                ){
+                    Text(text = "${it + 1} set")
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.weight(1f)
+                ){
+                    Text(text = "${repsList?.get(it)} reps")
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.weight(1f)
+                ){
+                    Text(text = "${weightList?.get(it)} kg")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ExerciseTypeAthletics( exercise: ExerciseTrainingSession ){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.weight(1f)
+        ){
+            Text(text = "${exercise.distance} km")
+        }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.weight(1f)
+        ){
+            Text(text = "${exercise.duration} min")
         }
     }
 }
