@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -116,6 +117,10 @@ fun ExerciseDetailsDialog(
                 } else if(exercise.type == "Athletics") {
                     AthleticsSessionDetails(
                         modifier = contentModifier,
+                        distance = exerciseDetailsViewModel.distance,
+                        duration = exerciseDetailsViewModel.duration,
+                        onDistanceChange = { exerciseDetailsViewModel.updateDistance(it) },
+                        onDurationChange = { exerciseDetailsViewModel.updateDuration(it) }
                     )
 
                     CancelAndConfirmButtons(
@@ -227,7 +232,11 @@ fun DateAndTimeRow(
 
 @Composable
 fun AthleticsSessionDetails(
+    distance: String,
+    duration: String,
     modifier: Modifier,
+    onDistanceChange: (String) -> Unit,
+    onDurationChange: (String) -> Unit,
 //    onCancelClick: () -> Unit,
 //    onConfirmClick: () -> Unit
 ) {
@@ -252,8 +261,8 @@ fun AthleticsSessionDetails(
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ){
                 BasicTextField(
-                    value = "",
-                    onValueChange = {  },
+                    value = distance,
+                    onValueChange = { onDistanceChange(it) },
                     textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -271,8 +280,8 @@ fun AthleticsSessionDetails(
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ){
                 BasicTextField(
-                    value = "",
-                    onValueChange = {  },
+                    value = duration,
+                    onValueChange = { onDurationChange(it) },
                     textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp, textAlign = Center), //MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
