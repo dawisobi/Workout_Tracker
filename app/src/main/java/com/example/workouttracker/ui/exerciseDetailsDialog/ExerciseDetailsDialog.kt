@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -93,27 +92,6 @@ fun ExerciseDetailsDialog(
                         repsTextList = exerciseDetailsViewModel.setsRepsList,
                         weightTextList = exerciseDetailsViewModel.setsWeightList
                     )
-
-                    CancelAndConfirmButtons(
-                        modifier = contentModifier,
-                        onCancelClick = { onDismiss(); Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
-                        onConfirmClick = {
-                            exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
-
-                            val trainingSessionToAdd = ExerciseTrainingSession(
-                                date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
-                                time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
-                                idExercise = exercise.exerciseId,
-                                sets = exerciseDetailsUiState.setsCount.toString(),
-                                reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
-                                weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
-                            )
-
-                            trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
-                            onConfirmClick()
-                            Log.d("ExerciseDetailsDialog", "Confirm button clicked")
-                        }
-                    )
                 } else if(exercise.type == "Athletics") {
                     AthleticsSessionDetails(
                         modifier = contentModifier,
@@ -122,28 +100,30 @@ fun ExerciseDetailsDialog(
                         onDistanceChange = { exerciseDetailsViewModel.updateDistance(it) },
                         onDurationChange = { exerciseDetailsViewModel.updateDuration(it) }
                     )
-
-                    CancelAndConfirmButtons(
-                        modifier = contentModifier,
-                        onCancelClick = { onDismiss(); Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
-                        onConfirmClick = {
-                            exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
-
-                            val trainingSessionToAdd = ExerciseTrainingSession(
-                                date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
-                                time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
-                                idExercise = exercise.exerciseId,
-                                sets = exerciseDetailsUiState.setsCount.toString(),
-                                reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
-                                weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
-                            )
-
-                            trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
-                            onConfirmClick()
-                            Log.d("ExerciseDetailsDialog", "Confirm button clicked")
-                        }
-                    )
                 }
+
+                CancelAndConfirmButtons(
+                    modifier = contentModifier,
+                    onCancelClick = { onDismiss(); Log.d("ExerciseDetailsDialog", "Cancel button clicked") },
+                    onConfirmClick = {
+                        exerciseDetailsViewModel.updateSetsDetailsOnConfirm()
+
+                        val trainingSessionToAdd = ExerciseTrainingSession(
+                            date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(exerciseDetailsUiState.currentDateTime).toString(),
+                            time = DateTimeFormatter.ofPattern("HH:mm").format(exerciseDetailsUiState.currentDateTime).toString(),
+                            idExercise = exercise.exerciseId,
+                            sets = exerciseDetailsUiState.setsCount.toString(),
+                            reps = exerciseDetailsViewModel.convertRepsToString(exerciseDetailsUiState.setsDetails),
+                            weight = exerciseDetailsViewModel.convertWeightToString(exerciseDetailsUiState.setsDetails),
+                            distance = exerciseDetailsViewModel.distance,
+                            duration = exerciseDetailsViewModel.duration
+                        )
+
+                        trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
+                        onConfirmClick()
+                        Log.d("ExerciseDetailsDialog", "Confirm button clicked")
+                    }
+                )
             }
         }
     }
@@ -237,8 +217,6 @@ fun AthleticsSessionDetails(
     modifier: Modifier,
     onDistanceChange: (String) -> Unit,
     onDurationChange: (String) -> Unit,
-//    onCancelClick: () -> Unit,
-//    onConfirmClick: () -> Unit
 ) {
     Column(modifier = modifier) {
         Row(

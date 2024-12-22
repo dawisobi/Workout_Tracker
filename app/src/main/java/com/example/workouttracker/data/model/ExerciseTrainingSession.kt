@@ -1,8 +1,6 @@
 package com.example.workouttracker.data.model
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
@@ -20,6 +18,6 @@ class ExerciseTrainingSession(
     val sets: String? = null, //only for type = gym
     val reps: String? = null, // only for type = gym
     val weight: String? = null, // in kilograms, only for type = gym
-    val distance: Double? = null, // in kilometers, only for type = athletics
-    val duration: Double? = null // in minutes, only for type = athletics
+    val distance: String? = null, // in kilometers, only for type = athletics
+    val duration: String? = null // in minutes, only for type = athletics
 )

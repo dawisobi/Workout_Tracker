@@ -5,7 +5,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
@@ -49,7 +49,8 @@ import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 
 @Composable
 fun PerformedExercisesDisplay(
-    exerciseList: MutableList<ExerciseTrainingSession>
+    exerciseList: MutableList<ExerciseTrainingSession>,
+    trainingSessionViewModel: TrainingSessionViewModel,
 ) {
     Column(
         modifier = Modifier
@@ -70,7 +71,10 @@ fun PerformedExercisesDisplay(
                             .padding(end = dimensionResource(R.dimen.padding_small))
                     )
                 }
-                ExerciseCard(exercise = trainingSession)
+                ExerciseCard(
+                    exercise = trainingSession,
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) }
+                )
             }
         }
         //add space at the bottom of the list so FAB does not block content at the bottom
@@ -78,10 +82,12 @@ fun PerformedExercisesDisplay(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExerciseCard(
     exercise: ExerciseTrainingSession,
-    exerciseViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao()))
+    exerciseViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
+    onExerciseDelete: () -> Unit
 ){
     var exerciseData by remember { mutableStateOf<Exercise?>(null) }
     var isExpanded by remember { mutableStateOf(false) }
@@ -102,7 +108,10 @@ fun ExerciseCard(
             .offset(y = (-10).dp)
             .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
             .fillMaxWidth()
-            .clickable { isExpanded = !isExpanded }
+            .combinedClickable(
+                onClick = { isExpanded = !isExpanded },
+                onLongClick = { onExerciseDelete() }
+            )
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioNoBouncy,
