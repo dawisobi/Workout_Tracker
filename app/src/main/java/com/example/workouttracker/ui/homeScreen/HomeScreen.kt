@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.homeScreen
 
 import android.os.Build
 import android.util.Log
@@ -10,38 +10,40 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.datasource.TodayTrainingDataSource
-import com.example.workouttracker.model.ExerciseTrainingSession
+import com.example.workouttracker.data.model.ExerciseTrainingSession
+import com.example.workouttracker.ui.PerformedExercisesDisplay
+import com.example.workouttracker.ui.TrainingSessionViewModel
+import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
+import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
@@ -50,10 +52,20 @@ import java.util.Locale
 fun HomeScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
+    LaunchedEffect(key1 = Unit) {
+        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
+    }
+
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
+
+    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
+
+    Log.d("HomeScreen", "Obtaining performed exercises... $performedExercises")
+
 
 
     Column(
@@ -79,26 +91,43 @@ fun HomeScreen(
                     bottom = dimensionResource(R.dimen.padding_small)
                 )
         )
-        DayLayout()
+
+        if(performedExercises.isEmpty()) {
+            Text(
+                text = "No training sessions for today",
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+            )
+            Log.d("HomeScreen", "No performed exercises found")
+        } else {
+            PerformedExercisesDisplay(
+                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
+                trainingSessionViewModel = trainingSessionViewModel,
+            )
+        }
     }
 
     if(showExerciseListDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
         AddExerciseDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)},
-            workoutTrackerViewModel = workoutTrackerViewModel,
-            exerciseList = workoutTrackerUiState.foundExercises
-        ) //{ workoutTrackerViewModel.updateShowDialog(false) }
+            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            workoutTrackerViewModel = workoutTrackerViewModel
+        )
     }
     if(showExerciseDetailsDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
+            onConfirmClick = {
+                // Hide both dialogs on confirm
+                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+                workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            trainingSessionViewModel = trainingSessionViewModel
         )
     }
-
 }
 
 @Composable
@@ -152,67 +181,68 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun DayLayout(
-    exerciseList: List<Pair<ExerciseTrainingSession, String>> = TodayTrainingDataSource.todayTrainingSessions,
-) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ){
-        exerciseList.forEach { (exercise, time) ->
-            Column {
-                Row {
-                    Text(
-                        text = time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                ExerciseCard(exercise = exercise)
-            }
-        }
-        //add space at the bottom of the list so FAB does not block content at the bottom
-        Spacer(Modifier.height(56.dp))
-    }
-}
-
-@Composable
-fun ExerciseCard(exercise: ExerciseTrainingSession){
-    Card(
-        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-        shape = RoundedCornerShape(30),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
-        ),
-        modifier = Modifier
-            .offset(y = (-10).dp)
-            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
-            .fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            Text(text = exercise.name)
-
-            if(exercise.type != "Gym") {
-                Text(text = exercise.distance.toString() + "km")
-            } else {
-                Text(text = exercise.weight.toString() + "kg")
-            }
-        }
-    }
-}
+//@Composable
+//fun DayLayout(
+//    exerciseList: MutableList<ExerciseTrainingSession>,
+//) {
+//    Column(
+//        modifier = Modifier
+//            .verticalScroll(rememberScrollState())
+//    ){
+//        exerciseList.forEach { trainingSession ->
+//            Column {
+//                Row {
+//                    Text(
+//                        text = trainingSession.time,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        modifier = Modifier
+//                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+//                    )
+//                    HorizontalDivider(
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically)
+//                            .padding(end = dimensionResource(R.dimen.padding_small))
+//                    )
+//                }
+//                ExerciseCard(exercise = trainingSession)
+//            }
+//        }
+//        //add space at the bottom of the list so FAB does not block content at the bottom
+//        Spacer(Modifier.height(56.dp))
+//    }
+//}
+//
+//@Composable
+//fun ExerciseCard(exercise: ExerciseTrainingSession){
+//    Card(
+//        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
+//        shape = RoundedCornerShape(30),
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+//        ),
+//        modifier = Modifier
+//            .offset(y = (-10).dp)
+//            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
+//            .fillMaxWidth()
+//    ) {
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(dimensionResource(R.dimen.padding_medium))
+//        ) {
+//            Text(text = "exercise ID: ${exercise.idExercise}")
+//            Text(text = exercise.weight.toString() + "kg")
+////
+////            if(exercise.type != "Gym") {
+////                Text(text = exercise.distance.toString() + "km")
+////            } else {
+////                Text(text = exercise.weight.toString() + "kg")
+////            }
+//        }
+//    }
+//}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)

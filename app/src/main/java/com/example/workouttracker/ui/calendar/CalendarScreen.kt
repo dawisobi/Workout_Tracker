@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.calendar
 
 import android.os.Build
 import android.util.Log
@@ -38,7 +38,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.TrainingSessionViewModel
+import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
+import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -52,6 +56,7 @@ import java.util.Locale
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
@@ -76,20 +81,25 @@ fun CalendarScreen(
             }
         )
         SelectedDayText(selectedDay, selectedMonth)
-        DayLayout()
+//        DayLayout()
     }
 
     if(showExerciseListDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseListDialog: $showExerciseListDialog")
-        AddExerciseDialog(onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false)}, workoutTrackerViewModel = workoutTrackerViewModel, exerciseList = workoutTrackerUiState.foundExercises) //{ workoutTrackerViewModel.updateShowDialog(false) }
+        AddExerciseDialog(
+            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            workoutTrackerViewModel = workoutTrackerViewModel
+        )
     }
     if(showExerciseDetailsDialog) {
-        Log.d("ExerciseDetailsDialog", "showExerciseDetailsDialog: $showExerciseDetailsDialog")
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = { Log.d("ExerciseDetailsDialog", "Confirm button clicked") }
-            )
+            onConfirmClick = {
+                // Hide both dialogs on confirm
+                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+                workoutTrackerViewModel.updateExerciseListDialogState(false) },
+            trainingSessionViewModel = trainingSessionViewModel
+        )
     }
 }
 
@@ -121,7 +131,6 @@ fun CalendarLayout(
     selectedMonth: Int,
     onDaySelected: (Int, Int) -> Unit,
     onMonthChanged: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
     val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
