@@ -35,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -43,7 +42,6 @@ import com.example.workouttracker.R
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.ui.TrainingSessionViewModel
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -54,7 +52,7 @@ fun ExerciseDetailsDialog(
     onDismiss: () -> Unit,
     onConfirmClick: () -> Unit,
     exercise: Exercise,
-    trainingSessionViewModel: TrainingSessionViewModel? = null //null for preview
+    trainingSessionViewModel: TrainingSessionViewModel
 ){
     Log.d("AddExerciseDialog", "ExerciseDetailsDialog Opened")
 
@@ -119,7 +117,7 @@ fun ExerciseDetailsDialog(
                             duration = exerciseDetailsViewModel.duration
                         )
 
-                        trainingSessionViewModel?.insertTrainingSession(trainingSessionToAdd)
+                        trainingSessionViewModel.insertTrainingSession(trainingSessionToAdd)
                         onConfirmClick()
                         Log.d("ExerciseDetailsDialog", "Confirm button clicked")
                     }
@@ -428,16 +426,16 @@ fun CancelAndConfirmButtons(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun ExerciseDetailsDialogPreview() {
-    WorkoutTrackerTheme(dynamicColor = false) {
-        ExerciseDetailsDialog(
-            onDismiss = { },
-            exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
-//            exercise = Exercise(exerciseId = 1, type = "Gym", muscle = "Chest", name = "Bench Press", description = "Lorem Ipsum Dolor Sit Amet"),
-            onConfirmClick = { },
-        )
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(showBackground = true)
+//@Composable
+//fun ExerciseDetailsDialogPreview() {
+//    WorkoutTrackerTheme(dynamicColor = false) {
+//        ExerciseDetailsDialog(
+//            onDismiss = { },
+//            exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
+////            exercise = Exercise(exerciseId = 1, type = "Gym", muscle = "Chest", name = "Bench Press", description = "Lorem Ipsum Dolor Sit Amet"),
+//            onConfirmClick = { },
+//        )
+//    }
+//}
