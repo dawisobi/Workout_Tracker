@@ -378,7 +378,7 @@ fun SetsAndRepsList(
                     weightTextList.add("0")
                     onSetAdd()
                     Log.d("ExerciseDetailsDialog", "Add set button clicked")
-                    Log.d("ExerciseDetailsDialog", "repsTextList: ${repsTextList.toString()}")
+                    Log.d("ExerciseDetailsDialog", "repsTextList: $repsTextList")
                 }
         ){
             Icon(painter = painterResource(id = R.drawable.rounded_add_circle_24), contentDescription = "Add")
