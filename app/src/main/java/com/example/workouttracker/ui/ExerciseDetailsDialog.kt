@@ -343,7 +343,7 @@ fun ExerciseDetailsDialogPreview() {
     WorkoutTrackerTheme(dynamicColor = false) {
         ExerciseDetailsDialog(
             onDismiss = { },
-            exercise = Exercise(exerciseId = 1, type = "Athletics", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
+            exercise = Exercise(exerciseId = 1, type = "Athletics", muscle = "Cardio", name = "Running", description = "Lorem Ipsum Dolor Sit Amet"),
             onConfirmClick = { },
         )
     }

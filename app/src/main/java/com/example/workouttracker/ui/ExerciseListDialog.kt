@@ -1,5 +1,6 @@
 package com.example.workouttracker.ui
 
+import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -59,7 +60,9 @@ fun AddExerciseDialog(
     Log.d("AddExerciseDialog", "ExerciseListDialog Opened")
 
     Dialog(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = {
+            onDismiss()
+            workoutTrackerViewModel.resetSearchDialogState() },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,

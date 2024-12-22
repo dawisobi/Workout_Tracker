@@ -64,6 +64,9 @@ fun WorkoutTrackerApp(
                 ActionButton(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
+//                        workoutTrackerViewModel.updateExercisesList()
+                        workoutTrackerViewModel.resetSearchDialogState()
+                        Log.d("FAB", "Exercises list updated")
                         workoutTrackerViewModel.updateExerciseListDialogState(true)
                     },
 //                    fabVisible = true
