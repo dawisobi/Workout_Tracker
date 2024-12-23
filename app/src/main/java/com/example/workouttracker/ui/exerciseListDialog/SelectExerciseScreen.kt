@@ -155,8 +155,8 @@ fun SelectExerciseScreen(
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
 
-    val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggerred always
-    val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggerred only when the searchResults changes
+    val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered always
+    val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggered only when the searchResults changes
 
 //    LaunchedEffect(key1 = searchedExercise) {
 //        if (searchedExercise.isBlank()) {

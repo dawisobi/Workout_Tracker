@@ -22,7 +22,6 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     @RequiresApi(Build.VERSION_CODES.O)
     fun getExercisesBySearchQuery(searchQuery: String) {
 
-
         Log.d("ExerciseViewModel", "Searching for exercises with query: '$searchQuery'")
 
         viewModelScope.launch {
