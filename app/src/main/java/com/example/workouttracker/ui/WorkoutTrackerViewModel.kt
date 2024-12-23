@@ -36,6 +36,7 @@ class WorkoutTrackerViewModel : ViewModel() {
     }
 
     fun updateSearchedExercise(newSearchedExercise: String) {
+        Log.d("WorkoutTrackerViewModel", "Changing searched exercise from '$searchedExercise' to '$newSearchedExercise'...")
         searchedExercise = newSearchedExercise
     }
 

@@ -111,12 +111,12 @@ fun HomeScreen(
         }
     }
 
-    if(showExerciseListDialog) {
-        AddExerciseDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
-            workoutTrackerViewModel = workoutTrackerViewModel
-        )
-    }
+//    if(showExerciseListDialog) {
+//        AddExerciseDialog(
+//            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
+//            workoutTrackerViewModel = workoutTrackerViewModel
+//        )
+//    }
     if(showExerciseDetailsDialog) {
         ExerciseDetailsDialog(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
@@ -124,7 +124,8 @@ fun HomeScreen(
             onConfirmClick = {
                 // Hide both dialogs on confirm
                 workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-                workoutTrackerViewModel.updateExerciseListDialogState(false) },
+//                workoutTrackerViewModel.updateExerciseListDialogState(false)
+                             },
             trainingSessionViewModel = trainingSessionViewModel
         )
     }

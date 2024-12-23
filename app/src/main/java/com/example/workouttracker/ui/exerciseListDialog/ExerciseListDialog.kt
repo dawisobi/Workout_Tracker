@@ -221,14 +221,14 @@ fun DisplayExercisesList(exerciseList: List<Exercise>, workoutTrackerViewModel: 
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun AddExerciseDialogPreview(){
-    WorkoutTrackerTheme(dynamicColor = false) {
-        AddExerciseDialog(
-            onDismiss = {  },
-            workoutTrackerViewModel = WorkoutTrackerViewModel(),
-        )
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(showBackground = true)
+//@Composable
+//fun AddExerciseDialogPreview(){
+//    WorkoutTrackerTheme(dynamicColor = false) {
+//        AddExerciseDialog(
+//            onDismiss = {  },
+//            workoutTrackerViewModel = WorkoutTrackerViewModel(),
+//        )
+//    }
+//}

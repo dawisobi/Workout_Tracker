@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,12 +34,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.workouttracker.data.database.ExerciseDatabase
+import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 
 enum class WorkoutTrackerScreen(
     @StringRes val title: Int,
@@ -67,7 +72,8 @@ fun WorkoutTrackerApp(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
                         workoutTrackerViewModel.resetSearchedExercise()
-                        workoutTrackerViewModel.updateExerciseListDialogState(true)
+//                        workoutTrackerViewModel.updateExerciseListDialogState(true)
+                        navController.navigate("SelectExerciseScreen")
                     },
                 )
             }
@@ -98,6 +104,17 @@ fun WorkoutTrackerApp(
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {
                 ProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(R.dimen.padding_medium))
+                )
+            }
+            composable(route = "SelectExerciseScreen") {
+                SelectExerciseScreen(
+                    onDismiss = { navController.navigateUp() },
+                    exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
+                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    trainingSessionViewModel = trainingSessionViewModel,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
