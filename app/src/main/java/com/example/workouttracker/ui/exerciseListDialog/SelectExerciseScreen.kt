@@ -62,85 +62,6 @@ import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.time.debounce
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun SelectExerciseScreen(
-//    onDismiss: () -> Unit,
-//    exerciseViewModel: ExerciseViewModel,
-//    workoutTrackerViewModel: WorkoutTrackerViewModel,
-//    modifier: Modifier
-//) {
-//    val searchedExercise = workoutTrackerViewModel.searchedExercise
-//    val foundExercisesList by exerciseViewModel.searchResults.collectAsState(initial = emptyList())
-//
-//    LaunchedEffect(key1 = searchedExercise) {
-//
-//        if (searchedExercise.isBlank()) {
-//            Log.d("SelectExerciseScreen", "LaunchedEffect triggered with blank search query")
-//            exerciseViewModel.getAllExercises()
-//        } else {
-//            Log.d("SelectExerciseScreen", "LaunchedEffect triggered with search query: '$searchedExercise'")
-//            exerciseViewModel.getExercisesBySearchQuery(searchedExercise)
-//        }
-//    }
-//
-//
-//
-//    Log.d("SelectExerciseScreen", "Composing the SelectExerciseScreen with query: '$searchedExercise'")
-//    Column(
-//        verticalArrangement = Arrangement.Top,
-//        modifier = modifier,
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(
-//                text = "Select Exercise",
-//                style = MaterialTheme.typography.titleLarge,
-//                fontWeight = FontWeight.Bold
-//            )
-//
-//            IconButton( onClick = {  } )
-//            {
-//                Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
-//            }
-//        }
-//
-//        OutlinedTextField(
-//            value = searchedExercise,
-//            singleLine = true,
-//            onValueChange = {
-//                workoutTrackerViewModel.updateSearchedExercise(it)
-////                exerciseViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
-//                            },
-//            label = { Text("Search") },
-//            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-////            trailingIcon = {
-////                if(searchedExercise.isNotEmpty()){
-////                    IconButton(onClick = { onSearchClear() }) {
-////                        Icon(Icons.Filled.Clear, contentDescription = "Clear") } } },
-//            shape = RoundedCornerShape(16.dp),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 4.dp),
-//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-//            keyboardActions = KeyboardActions(
-//                onSearch = {
-////                    focusManager.clearFocus()
-////                    onKeyboardSearch()
-//                }
-//            )
-//        )
-//
-//        ExercisesListComponent(
-//            exerciseList = foundExercisesList,
-//            workoutTrackerViewModel = workoutTrackerViewModel
-//        )
-//    }
-//}
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SelectExerciseScreen(
@@ -155,14 +76,13 @@ fun SelectExerciseScreen(
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
 
-    val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered always
+    //val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered always
     val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggered only when the searchResults changes
 
-//    LaunchedEffect(key1 = searchedExercise) {
-//        if (searchedExercise.isBlank()) {
-//            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with blank search query")
-//            exerciseListViewModel.getAllExercises()
-//        }
+    LaunchedEffect(key1 = Unit) {
+            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with blank search query")
+            exerciseListViewModel.getAllExercises()
+        }
 //        else {
 //            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with search query: '$searchedExercise'")
 //            exerciseListViewModel.getExercisesBySearchQuery(searchedExercise)
@@ -180,7 +100,7 @@ fun SelectExerciseScreen(
         SelectExerciseHeaderContent(
             onDismiss = { onDismiss() },
             workoutTrackerViewModel = workoutTrackerViewModel,
-            searchedExerciseName = searchedExercise,
+            searchedExerciseName = workoutTrackerViewModel.searchedExercise,
             onSearchedExerciseChange = {
                 Log.d("SelectExerciseScreen", "Search query changed to: '$it'")
                 workoutTrackerViewModel.updateSearchedExercise(it)
