@@ -150,9 +150,10 @@ fun SelectExerciseScreen(
     trainingSessionViewModel: TrainingSessionViewModel,
     modifier: Modifier
 ){
-
+    // Used to trigger dialog popup
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
+
 
     val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggerred always
     val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggerred only when the searchResults changes
