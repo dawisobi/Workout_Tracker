@@ -24,12 +24,12 @@ class MainActivity : ComponentActivity() {
 
     private val fileViewModel : FileViewModel by viewModels {
         Log.d("MainActivity", "FileViewModel created")
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
     private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
         Log.d("MainActivity", "TrainingSessionViewModel created")
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

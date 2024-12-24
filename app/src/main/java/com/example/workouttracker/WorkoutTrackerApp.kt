@@ -30,12 +30,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
+import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
@@ -58,13 +60,17 @@ enum class WorkoutTrackerScreen(
 @Composable
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController(),
-//    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
+    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
     trainingSessionViewModel: TrainingSessionViewModel
 ) {
     //val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
-    val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
 
+    val context = LocalContext.current
+    val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
+    val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
+    val exerciseViewModelFactory = remember { ExerciseViewModelFactory(exerciseRepository) }
+    val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
@@ -118,7 +124,7 @@ fun WorkoutTrackerApp(
                 Log.d("SelectExerciseScreen", "Launching the SelectExerciseScreen from NavHost")
                 SelectExerciseScreen(
                     onDismiss = { navController.navigateUp() },
-                    exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
+                    exerciseListViewModel = exerciseViewModel,
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
                     modifier = Modifier
