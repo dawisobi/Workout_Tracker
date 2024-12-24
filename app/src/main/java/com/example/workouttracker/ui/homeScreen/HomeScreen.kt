@@ -40,7 +40,7 @@ import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
-import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
+//import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -58,9 +58,9 @@ fun HomeScreen(
         trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
     }
 
-    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
-    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
+//    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+    //val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
+//    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
@@ -117,18 +117,18 @@ fun HomeScreen(
 //            workoutTrackerViewModel = workoutTrackerViewModel
 //        )
 //    }
-    if(showExerciseDetailsDialog) {
-        ExerciseDetailsDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-            exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = {
-                // Hide both dialogs on confirm
-                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-//                workoutTrackerViewModel.updateExerciseListDialogState(false)
-                             },
-            trainingSessionViewModel = trainingSessionViewModel
-        )
-    }
+//    if(showExerciseDetailsDialog) {
+//        ExerciseDetailsDialog(
+//            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+//            exercise = workoutTrackerUiState.selectedExercise!!,
+//            onConfirmClick = {
+//                // Hide both dialogs on confirm
+//                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+////                workoutTrackerViewModel.updateExerciseListDialogState(false)
+//                             },
+//            trainingSessionViewModel = trainingSessionViewModel
+//        )
+//    }
 }
 
 @Composable

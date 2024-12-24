@@ -42,7 +42,7 @@ import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
-import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
+//import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -58,9 +58,9 @@ fun CalendarScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
-    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
-    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
+//    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+    //val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
+//    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
     var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
@@ -90,18 +90,18 @@ fun CalendarScreen(
 //            workoutTrackerViewModel = workoutTrackerViewModel
 //        )
 //    }
-    if(showExerciseDetailsDialog) {
-        ExerciseDetailsDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-            exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = {
-                // Hide both dialogs on confirm
-                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-//                workoutTrackerViewModel.updateExerciseListDialogState(false)
-                             },
-            trainingSessionViewModel = trainingSessionViewModel
-        )
-    }
+//    if(showExerciseDetailsDialog) {
+//        ExerciseDetailsDialog(
+//            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
+//            exercise = workoutTrackerUiState.selectedExercise!!,
+//            onConfirmClick = {
+//                // Hide both dialogs on confirm
+//                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
+////                workoutTrackerViewModel.updateExerciseListDialogState(false)
+//                             },
+//            trainingSessionViewModel = trainingSessionViewModel
+//        )
+//    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

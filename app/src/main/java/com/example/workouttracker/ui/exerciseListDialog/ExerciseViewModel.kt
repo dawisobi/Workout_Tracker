@@ -22,16 +22,18 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     @RequiresApi(Build.VERSION_CODES.O)
     fun getExercisesBySearchQuery(searchQuery: String) {
 
-        Log.d("ExerciseViewModel", "Searching for exercises with query: '$searchQuery'")
+        Log.d("ExerciseViewModel", "getExercisesBySearchQuery(): Searching for exercises with query: '$searchQuery'")
 
         viewModelScope.launch {
             exerciseRepository.searchExercises(searchQuery).collect { list ->
+                Log.d("ExerciseViewModel", "getExercisesBySearchQuery(): Found ${list.size} exercises")
                 _searchResults.value = list
             }
         }
     }
 
     suspend fun getExerciseById(id: Int) : Exercise {
+        Log.d("ExerciseViewModel", "getExerciseById(): Getting exercise with id: '$id'")
         return exerciseRepository.getExerciseById(id)
 //        viewModelScope.launch {
 //            exerciseRepository.getExerciseById(id)
@@ -39,7 +41,7 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     }
 
     fun getAllExercises() {
-        Log.d("ExerciseViewModel", "Getting all exercises...")
+        Log.d("ExerciseViewModel", "getAllExercises(): Getting all exercises...")
 
         viewModelScope.launch {
             exerciseRepository.getAllExercises().collect { list ->

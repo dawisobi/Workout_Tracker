@@ -58,10 +58,13 @@ enum class WorkoutTrackerScreen(
 @Composable
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController(),
-    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
+//    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
     trainingSessionViewModel: TrainingSessionViewModel
 ) {
+    //val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
+    val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
+
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
@@ -73,7 +76,9 @@ fun WorkoutTrackerApp(
                         Log.d("FAB", "FAB clicked")
                         workoutTrackerViewModel.resetSearchedExercise()
 //                        workoutTrackerViewModel.updateExerciseListDialogState(true)
-                        navController.navigate("SelectExerciseScreen")
+                        navController.navigate("SelectExerciseScreen") {
+                            launchSingleTop = true
+                        }
                     },
                 )
             }
@@ -110,6 +115,7 @@ fun WorkoutTrackerApp(
                 )
             }
             composable(route = "SelectExerciseScreen") {
+                Log.d("SelectExerciseScreen", "Launching the SelectExerciseScreen from NavHost")
                 SelectExerciseScreen(
                     onDismiss = { navController.navigateUp() },
                     exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),

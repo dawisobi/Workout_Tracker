@@ -75,21 +75,22 @@ fun SelectExerciseScreen(
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
-
-    //val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered always
-    val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggered only when the searchResults changes
-
     LaunchedEffect(key1 = Unit) {
-            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with blank search query")
-            exerciseListViewModel.getAllExercises()
-        }
+        Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with blank search query")
+//            exerciseListViewModel.getAllExercises()
+        exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
+    }
 //        else {
 //            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with search query: '$searchedExercise'")
 //            exerciseListViewModel.getExercisesBySearchQuery(searchedExercise)
 //        }
 //    }
 
-    Log.d("SelectExerciseScreen", "Composing the SelectExerciseScreen")
+    //exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
+    //val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered
+    val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggered only when the searchResults changes
+    Log.d("SelectExerciseScreen", "Recomposing the SelectExerciseScreen")
+
 
     Column(
         modifier = Modifier
@@ -99,7 +100,7 @@ fun SelectExerciseScreen(
     ) {
         SelectExerciseHeaderContent(
             onDismiss = { onDismiss() },
-            workoutTrackerViewModel = workoutTrackerViewModel,
+            //workoutTrackerViewModel = workoutTrackerViewModel,
             searchedExerciseName = workoutTrackerViewModel.searchedExercise,
             onSearchedExerciseChange = {
                 Log.d("SelectExerciseScreen", "Search query changed to: '$it'")
@@ -136,7 +137,7 @@ fun SelectExerciseScreen(
 @Composable
 fun SelectExerciseHeaderContent(
     onDismiss: () -> Unit,
-    workoutTrackerViewModel: WorkoutTrackerViewModel,
+    //workoutTrackerViewModel: WorkoutTrackerViewModel,
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
     onSearchClear: () -> Unit,
@@ -199,7 +200,7 @@ fun SelectExerciseHeaderContent(
 fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
 
     //Log.d("ExerciseListComponent", "Composing the list: ${exerciseList.size}")
-
+    Text(text = "Search query: '${workoutTrackerViewModel.searchedExercise}', returned list size: ${exerciseList.size}")
     if(exerciseList.isEmpty()){
         Log.d("ExerciseListComponent", "No exercises found")
         Text(
