@@ -73,7 +73,10 @@ fun WorkoutTrackerApp(
     val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) },
+        bottomBar = {
+            if(currentRoute.value?.destination?.route != "SelectExerciseScreen")
+                BottomNavigationBar(navController)
+                    },
         floatingActionButton = {
             if(currentRoute.value?.destination?.route == WorkoutTrackerScreen.Home.name
                 || currentRoute.value?.destination?.route == WorkoutTrackerScreen.Calendar.name) {
