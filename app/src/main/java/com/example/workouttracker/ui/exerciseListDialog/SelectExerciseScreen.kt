@@ -200,7 +200,6 @@ fun SelectExerciseHeaderContent(
 fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
 
     //Log.d("ExerciseListComponent", "Composing the list: ${exerciseList.size}")
-    Text(text = "Search query: '${workoutTrackerViewModel.searchedExercise}', returned list size: ${exerciseList.size}")
     if(exerciseList.isEmpty()){
         Log.d("ExerciseListComponent", "No exercises found")
         Text(
