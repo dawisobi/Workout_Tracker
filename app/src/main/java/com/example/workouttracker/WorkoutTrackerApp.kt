@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -74,7 +76,7 @@ fun WorkoutTrackerApp(
     Scaffold(
         bottomBar = {
             if(currentRoute.value?.destination?.route != "SelectExerciseScreen")
-                BottomNavigationBar(navController)
+                BottomNavigationBar(navController, currentRoute)
                     },
         floatingActionButton = {
             if(currentRoute.value?.destination?.route == WorkoutTrackerScreen.Home.name
@@ -101,6 +103,7 @@ fun WorkoutTrackerApp(
                 HomeScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
+                    exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier
                 )
             }
@@ -108,6 +111,7 @@ fun WorkoutTrackerApp(
                 CalendarScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
+//                    exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier
                 )
             }
@@ -134,38 +138,39 @@ fun WorkoutTrackerApp(
 fun ActionButton(
     onClick: () -> Unit,
 ) {
-        FloatingActionButton(
-            onClick = { onClick() },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.secondary
-        ) {
-            Icon(Icons.Filled.Add, "Small floating action button.")
-        }
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondary
+    ) {
+        Icon(Icons.Filled.Add, "Small floating action button.")
+    }
 }
 
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController
+    navController: NavHostController,
+    currentRoute: State<NavBackStackEntry?>
 ) {
     var selectedItem by remember { mutableIntStateOf(0) }
 
-    NavigationBar {
-        val navigationBarColors = NavigationBarItemDefaults.colors(
-            indicatorColor = Color.Transparent,
-            selectedIconColor = MaterialTheme.colorScheme.primary,
-            selectedTextColor = MaterialTheme.colorScheme.primary,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+    val navigationBarColors = NavigationBarItemDefaults.colors(
+        indicatorColor = Color.Transparent,
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 
+    NavigationBar {
         WorkoutTrackerScreen.entries.forEachIndexed { index,item ->
             NavigationBarItem(
                 icon = { Icon(painterResource(item.icon), contentDescription = stringResource(item.title)) },
                 label = { Text(stringResource(item.title)) },
                 onClick = {
                     selectedItem = index
-                    navController.navigate(item.name)
+                    if(currentRoute.value?.destination?.route != item.name) { navController.navigate(item.name) }
                 },
                 selected = selectedItem == index, // Check if this item is selected
                 colors = navigationBarColors
@@ -173,4 +178,3 @@ fun BottomNavigationBar(
         }
     }
 }
-

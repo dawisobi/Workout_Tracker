@@ -51,11 +51,12 @@ import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 fun PerformedExercisesDisplay(
     exerciseList: MutableList<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
+    exerciseListViewModel: ExerciseViewModel
 ) {
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ){
+            .verticalScroll(state = rememberScrollState())
+    ) {
         exerciseList.forEach { trainingSession ->
             Column {
                 Row {
@@ -73,7 +74,8 @@ fun PerformedExercisesDisplay(
                 }
                 ExerciseCard(
                     exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) }
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                    exerciseViewModel = exerciseListViewModel
                 )
             }
         }
@@ -86,9 +88,9 @@ fun PerformedExercisesDisplay(
 @Composable
 fun ExerciseCard(
     exercise: ExerciseTrainingSession,
-    exerciseViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
+    exerciseViewModel: ExerciseViewModel,
     onExerciseDelete: () -> Unit
-){
+) {
     var exerciseData by remember { mutableStateOf<Exercise?>(null) }
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -156,7 +158,7 @@ fun ExerciseCard(
 @Composable
 fun ExerciseTypeGym(
     exercise: ExerciseTrainingSession
-){
+) {
     exercise.sets?.toInt()?.let {
 
         val repsList = exercise.reps?.split(",")

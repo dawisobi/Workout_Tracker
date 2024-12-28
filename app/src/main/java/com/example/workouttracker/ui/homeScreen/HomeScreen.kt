@@ -40,6 +40,7 @@ import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 //import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.text.SimpleDateFormat
@@ -52,15 +53,12 @@ import java.util.Locale
 fun HomeScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
+    exerciseListViewModel: ExerciseViewModel
 ) {
     LaunchedEffect(key1 = Unit) {
         trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
     }
-
-//    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    //val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
-//    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
@@ -107,28 +105,10 @@ fun HomeScreen(
             PerformedExercisesDisplay(
                 exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
                 trainingSessionViewModel = trainingSessionViewModel,
+                exerciseListViewModel = exerciseListViewModel
             )
         }
     }
-
-//    if(showExerciseListDialog) {
-//        AddExerciseDialog(
-//            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
-//            workoutTrackerViewModel = workoutTrackerViewModel
-//        )
-//    }
-//    if(showExerciseDetailsDialog) {
-//        ExerciseDetailsDialog(
-//            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-//            exercise = workoutTrackerUiState.selectedExercise!!,
-//            onConfirmClick = {
-//                // Hide both dialogs on confirm
-//                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-////                workoutTrackerViewModel.updateExerciseListDialogState(false)
-//                             },
-//            trainingSessionViewModel = trainingSessionViewModel
-//        )
-//    }
 }
 
 @Composable
@@ -178,82 +158,5 @@ fun AddExerciseButtonHomeScreen(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.titleLarge,
             )
         }
-    }
-}
-
-
-//@Composable
-//fun DayLayout(
-//    exerciseList: MutableList<ExerciseTrainingSession>,
-//) {
-//    Column(
-//        modifier = Modifier
-//            .verticalScroll(rememberScrollState())
-//    ){
-//        exerciseList.forEach { trainingSession ->
-//            Column {
-//                Row {
-//                    Text(
-//                        text = trainingSession.time,
-//                        style = MaterialTheme.typography.bodySmall,
-//                        modifier = Modifier
-//                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-//                    )
-//                    HorizontalDivider(
-//                        modifier = Modifier
-//                            .align(Alignment.CenterVertically)
-//                            .padding(end = dimensionResource(R.dimen.padding_small))
-//                    )
-//                }
-//                ExerciseCard(exercise = trainingSession)
-//            }
-//        }
-//        //add space at the bottom of the list so FAB does not block content at the bottom
-//        Spacer(Modifier.height(56.dp))
-//    }
-//}
-//
-//@Composable
-//fun ExerciseCard(exercise: ExerciseTrainingSession){
-//    Card(
-//        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-//        shape = RoundedCornerShape(30),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
-//        ),
-//        modifier = Modifier
-//            .offset(y = (-10).dp)
-//            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
-//            .fillMaxWidth()
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(dimensionResource(R.dimen.padding_medium))
-//        ) {
-//            Text(text = "exercise ID: ${exercise.idExercise}")
-//            Text(text = exercise.weight.toString() + "kg")
-////
-////            if(exercise.type != "Gym") {
-////                Text(text = exercise.distance.toString() + "km")
-////            } else {
-////                Text(text = exercise.weight.toString() + "kg")
-////            }
-//        }
-//    }
-//}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    WorkoutTrackerTheme(dynamicColor = false) {
-        HomeScreen(
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
-                .fillMaxSize()
-        )
     }
 }

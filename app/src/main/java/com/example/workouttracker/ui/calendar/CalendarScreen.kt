@@ -58,9 +58,6 @@ fun CalendarScreen(
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel()
 ) {
-//    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    //val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
-//    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
     var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
@@ -83,25 +80,6 @@ fun CalendarScreen(
         SelectedDayText(selectedDay, selectedMonth)
 //        DayLayout()
     }
-
-//    if(showExerciseListDialog) {
-//        AddExerciseDialog(
-//            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
-//            workoutTrackerViewModel = workoutTrackerViewModel
-//        )
-//    }
-//    if(showExerciseDetailsDialog) {
-//        ExerciseDetailsDialog(
-//            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-//            exercise = workoutTrackerUiState.selectedExercise!!,
-//            onConfirmClick = {
-//                // Hide both dialogs on confirm
-//                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-////                workoutTrackerViewModel.updateExerciseListDialogState(false)
-//                             },
-//            trainingSessionViewModel = trainingSessionViewModel
-//        )
-//    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
