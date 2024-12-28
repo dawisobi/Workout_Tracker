@@ -174,13 +174,3 @@ fun BottomNavigationBar(
     }
 }
 
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview(showBackground = true)
-//@Composable
-//fun WorkoutTrackerAppPreview() {
-//    WorkoutTrackerTheme(dynamicColor = false){
-//        WorkoutTrackerApp()
-//    }
-//}
-
