@@ -72,9 +72,7 @@ fun SelectExerciseScreen(
 
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
     ) {
         SelectExerciseHeaderContent(
@@ -90,7 +88,6 @@ fun SelectExerciseScreen(
                 workoutTrackerViewModel.resetSearchedExercise()
                 exerciseListViewModel.getAllExercises()
                             },
-            exerciseList = foundExercisesList,
             focusManager = focusManager
         )
         ExercisesListComponent(
@@ -120,10 +117,8 @@ fun SelectExerciseHeaderContent(
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
     onSearchClear: () -> Unit,
-    exerciseList: List<Exercise>,
     focusManager: FocusManager
 ) {
-//    val focusManager = LocalFocusManager.current
 
     Log.d("SE_HeaderContent", "Recomposing the header with query: '$searchedExerciseName'")
 
@@ -138,12 +133,11 @@ fun SelectExerciseHeaderContent(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()//.background(color = MaterialTheme.colorScheme.primaryContainer)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Select Exercise",
                 style = MaterialTheme.typography.titleLarge,
-                //textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold
             )
 

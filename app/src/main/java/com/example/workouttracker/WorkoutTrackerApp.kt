@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -44,7 +43,6 @@ import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 
 enum class WorkoutTrackerScreen(
@@ -63,7 +61,6 @@ fun WorkoutTrackerApp(
     workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
     trainingSessionViewModel: TrainingSessionViewModel
 ) {
-    //val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
     val context = LocalContext.current
@@ -71,6 +68,8 @@ fun WorkoutTrackerApp(
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
     val exerciseViewModelFactory = remember { ExerciseViewModelFactory(exerciseRepository) }
     val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
+
+    val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
 
     Scaffold(
         bottomBar = {
@@ -102,25 +101,19 @@ fun WorkoutTrackerApp(
                 HomeScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    modifier = screensContentModifier
                 )
             }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 CalendarScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    modifier = screensContentModifier
                 )
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {
                 ProfileScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    modifier = screensContentModifier
                 )
             }
             composable(route = "SelectExerciseScreen") {
@@ -130,9 +123,7 @@ fun WorkoutTrackerApp(
                     exerciseListViewModel = exerciseViewModel,
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    modifier = screensContentModifier
                 )
             }
         }
