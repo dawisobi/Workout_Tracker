@@ -3,15 +3,14 @@ package com.example.workouttracker.ui.exerciseListDialog
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,12 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,32 +31,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.model.Exercise
-import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
-import kotlinx.coroutines.time.debounce
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -71,23 +56,17 @@ fun SelectExerciseScreen(
     trainingSessionViewModel: TrainingSessionViewModel,
     modifier: Modifier
 ){
+    val focusManager = LocalFocusManager.current
+
     // Used to trigger dialog popup
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     LaunchedEffect(key1 = Unit) {
         Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with blank search query")
-//            exerciseListViewModel.getAllExercises()
         exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
     }
-//        else {
-//            Log.d("SelectExercise_LaunchEffect", "LaunchedEffect triggered with search query: '$searchedExercise'")
-//            exerciseListViewModel.getExercisesBySearchQuery(searchedExercise)
-//        }
-//    }
 
-    //exerciseListViewModel.getExercisesBySearchQuery(workoutTrackerViewModel.searchedExercise)
-    //val searchedExercise = workoutTrackerViewModel.searchedExercise //one recomposition triggered
     val foundExercisesList by exerciseListViewModel.searchResults.collectAsState(initial = emptyList()) // second recomposition triggered only when the searchResults changes
     Log.d("SelectExerciseScreen", "Recomposing the SelectExerciseScreen")
 
@@ -100,7 +79,6 @@ fun SelectExerciseScreen(
     ) {
         SelectExerciseHeaderContent(
             onDismiss = { onDismiss() },
-            //workoutTrackerViewModel = workoutTrackerViewModel,
             searchedExerciseName = workoutTrackerViewModel.searchedExercise,
             onSearchedExerciseChange = {
                 Log.d("SelectExerciseScreen", "Search query changed to: '$it'")
@@ -112,9 +90,14 @@ fun SelectExerciseScreen(
                 workoutTrackerViewModel.resetSearchedExercise()
                 exerciseListViewModel.getAllExercises()
                             },
-            exerciseList = foundExercisesList
+            exerciseList = foundExercisesList,
+            focusManager = focusManager
         )
-        ExercisesListComponent(exerciseList = foundExercisesList, workoutTrackerViewModel = workoutTrackerViewModel)
+        ExercisesListComponent(
+            exerciseList = foundExercisesList,
+            workoutTrackerViewModel = workoutTrackerViewModel,
+            focusManager = focusManager
+        )
     }
     if(showExerciseDetailsDialog) {
         ExerciseDetailsDialog(
@@ -124,31 +107,34 @@ fun SelectExerciseScreen(
                 // Hide both dialogs on confirm
                 workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
                 onDismiss()
-//                workoutTrackerViewModel.updateExerciseListDialogState(false)
             },
             trainingSessionViewModel = trainingSessionViewModel
         )
     }
-        }
-//    }
-//}
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SelectExerciseHeaderContent(
     onDismiss: () -> Unit,
-    //workoutTrackerViewModel: WorkoutTrackerViewModel,
     searchedExerciseName: String,
     onSearchedExerciseChange: (String) -> Unit,
     onSearchClear: () -> Unit,
-//    onKeyboardSearch: () -> Unit,
-    exerciseList: List<Exercise>
+    exerciseList: List<Exercise>,
+    focusManager: FocusManager
 ) {
-    val focusManager = LocalFocusManager.current
+//    val focusManager = LocalFocusManager.current
 
     Log.d("SE_HeaderContent", "Recomposing the header with query: '$searchedExerciseName'")
 
-    Column {
+    Column(
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                // Clear focus on any tap outside the text field
+                focusManager.clearFocus()
+            })
+        }
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -188,7 +174,6 @@ fun SelectExerciseHeaderContent(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     focusManager.clearFocus()
-//                    onKeyboardSearch()
                 }
             )
         )
@@ -197,7 +182,11 @@ fun SelectExerciseHeaderContent(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel: WorkoutTrackerViewModel) {
+fun ExercisesListComponent(
+    exerciseList: List<Exercise>,
+    workoutTrackerViewModel: WorkoutTrackerViewModel,
+    focusManager: FocusManager
+) {
 
     //Log.d("ExerciseListComponent", "Composing the list: ${exerciseList.size}")
     if(exerciseList.isEmpty()){
@@ -218,6 +207,12 @@ fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel
 
         val listState = rememberLazyListState()
 
+        LaunchedEffect(listState.isScrollInProgress) {
+            if (listState.isScrollInProgress) {
+                focusManager.clearFocus()
+            }
+        }
+
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -229,6 +224,7 @@ fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel
                         .fillMaxWidth()
                         .clickable {
                             Log.d("SelectExerciseScreen", "Exercise selected: ${exercise.name}")
+                            focusManager.clearFocus()
                             workoutTrackerViewModel.updateSelectedExercise(exercise)
                             workoutTrackerViewModel.updateExerciseDetailsDialogState(true)
                         }
@@ -245,20 +241,3 @@ fun ExercisesListComponent(exerciseList: List<Exercise>, workoutTrackerViewModel
         }
     }
 }
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview(showBackground = true)
-//@Composable
-//fun SelectExerciseScreenPreview(){
-//    WorkoutTrackerTheme(dynamicColor = false) {
-//        SelectExerciseScreen(
-//            onDismiss = {  },
-//            exerciseListViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
-//            workoutTrackerViewModel = WorkoutTrackerViewModel(),
-//            trainingSessionViewModel = TrainingSessionViewModel(),
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp)
-//        )
-//    }
-//}
