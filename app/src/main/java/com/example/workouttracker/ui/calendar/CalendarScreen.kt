@@ -69,6 +69,7 @@ fun CalendarScreen(
         modifier = modifier
     ) {
         CalendarLayout(
+            currentDate = calendarUiState.currentDate,
             selectedDay = calendarUiState.selectedDay,
             selectedMonth = calendarUiState.selectedMonth,
             selectedYear = calendarUiState.selectedYear,
@@ -88,12 +89,12 @@ fun CalendarScreen(
 
         // DEBUG
         // REMOVE AFTERWARDS
-        Text(text = "Selected day: ${calendarUiState.selectedDay}")
-        Text(text = "Selected month: ${calendarUiState.selectedMonth}")
-        Text(text = "Selected year: ${calendarUiState.selectedYear}")
-        Text(text = "Selected month number of days: ${calendarUiState.selectedMonthNumberOfDays}")
-        Text(text = "Selected month first day: ${calendarUiState.selectedMonthFirstDay} - ${DayOfWeek.of(calendarUiState.selectedMonthFirstDay).name}")
-        Text(text = "Selected month first day index: ${calendarUiState.selectedMonthFirstDayIndex}")
+//        Text(text = "Selected day: ${calendarUiState.selectedDay}")
+//        Text(text = "Selected month: ${calendarUiState.selectedMonth}")
+//        Text(text = "Selected year: ${calendarUiState.selectedYear}")
+//        Text(text = "Selected month number of days: ${calendarUiState.selectedMonthNumberOfDays}")
+//        Text(text = "Selected month first day: ${calendarUiState.selectedMonthFirstDay} - ${DayOfWeek.of(calendarUiState.selectedMonthFirstDay).name}")
+//        Text(text = "Selected month first day index: ${calendarUiState.selectedMonthFirstDayIndex}")
     }
 }
 
@@ -119,6 +120,7 @@ fun SelectedDayText(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarLayout(
+    currentDate: LocalDate,
     selectedDay: Int,
     selectedMonth: Int,
     selectedYear: Int,
@@ -130,11 +132,6 @@ fun CalendarLayout(
     onMonthChangedBackward: () -> Unit
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-//    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
-//    val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(selectedMonth - 1)
-//    val firstDayOfMonth = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(1).dayOfWeek.value
-//    val firstDayOfMonthIndex = monthFirstDay - 1
-    val today = LocalDate.now().dayOfMonth
 
     Column {
         Row(
@@ -189,8 +186,7 @@ fun CalendarLayout(
             items(monthNumberOfDays + monthFirstDayIndex) { index ->
                 if (index >= monthFirstDayIndex) {
                     Box(
-                        modifier = Modifier
-                            .clickable { onDayChanged(index - monthFirstDayIndex + 1) }
+                        modifier = Modifier.clickable { onDayChanged(index - monthFirstDayIndex + 1) }
                     ) {
                         Column {
                             Text(
@@ -205,18 +201,12 @@ fun CalendarLayout(
                                             Log.d("CalendarScreen", "Selected day: $selectedDay")
                                             Modifier.background(
                                                     color = MaterialTheme.colorScheme.primaryContainer,
-                                                    shape = MaterialTheme.shapes.large )
-                                        }
-                                        // Adding highlight to current day
-                                        else if (index - monthFirstDayIndex + 1 == today && selectedMonth == LocalDate.now().monthValue)
-//                                            Modifier.background(
-//                                                    color = MaterialTheme.colorScheme.secondaryContainer,
-//                                                    shape = MaterialTheme.shapes.large )
-                                            Modifier
-                                                .background(
-                                                    color = Color.Transparent,
                                                     shape = MaterialTheme.shapes.large
-                                                )
+                                            )
+                                        }
+                                        // Adding outline to current day
+                                        else if (index - monthFirstDayIndex + 1 == currentDate.dayOfMonth && selectedMonth == currentDate.monthValue && selectedYear == currentDate.year)
+                                            Modifier
                                                 .border(
                                                     width = 3.dp,
                                                     color = MaterialTheme.colorScheme.primaryContainer,

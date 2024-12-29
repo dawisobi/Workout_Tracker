@@ -40,6 +40,10 @@ class CalendarViewModel : ViewModel() {
 
         // Update month details, as they are not updated automatically
         updateMonthDetails()
+
+        // Check if the selected day is greater than the number of days in the selected month
+        // If yes, set the selected day to the last day of the selected month (number of days in the selected month)
+        checkSelectedDay()
     }
 
     fun updateSelectedMonthBackward() {
@@ -52,6 +56,16 @@ class CalendarViewModel : ViewModel() {
 
         // Update month details, as they are not updated automatically
         updateMonthDetails()
+
+        // Check if the selected day is greater than the number of days in the selected month
+        // If yes, set the selected day to the last day of the selected month (number of days in the selected month)
+        checkSelectedDay()
+    }
+
+    private fun checkSelectedDay() {
+        if(_uiState.value.selectedDay > _uiState.value.selectedMonthNumberOfDays) {
+            _uiState.value = _uiState.value.copy(selectedDay = _uiState.value.selectedMonthNumberOfDays)
+        }
     }
 
     private fun updateMonthDetails() {

@@ -56,14 +56,13 @@ fun HomeScreen(
     trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
     exerciseListViewModel: ExerciseViewModel
 ) {
-    LaunchedEffect(key1 = Unit) {
-        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        trainingSessionViewModel.getTrainingSessionsByDate(LocalDate.now().toString())
+//    }
 
-    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
+//    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
-    Log.d("HomeScreen", "Obtaining performed exercises... $performedExercises")
-
+//    Log.d("HomeScreen", "Obtaining performed exercises... $performedExercises")
 
 
     Column(
@@ -90,24 +89,31 @@ fun HomeScreen(
                 )
         )
 
-        if(performedExercises.isEmpty()) {
-            Text(
-                text = "No training sessions for today",
-                color = Color.Gray,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
-            )
-            Log.d("HomeScreen", "No performed exercises found")
-        } else {
-            PerformedExercisesDisplay(
-                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
+        PerformedExercisesDisplay(
+//                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
                 trainingSessionViewModel = trainingSessionViewModel,
-                exerciseListViewModel = exerciseListViewModel
+                exerciseListViewModel = exerciseListViewModel,
+                dateToDisplay = LocalDate.now().toString()
             )
-        }
+
+//        if(performedExercises.isEmpty()) {
+//            Text(
+//                text = "No training sessions for today",
+//                color = Color.Gray,
+//                fontWeight = FontWeight.Bold,
+//                fontStyle = FontStyle.Italic,
+//                style = MaterialTheme.typography.titleMedium,
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+//            )
+//            Log.d("HomeScreen", "No performed exercises found")
+//        } else {
+//            PerformedExercisesDisplay(
+//                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
+//                trainingSessionViewModel = trainingSessionViewModel,
+//                exerciseListViewModel = exerciseListViewModel
+//            )
+//        }
     }
 }
 
