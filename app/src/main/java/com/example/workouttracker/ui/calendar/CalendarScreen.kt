@@ -70,6 +70,7 @@ fun CalendarScreen(
         CalendarLayout(
             selectedDay = calendarUiState.selectedDay,
             selectedMonth = calendarUiState.selectedMonth,
+            selectedYear = calendarUiState.selectedYear,
             onDayChanged = { calendarViewModel.updateSelectedDay(it) },
             onMonthChanged = { calendarViewModel.updateSelectedMonth(it) },
             onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
@@ -117,6 +118,7 @@ fun SelectedDayText(
 fun CalendarLayout(
     selectedDay: Int,
     selectedMonth: Int,
+    selectedYear: Int,
     onDayChanged: (Int) -> Unit,
     onMonthChanged: (Int) -> Unit,
     //onYearChanged: (Int) -> Unit,  //?????????
@@ -134,11 +136,10 @@ fun CalendarLayout(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = { onMonthChangedBackward() }//onMonthChanged((selectedMonth - 1).takeIf { it > 0 } ?: 12) },
+                onClick = { onMonthChangedBackward() }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -146,15 +147,15 @@ fun CalendarLayout(
                 )
             }
             Text(
-                text = Month.of(selectedMonth).name.lowercase(Locale.getDefault())
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                //converts the number of the selected month into a lowercase string with capitalized first letter
+                text = "${Month.of(selectedMonth).name.lowercase(Locale.getDefault())
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} $selectedYear",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
             )
             IconButton(
-                onClick = { onMonthChangedForward() }//onMonthChanged((selectedMonth + 1).takeIf { it < 13 } ?: 1) }
+                onClick = { onMonthChangedForward() }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

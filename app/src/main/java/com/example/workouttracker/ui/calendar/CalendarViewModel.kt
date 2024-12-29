@@ -37,6 +37,8 @@ class CalendarViewModel : ViewModel() {
         } else {
             _uiState.value = _uiState.value.copy(selectedMonth = _uiState.value.selectedMonth + 1)
         }
+
+        // Update month details, as they are not updated automatically
         updateMonthDetails()
     }
 
@@ -47,6 +49,8 @@ class CalendarViewModel : ViewModel() {
         } else {
             _uiState.value = _uiState.value.copy(selectedMonth = _uiState.value.selectedMonth - 1)
         }
+
+        // Update month details, as they are not updated automatically
         updateMonthDetails()
     }
 
