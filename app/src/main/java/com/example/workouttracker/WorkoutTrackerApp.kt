@@ -44,6 +44,7 @@ import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.calendar.CalendarViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 
@@ -65,6 +66,7 @@ fun WorkoutTrackerApp(
 ) {
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
+    // Exercise List view model initialization
     val context = LocalContext.current
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
@@ -85,7 +87,6 @@ fun WorkoutTrackerApp(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
                         workoutTrackerViewModel.resetSearchedExercise()
-//                        workoutTrackerViewModel.updateExerciseListDialogState(true)
                         navController.navigate("SelectExerciseScreen") {
                             launchSingleTop = true
                         }

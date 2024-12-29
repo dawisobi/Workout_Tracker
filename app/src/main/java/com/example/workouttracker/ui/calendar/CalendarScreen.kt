@@ -32,8 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,13 +44,13 @@ import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
-import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
-//import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.Year
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -56,29 +59,37 @@ import java.util.Locale
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
+    trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
 ) {
-
-    var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
-    var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
+    val calendarViewModel: CalendarViewModel = viewModel()
+    val calendarUiState by calendarViewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier
     ) {
         CalendarLayout(
-            selectedDay = selectedDay,
-            selectedMonth = selectedMonth,
-            onDaySelected = { day: Int, month: Int ->
-                selectedDay = day
-                selectedMonth = month
-            },
-            onMonthChanged = { day: Int, month: Int ->
-                selectedDay = day
-                selectedMonth = month
-            }
+            selectedDay = calendarUiState.selectedDay,
+            selectedMonth = calendarUiState.selectedMonth,
+            onDayChanged = { calendarViewModel.updateSelectedDay(it) },
+            onMonthChanged = { calendarViewModel.updateSelectedMonth(it) },
+            onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
+            onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() }
         )
-        SelectedDayText(selectedDay, selectedMonth)
+        SelectedDayText(
+            selectedDay = calendarUiState.selectedDay,
+            selectedMonth = calendarUiState.selectedMonth,
+            selectedYear = calendarUiState.selectedYear
+        )
 //        DayLayout()
+
+        // DEBUG
+        // REMOVE AFTERWARDS
+        Text(text = "Selected day: ${calendarUiState.selectedDay}")
+        Text(text = "Selected month: ${calendarUiState.selectedMonth}")
+        Text(text = "Selected year: ${calendarUiState.selectedYear}")
+        Text(text = "Selected month number of days: ${calendarUiState.selectedMonthNumberOfDays}")
+        Text(text = "Selected month first day: ${calendarUiState.selectedMonthFirstDay} - ${DayOfWeek.of(calendarUiState.selectedMonthFirstDay).name}")
+        Text(text = "Selected month first day index: ${calendarUiState.selectedMonthFirstDayIndex}")
     }
 }
 
@@ -87,19 +98,17 @@ fun CalendarScreen(
 fun SelectedDayText(
     selectedDay: Int,
     selectedMonth: Int,
-    selectedYear: Int = LocalDate.now().year
+    selectedYear: Int
 ){
     val date = getDate(selectedYear, selectedMonth, selectedDay)
-    val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.getDefault())
+    val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM uuuu", Locale.getDefault())
 
     Text(
         text = date.format(formatter),
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                vertical = dimensionResource(R.dimen.padding_medium)
-            )
+            .padding(vertical = dimensionResource(R.dimen.padding_medium))
     )
 }
 
@@ -108,16 +117,18 @@ fun SelectedDayText(
 fun CalendarLayout(
     selectedDay: Int,
     selectedMonth: Int,
-    onDaySelected: (Int, Int) -> Unit,
-    onMonthChanged: (Int, Int) -> Unit,
+    onDayChanged: (Int) -> Unit,
+    onMonthChanged: (Int) -> Unit,
+    //onYearChanged: (Int) -> Unit,  //?????????
+    onMonthChangedForward: () -> Unit,
+    onMonthChangedBackward: () -> Unit
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
+//    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
     val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(selectedMonth - 1)
     val firstDayOfMonth = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(1).dayOfWeek.value
     val firstDayOfMonthIndex = firstDayOfMonth - 1
     val today = LocalDate.now().dayOfMonth
-
 
     Column {
         Row(
@@ -127,9 +138,7 @@ fun CalendarLayout(
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = {
-                    onMonthChanged(selectedDay, (selectedMonth - 1).takeIf { it > 0 } ?: 12)
-                },
+                onClick = { onMonthChangedBackward() }//onMonthChanged((selectedMonth - 1).takeIf { it > 0 } ?: 12) },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -137,14 +146,15 @@ fun CalendarLayout(
                 )
             }
             Text(
-                text = monthName,
+                text = Month.of(selectedMonth).name.lowercase(Locale.getDefault())
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
             )
             IconButton(
-                onClick = { onMonthChanged(selectedDay, (selectedMonth + 1).takeIf { it < 13 } ?: 1) }
+                onClick = { onMonthChangedForward() }//onMonthChanged((selectedMonth + 1).takeIf { it < 13 } ?: 1) }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -179,9 +189,7 @@ fun CalendarLayout(
                 if (index >= firstDayOfMonthIndex) {
                     Box(
                         modifier = Modifier
-                            .clickable {
-                                onDaySelected(index - firstDayOfMonthIndex + 1, selectedMonth)
-                            }
+                            .clickable { onDayChanged(index - firstDayOfMonthIndex + 1) }
                     ) {
                         Column {
                             Text(

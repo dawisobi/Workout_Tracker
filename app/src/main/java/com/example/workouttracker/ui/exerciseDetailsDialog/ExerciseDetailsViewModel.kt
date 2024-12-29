@@ -21,7 +21,6 @@ class ExerciseDetailsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ExerciseDetailsUiState())
     val uiState: StateFlow<ExerciseDetailsUiState> = _uiState.asStateFlow()
 
-    // Does it need its own viewModel?
     var duration by mutableStateOf("0")
         private set
     var distance by mutableStateOf("0")
