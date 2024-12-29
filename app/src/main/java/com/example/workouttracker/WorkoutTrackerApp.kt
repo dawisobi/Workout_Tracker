@@ -93,7 +93,7 @@ fun WorkoutTrackerApp(
                     },
                 )
             }
-                               },
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -112,8 +112,8 @@ fun WorkoutTrackerApp(
                 CalendarScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-//                    exerciseListViewModel = exerciseViewModel,
-                    modifier = screensContentModifier
+                    exerciseListViewModel = exerciseViewModel,
+                    modifier = screensContentModifier,
                 )
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {

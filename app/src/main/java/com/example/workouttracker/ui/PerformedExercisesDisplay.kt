@@ -58,47 +58,24 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PerformedExercisesDisplay(
-//    exerciseList: MutableList<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel,
     dateToDisplay: String
 ) {
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = dateToDisplay) {
         trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
     }
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
     Log.d("PerformedExercisesDisplay", "Obtaining performed exercises for date $dateToDisplay... $performedExercises")
 
-    Column(
-        modifier = Modifier.verticalScroll(state = rememberScrollState())
-    ) {
-        performedExercises.forEach { trainingSession ->
-//        exerciseList.forEach { trainingSession ->
-            Column {
-                Row {
-                    Text(
-                        text = trainingSession.time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                ExerciseCard(
-                    exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
-                    exerciseViewModel = exerciseListViewModel
-                )
-            }
-        }
-        //add space at the bottom of the list so FAB does not block content at the bottom
-        Spacer(Modifier.height(56.dp))
-    }
+    if(performedExercises.isNotEmpty()) {
+        TrainingSessionsList(
+            performedExercises = performedExercises,
+            trainingSessionViewModel = trainingSessionViewModel,
+            exerciseListViewModel = exerciseListViewModel
+        )
+    } else { NoExercisesText() }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -250,4 +227,41 @@ fun NoExercisesText() {
         modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
     )
     Log.d("HomeScreen", "No performed exercises found")
+}
+
+
+@Composable
+fun TrainingSessionsList(
+    performedExercises: List<ExerciseTrainingSession>,
+    trainingSessionViewModel: TrainingSessionViewModel,
+    exerciseListViewModel: ExerciseViewModel
+){
+    Column(
+        modifier = Modifier.verticalScroll(state = rememberScrollState())
+    ) {
+        performedExercises.forEach { trainingSession ->
+            Column {
+                Row {
+                    Text(
+                        text = trainingSession.time,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = dimensionResource(R.dimen.padding_small))
+                    )
+                }
+                ExerciseCard(
+                    exercise = trainingSession,
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                    exerciseViewModel = exerciseListViewModel
+                )
+            }
+        }
+        //add space at the bottom of the list so FAB does not block content at the bottom
+        Spacer(Modifier.height(56.dp))
+    }
 }

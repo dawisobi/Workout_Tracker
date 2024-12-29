@@ -43,8 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
 import java.time.DayOfWeek
@@ -61,9 +63,12 @@ fun CalendarScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
+    exerciseListViewModel: ExerciseViewModel
 ) {
     val calendarViewModel: CalendarViewModel = viewModel()
     val calendarUiState by calendarViewModel.uiState.collectAsState()
+
+    val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
 
     Column(
         modifier = modifier
@@ -85,7 +90,14 @@ fun CalendarScreen(
             selectedMonth = calendarUiState.selectedMonth,
             selectedYear = calendarUiState.selectedYear
         )
-//        DayLayout()
+
+        PerformedExercisesDisplay(
+//                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
+            trainingSessionViewModel = trainingSessionViewModel,
+            exerciseListViewModel = exerciseListViewModel,
+            dateToDisplay = selectedDate.toString()
+        )
+
 
         // DEBUG
         // REMOVE AFTERWARDS
@@ -241,15 +253,15 @@ private fun getDate(year: Int, month: Int, day: Int): LocalDate {
     }
 }
 
-@Preview(showBackground = true)
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun CalendarScreenPreview() {
-    WorkoutTrackerTheme(dynamicColor = false) {
-        CalendarScreen(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Composable
+//fun CalendarScreenPreview() {
+//    WorkoutTrackerTheme(dynamicColor = false) {
+//        CalendarScreen(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp)
+//        )
+//    }
+//}
