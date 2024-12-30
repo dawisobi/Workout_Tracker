@@ -15,6 +15,8 @@ data class CalendarUiState (
     val selectedMonth: Int = LocalDate.now().monthValue,
     val selectedYear: Int = LocalDate.now().year,
 
+    //val isSessionPerformed: Boolean = false,
+
     val selectedMonthNumberOfDays: Int = YearMonth.of(selectedYear, selectedMonth).lengthOfMonth(),
     val selectedMonthFirstDay: Int = LocalDate.of(selectedYear, selectedMonth, 1).dayOfWeek.value,
     val selectedMonthFirstDayIndex: Int = LocalDate.of(selectedYear, selectedMonth, 1).dayOfWeek.value - 1,

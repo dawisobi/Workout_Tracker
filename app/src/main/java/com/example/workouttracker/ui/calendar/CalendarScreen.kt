@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
@@ -72,6 +76,15 @@ fun CalendarScreen(
     Log.d("CalendarScreen", "calendarUiState captured... calendarUiState: selected day: ${calendarUiState.selectedDay}, month: ${calendarUiState.selectedMonth}, year: ${calendarUiState.selectedYear}")
 
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
+//    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
+
+    // Collect training sessions for the month
+//    val trainingSessions = trainingSessionViewModel.trainingSessions.collectAsState(initial = emptyList()).value
+//    val trainingDays = trainingSessions
+//        .filter { it.date.monthValue == calendarUiState.selectedMonth }
+//        .map { it.date.dayOfMonth }
+//        .toSet()
+
     Log.d("CalendarScreen", "Selected date: $selectedDate")
 
     LaunchedEffect(key1 = Unit) {
@@ -92,7 +105,10 @@ fun CalendarScreen(
             monthFirstDayIndex = calendarUiState.selectedMonthFirstDayIndex,
             onDayChanged = { calendarViewModel.updateSelectedDay(it) },
             onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
-            onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() }
+            onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() },
+//            trainingDays = trainingDays,
+//            isTrainingDayCheck = {  }
+
         )
         SelectedDayText(
             selectedDay = calendarUiState.selectedDay,
@@ -150,7 +166,8 @@ fun CalendarLayout(
     monthFirstDayIndex: Int,
     onDayChanged: (Int) -> Unit,
     onMonthChangedForward: () -> Unit,
-    onMonthChangedBackward: () -> Unit
+    onMonthChangedBackward: () -> Unit,
+//    trainingDays: Set<Int>
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
@@ -206,6 +223,8 @@ fun CalendarLayout(
         ) {
             items(monthNumberOfDays + monthFirstDayIndex) { index ->
                 if (index >= monthFirstDayIndex) {
+                    val day = index - monthFirstDayIndex + 1
+
                     Box(
                         modifier = Modifier.clickable { onDayChanged(index - monthFirstDayIndex + 1) }
                     ) {
@@ -215,7 +234,7 @@ fun CalendarLayout(
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(8.dp)
+                                    .padding(6.dp)
                                     .then(
                                         // Adding highlight to selected day
                                         if (index - monthFirstDayIndex + 1 == selectedDay) {
@@ -236,6 +255,9 @@ fun CalendarLayout(
                                         else Modifier
                                     )
                             )
+//                            DotIcon(isVisible = trainingDays.contains(day))
+//                            if (trainingDays.contains(day)) { DotIcon() }
+                            DotIcon()
                             if (index < monthNumberOfDays + monthFirstDayIndex) {
                                 HorizontalDivider(
                                     color = Color.LightGray,
@@ -258,6 +280,24 @@ private fun getDate(year: Int, month: Int, day: Int): LocalDate {
     } catch (e: DateTimeException) {
         LocalDate.of(year, month, 1).withDayOfMonth(
             Month.of(month).length(Year.of(year).isLeap)
+        )
+    }
+}
+
+@Composable
+private fun DotIcon(isVisible: Boolean = true) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = 4.dp).fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(
+                    color = if (isVisible) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    shape = CircleShape
+                )
         )
     }
 }
