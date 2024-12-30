@@ -79,6 +79,7 @@ fun HomeScreen(
                 )
         )
 
+        Log.d("HomeScreen", "Calling PerformedExercisesDisplay() with LocalDate.now()")
         PerformedExercisesDisplay(
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,

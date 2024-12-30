@@ -16,17 +16,19 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
-class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {
+class CalendarTrainingSessionViewModel(
+    private val trainingSessionRepository: TrainingSessionsRepository
+) : ViewModel() {
 
-    private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
-    val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
+    private val _searchResultsCalendar = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
+    val searchResultsCalendar: Flow<List<ExerciseTrainingSession>> = _searchResultsCalendar
 
 
     fun getTrainingSessionsByDate(date: String) {
         Log.d("TrainingSessionViewModel", "Getting training sessions for date: $date")
         viewModelScope.launch {
             trainingSessionRepository.getTrainingSessionsByDate(date).collect { list ->
-                _searchResults.value = list
+                _searchResultsCalendar.value = list
             }
         }
     }
@@ -57,7 +59,7 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
     fun getAllTrainingSessions() {
         viewModelScope.launch {
             trainingSessionRepository.getAllTrainingSessions().collect { list ->
-                _searchResults.value = list
+                _searchResultsCalendar.value = list
             }
         }
     }

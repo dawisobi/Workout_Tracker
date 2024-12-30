@@ -27,10 +27,10 @@ class MainActivity : ComponentActivity() {
         ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
-    private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
-        Log.d("MainActivity", "TrainingSessionViewModel created")
-        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
-    }
+//    private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
+//        Log.d("MainActivity", "TrainingSessionViewModel created")
+//        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WorkoutTrackerTheme(dynamicColor = false) {
-                WorkoutTrackerApp(trainingSessionViewModel = trainingSessionViewModel)
+                WorkoutTrackerApp() //trainingSessionViewModel = trainingSessionViewModel)
                 Log.d("MainActivity", "onCreate() called")
             }
         }

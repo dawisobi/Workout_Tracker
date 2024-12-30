@@ -63,13 +63,17 @@ fun PerformedExercisesDisplay(
     dateToDisplay: String
 ) {
     LaunchedEffect(key1 = dateToDisplay) {
+//        trainingSessionViewModel.setDateAndFetchSessions(dateToDisplay)
         trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
+        Log.d("PerformedExercisesDisplay", "LaunchedEffect triggered for date $dateToDisplay")
     }
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
     Log.d("PerformedExercisesDisplay", "Obtaining performed exercises for date $dateToDisplay... $performedExercises")
 
     if(performedExercises.isNotEmpty()) {
+        Log.d("PerformedExercisesDisplay", "Calling TrainingSessionsList() with $dateToDisplay")
+
         TrainingSessionsList(
             performedExercises = performedExercises,
             trainingSessionViewModel = trainingSessionViewModel,
@@ -226,16 +230,19 @@ fun NoExercisesText() {
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
     )
-    Log.d("HomeScreen", "No performed exercises found")
+    Log.d("NoExercisesText", "No performed exercises found")
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TrainingSessionsList(
     performedExercises: List<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel
 ){
+    Log.d("TrainingSessionsList", "Obtained performed exercises: $performedExercises")
+
     Column(
         modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
@@ -256,7 +263,8 @@ fun TrainingSessionsList(
                 }
                 ExerciseCard(
                     exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession) },
+                        //trainingSessionViewModel.deleteTrainingSession(trainingSession) },
                     exerciseViewModel = exerciseListViewModel
                 )
             }

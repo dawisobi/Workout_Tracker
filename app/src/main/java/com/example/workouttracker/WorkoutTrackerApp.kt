@@ -37,12 +37,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
+import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
+import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import com.example.workouttracker.ui.CalendarTrainingSessionViewModel
 import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
+import com.example.workouttracker.ui.TrainingSessionViewModelFactory
+import com.example.workouttracker.ui.ViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.calendar.CalendarViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
@@ -62,16 +67,24 @@ enum class WorkoutTrackerScreen(
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController(),
     workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel
+    //trainingSessionViewModel: TrainingSessionViewModel
 ) {
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
     // Exercise List view model initialization
     val context = LocalContext.current
+
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
     val exerciseViewModelFactory = remember { ExerciseViewModelFactory(exerciseRepository) }
     val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
+
+    val trainingSessionsDatabase = remember { TrainingSessionsDatabase.getDatabase(context) }
+    val trainingSessionsRepository = remember { TrainingSessionsRepository(trainingSessionsDatabase.trainingSessionDao()) }
+    val trainingSessionViewModelFactory = remember { TrainingSessionViewModelFactory(trainingSessionsRepository) }
+    val trainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory)
+
+    //val calendarTrainingSessionViewModel: CalendarTrainingSessionViewModel = viewModel(factory = TrainingSessionViewModelFactory(trainingSessionsRepository))
 
     val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
 

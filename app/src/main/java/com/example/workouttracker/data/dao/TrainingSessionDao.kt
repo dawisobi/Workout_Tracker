@@ -26,4 +26,6 @@ interface TrainingSessionDao {
     @Delete
     suspend fun deleteTrainingSession(session: ExerciseTrainingSession)
 
+    @Query("DELETE FROM training_sessions WHERE idSession = :id")
+    suspend fun deleteTrainingSessionById(id: Int)
 }

@@ -28,4 +28,8 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
     suspend fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         trainingSessionDao.deleteTrainingSession(trainingSession)
     }
+
+    suspend fun deleteTrainingSessionById(id: Int) {
+        trainingSessionDao.deleteTrainingSessionById(id)
+    }
 }

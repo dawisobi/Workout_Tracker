@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.CalendarTrainingSessionViewModel
 import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
@@ -62,13 +63,14 @@ import java.util.Locale
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel
 ) {
     val calendarViewModel: CalendarViewModel = viewModel()
     val calendarUiState by calendarViewModel.uiState.collectAsState()
 
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
+    Log.d("CalendarScreen", "Selected date: $selectedDate")
 
     Column(
         modifier = modifier
@@ -91,8 +93,8 @@ fun CalendarScreen(
             selectedYear = calendarUiState.selectedYear
         )
 
+        Log.d("CalendarScreen", "Calling PerformedExercisesDisplay() with date $selectedDate")
         PerformedExercisesDisplay(
-//                exerciseList = performedExercises as MutableList<ExerciseTrainingSession>,
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,
             dateToDisplay = selectedDate.toString()
