@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -68,9 +69,15 @@ fun CalendarScreen(
 ) {
     val calendarViewModel: CalendarViewModel = viewModel()
     val calendarUiState by calendarViewModel.uiState.collectAsState()
+    Log.d("CalendarScreen", "calendarUiState captured... calendarUiState: selected day: ${calendarUiState.selectedDay}, month: ${calendarUiState.selectedMonth}, year: ${calendarUiState.selectedYear}")
 
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
     Log.d("CalendarScreen", "Selected date: $selectedDate")
+
+    LaunchedEffect(key1 = Unit) {
+        trainingSessionViewModel.getTrainingSessionsByDate(selectedDate.toString())
+    }
+
 
     Column(
         modifier = modifier

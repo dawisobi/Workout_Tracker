@@ -69,7 +69,7 @@ fun PerformedExercisesDisplay(
     }
 
     val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
-    Log.d("PerformedExercisesDisplay", "Obtaining performed exercises for date $dateToDisplay... $performedExercises")
+    Log.d("PerformedExercisesDisplay", "Obtaining performed exercises for date $dateToDisplay... ${performedExercises.forEach( {it.idSession.toString() }) }")
 
     if(performedExercises.isNotEmpty()) {
         Log.d("PerformedExercisesDisplay", "Calling TrainingSessionsList() with $dateToDisplay")
@@ -77,7 +77,9 @@ fun PerformedExercisesDisplay(
         TrainingSessionsList(
             performedExercises = performedExercises,
             trainingSessionViewModel = trainingSessionViewModel,
-            exerciseListViewModel = exerciseListViewModel
+            exerciseListViewModel = exerciseListViewModel,
+            dateToDisplay = dateToDisplay,
+            //onExerciseDelete = { trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay) }
         )
     } else { NoExercisesText() }
 }
@@ -110,7 +112,7 @@ fun ExerciseCard(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = { isExpanded = !isExpanded },
-                onLongClick = { onExerciseDelete() }
+                //onLongClick = { onExerciseDelete() }
             )
             .animateContentSize(
                 animationSpec = spring(
@@ -239,7 +241,9 @@ fun NoExercisesText() {
 fun TrainingSessionsList(
     performedExercises: List<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
-    exerciseListViewModel: ExerciseViewModel
+    exerciseListViewModel: ExerciseViewModel,
+//    onExerciseDelete: () -> Unit,
+    dateToDisplay: String
 ){
     Log.d("TrainingSessionsList", "Obtained performed exercises: $performedExercises")
 
@@ -263,7 +267,15 @@ fun TrainingSessionsList(
                 }
                 ExerciseCard(
                     exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession) },
+                    onExerciseDelete = {
+                        Log.d("TrainingSessionsList", "Deleting training session with ID: ${trainingSession.idSession}")
+                        trainingSessionViewModel.deleteTrainingSession(trainingSession)
+//                        trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession)
+//                        onExerciseDelete()
+//                        trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
+                        Log.d("TrainingSessionsList", "dateToDisplay after removal of the session: $dateToDisplay")
+                                       },
+                        //trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession) },
                         //trainingSessionViewModel.deleteTrainingSession(trainingSession) },
                     exerciseViewModel = exerciseListViewModel
                 )

@@ -84,7 +84,8 @@ fun WorkoutTrackerApp(
     val trainingSessionViewModelFactory = remember { TrainingSessionViewModelFactory(trainingSessionsRepository) }
     val trainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory)
 
-    //val calendarTrainingSessionViewModel: CalendarTrainingSessionViewModel = viewModel(factory = TrainingSessionViewModelFactory(trainingSessionsRepository))
+    val homeTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "HomeScreen")
+    val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
 
     val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
 
@@ -114,25 +115,27 @@ fun WorkoutTrackerApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = WorkoutTrackerScreen.Home.name) {
+                Log.d("HomeScreen", "Launching the HomeScreen from NavHost")
                 HomeScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
-                    trainingSessionViewModel = trainingSessionViewModel,
+                    trainingSessionViewModel = homeTrainingSessionViewModel,
+//                    trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier
                 )
             }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
+                Log.d("CalendarScreen", "Launching the CalendarScreen from NavHost")
                 CalendarScreen(
                     workoutTrackerViewModel = workoutTrackerViewModel,
-                    trainingSessionViewModel = trainingSessionViewModel,
+                    trainingSessionViewModel = calendarTrainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier,
                 )
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {
-                ProfileScreen(
-                    modifier = screensContentModifier
-                )
+                Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
+                ProfileScreen(modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {
                 Log.d("SelectExerciseScreen", "Launching the SelectExerciseScreen from NavHost")

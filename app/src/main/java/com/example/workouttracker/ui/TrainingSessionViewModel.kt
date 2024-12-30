@@ -26,20 +26,21 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
         Log.d("TrainingSessionViewModel", "Getting training sessions for date: $date")
         viewModelScope.launch {
             trainingSessionRepository.getTrainingSessionsByDate(date).collect { list ->
+                //Log.d("TrainingSessionViewModel", "Collected training sessions: ${list.forEach({ it.idSession.toString() }) }")
                 _searchResults.value = list
             }
         }
     }
 
     fun insertTrainingSession(trainingSession: ExerciseTrainingSession) {
-        Log.d("TrainingSessionViewModel", "Inserting training session: $trainingSession")
+        Log.d("TrainingSessionViewModel", "Inserting training session for exerciseID: ${trainingSession.idExercise}")
         viewModelScope.launch {
             trainingSessionRepository.insertTrainingSession(trainingSession)
         }
     }
 
     fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
-        Log.d("TrainingSessionViewModel", "Deleting training session: $trainingSession")
+        Log.d("TrainingSessionViewModel", "Deleting training session with ID: ${trainingSession.idSession}")
         viewModelScope.launch {
             trainingSessionRepository.deleteTrainingSession(trainingSession)
         }
