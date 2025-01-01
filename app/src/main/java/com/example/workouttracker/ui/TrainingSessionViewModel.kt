@@ -3,9 +3,6 @@ package com.example.workouttracker.ui
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workouttracker.data.model.ExerciseTrainingSession
@@ -16,17 +13,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {
 
-//    private val today = LocalDate.now().toString()
-
     val distinctDates: StateFlow<List<String>> = trainingSessionRepository.getDistinctDates().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-//    val todayTrainingSessions: Flow<List<ExerciseTrainingSession>> = trainingSessionRepository.getTrainingSessionsByDate(today).stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
 
     private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
     val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
@@ -41,15 +32,6 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
             }
         }
     }
-
-//    fun getTodayTrainingSessions() {
-//        Log.d("TrainingSessionViewModel", "Getting today's training sessions")
-//        val today = LocalDate.now().toString()
-//        viewModelScope.launch {
-//            trainingSessionRepository.getTrainingSessionsByDate(today).collect { list ->
-//                _searchResults.value = list
-//            }
-//    }
 
     fun insertTrainingSession(trainingSession: ExerciseTrainingSession) {
         Log.d("TrainingSessionViewModel", "Inserting training session for exerciseID: ${trainingSession.idExercise}")
@@ -71,7 +53,6 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
             trainingSessionRepository.deleteTrainingSessionById(id)
         }
     }
-
 
     //for debug purposes
     fun getAllTrainingSessions() {

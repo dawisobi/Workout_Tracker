@@ -4,7 +4,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
-import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,14 +16,6 @@ class CalendarViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(CalendarUiState())
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
-
-//    fun setSelectedDate(date: LocalDate) {
-//        _uiState.value = _uiState.value.copy(
-//            selectedDay = date.dayOfMonth,
-//            selectedMonth = date.monthValue,
-//            selectedYear = date.year
-//        )
-//    }
 
     fun resetSelectedDay() {
         _uiState.value = _uiState.value.copy(

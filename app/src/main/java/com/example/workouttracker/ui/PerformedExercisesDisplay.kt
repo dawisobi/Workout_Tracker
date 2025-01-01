@@ -40,19 +40,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.workouttracker.R
-import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.model.ExerciseTrainingSession
-import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
-import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,11 +56,9 @@ import java.time.LocalDate
 fun PerformedExercisesDisplay(
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel,
-//    performedExercises: List<ExerciseTrainingSession>,
     dateToDisplay: String
 ) {
     LaunchedEffect(key1 = dateToDisplay) {
-//        trainingSessionViewModel.setDateAndFetchSessions(dateToDisplay)
         trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
         Log.d("PerformedExercisesDisplay", "LaunchedEffect triggered for date $dateToDisplay")
     }
@@ -79,8 +73,6 @@ fun PerformedExercisesDisplay(
             performedExercises = performedExercises,
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,
-            dateToDisplay = dateToDisplay,
-            //onExerciseDelete = { trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay) }
         )
     } else { NoExercisesText() }
 }
@@ -243,8 +235,6 @@ fun TrainingSessionsList(
     performedExercises: List<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel,
-//    onExerciseDelete: () -> Unit,
-    dateToDisplay: String
 ){
     Log.d("TrainingSessionsList", "Obtained performed exercises: $performedExercises")
 
@@ -268,16 +258,7 @@ fun TrainingSessionsList(
                 }
                 ExerciseCard(
                     exercise = trainingSession,
-                    onExerciseDelete = {
-                        Log.d("TrainingSessionsList", "Deleting training session with ID: ${trainingSession.idSession}")
-                        trainingSessionViewModel.deleteTrainingSession(trainingSession)
-//                        trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession)
-//                        onExerciseDelete()
-//                        trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
-                        Log.d("TrainingSessionsList", "dateToDisplay after removal of the session: $dateToDisplay")
-                                       },
-                        //trainingSessionViewModel.deleteTrainingSessionById(trainingSession.idSession) },
-                        //trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
                     exerciseViewModel = exerciseListViewModel
                 )
             }

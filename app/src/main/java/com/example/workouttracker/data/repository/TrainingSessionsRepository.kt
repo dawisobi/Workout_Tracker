@@ -5,7 +5,6 @@ import com.example.workouttracker.data.dao.TrainingSessionDao
 import com.example.workouttracker.data.model.ExerciseTrainingSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class TrainingSessionsRepository(private val trainingSessionDao: TrainingSessionDao) {
 
@@ -43,10 +42,5 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         Log.d("TrainingSessionsRepository", "getDistinctDates() called")
         return trainingSessionDao.getDistinctDates()
     }
-
-//    fun getTodayTrainingSessions(date: String): Flow<List<ExerciseTrainingSession>> {
-//        Log.d("TrainingSessionsRepository", "getTodayTrainingSessions() called")
-//        return trainingSessionDao.getTodayTrainingSessions()
-//    }
 
 }

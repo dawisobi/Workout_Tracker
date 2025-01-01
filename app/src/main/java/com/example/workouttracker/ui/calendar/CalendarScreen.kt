@@ -29,41 +29,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
-import com.example.workouttracker.ui.CalendarTrainingSessionViewModel
 import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
-import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import java.time.DateTimeException
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.Year
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -71,7 +54,6 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
-    //workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel
 ) {
@@ -81,20 +63,13 @@ fun CalendarScreen(
 
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
     Log.d("CalendarScreen", "selectedDate: $selectedDate")
-//    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
     val dates by trainingSessionViewModel.distinctDates.collectAsState()
-    // Preprocess the list into a Set<LocalDate>
-    val trainingDaysSet = processDateList(dates) //Check the logs to make sure its not creating infinite loops
 
+    // Preprocess the list into a Set<LocalDate>
+    val trainingDaysSet = processDateList(dates)
 
     Log.d("CalendarScreen", "Selected date: $selectedDate")
-
-
-//    LaunchedEffect(key1 = Unit) {
-//        trainingSessionViewModel.getTrainingSessionsByDate(selectedDate.toString())
-//    }
-
 
     Column(
         modifier = modifier
@@ -112,33 +87,14 @@ fun CalendarScreen(
             onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() },
             trainingDays = trainingDaysSet,
             onDateReset = { calendarViewModel.resetSelectedDay() }
-//            trainingDays = trainingDays,
-//            isTrainingDayCheck = {  }
-
         )
-//        SelectedDayText(
-//            selectedDay = calendarUiState.selectedDay,
-//            selectedMonth = calendarUiState.selectedMonth,
-//            selectedYear = calendarUiState.selectedYear
-//        )
 
         Log.d("CalendarScreen", "Calling PerformedExercisesDisplay() with date $selectedDate")
         PerformedExercisesDisplay(
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,
-            //performedExercises = trainingSessionViewModel.searchResults.collectAsState(initial = emptyList()).value,
             dateToDisplay = selectedDate.toString()
         )
-
-
-        // DEBUG
-        // REMOVE AFTERWARDS
-//        Text(text = "Selected day: ${calendarUiState.selectedDay}")
-//        Text(text = "Selected month: ${calendarUiState.selectedMonth}")
-//        Text(text = "Selected year: ${calendarUiState.selectedYear}")
-//        Text(text = "Selected month number of days: ${calendarUiState.selectedMonthNumberOfDays}")
-//        Text(text = "Selected month first day: ${calendarUiState.selectedMonthFirstDay} - ${DayOfWeek.of(calendarUiState.selectedMonthFirstDay).name}")
-//        Text(text = "Selected month first day index: ${calendarUiState.selectedMonthFirstDayIndex}")
     }
 }
 
@@ -155,9 +111,7 @@ fun SelectedDayText(
     Text(
         text = date.format(formatter),
         style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier
-//            .fillMaxWidth()
-            .padding(vertical = dimensionResource(R.dimen.padding_small))
+        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))
     )
 }
 
@@ -174,7 +128,6 @@ fun CalendarLayout(
     onDayChanged: (Int) -> Unit,
     onMonthChangedForward: () -> Unit,
     onMonthChangedBackward: () -> Unit,
-//    trainingDays: List<String>,
     trainingDays: Set<LocalDate>,
     onDateReset: () -> Unit
 ) {
@@ -345,16 +298,3 @@ private fun isTrainingDay(year: Int, month: Int, day: Int, dateSet: Set<LocalDat
     val targetDate = LocalDate.of(year, month, day)
     return targetDate in dateSet
 }
-
-//@Preview(showBackground = true)
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun CalendarScreenPreview() {
-//    WorkoutTrackerTheme(dynamicColor = false) {
-//        CalendarScreen(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp)
-//        )
-//    }
-//}
