@@ -45,6 +45,7 @@ import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
@@ -78,18 +79,17 @@ fun CalendarScreen(
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
 //    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
-    // Collect training sessions for the month
-//    val trainingSessions = trainingSessionViewModel.trainingSessions.collectAsState(initial = emptyList()).value
-//    val trainingDays = trainingSessions
-//        .filter { it.date.monthValue == calendarUiState.selectedMonth }
-//        .map { it.date.dayOfMonth }
-//        .toSet()
+    val dates by trainingSessionViewModel.distinctDates.collectAsState()
+    // Preprocess the list into a Set<LocalDate>
+    val trainingDaysSet = processDateList(dates)
+
 
     Log.d("CalendarScreen", "Selected date: $selectedDate")
 
-    LaunchedEffect(key1 = Unit) {
-        trainingSessionViewModel.getTrainingSessionsByDate(selectedDate.toString())
-    }
+
+//    LaunchedEffect(key1 = Unit) {
+//        trainingSessionViewModel.getTrainingSessionsByDate(selectedDate.toString())
+//    }
 
 
     Column(
@@ -106,6 +106,7 @@ fun CalendarScreen(
             onDayChanged = { calendarViewModel.updateSelectedDay(it) },
             onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
             onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() },
+            trainingDays = trainingDaysSet,
 //            trainingDays = trainingDays,
 //            isTrainingDayCheck = {  }
 
@@ -167,7 +168,8 @@ fun CalendarLayout(
     onDayChanged: (Int) -> Unit,
     onMonthChangedForward: () -> Unit,
     onMonthChangedBackward: () -> Unit,
-//    trainingDays: Set<Int>
+//    trainingDays: List<String>,
+    trainingDays: Set<LocalDate>
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
@@ -255,9 +257,7 @@ fun CalendarLayout(
                                         else Modifier
                                     )
                             )
-//                            DotIcon(isVisible = trainingDays.contains(day))
-//                            if (trainingDays.contains(day)) { DotIcon() }
-                            DotIcon()
+                            DotIcon(isVisible = isTrainingDay(selectedYear, selectedMonth, day, trainingDays))
                             if (index < monthNumberOfDays + monthFirstDayIndex) {
                                 HorizontalDivider(
                                     color = Color.LightGray,
@@ -300,6 +300,23 @@ private fun DotIcon(isVisible: Boolean = true) {
                 )
         )
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun processDateList(dateList: List<String>): Set<LocalDate> {
+    return dateList.mapNotNull { dateString ->
+        try {
+            LocalDate.parse(dateString)
+        } catch (e: Exception) {
+            null // Skip invalid or unparsable dates
+        }
+    }.toSet()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun isTrainingDay(year: Int, month: Int, day: Int, dateSet: Set<LocalDate>): Boolean {
+    val targetDate = LocalDate.of(year, month, day)
+    return targetDate in dateSet
 }
 
 //@Preview(showBackground = true)

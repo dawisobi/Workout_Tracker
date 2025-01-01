@@ -37,4 +37,11 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         Log.d("TrainingSessionsRepository", "deleteTrainingSessionById() called with id: $id")
         trainingSessionDao.deleteTrainingSessionById(id)
     }
+
+
+    fun getDistinctDates(): Flow<List<String>> {
+        Log.d("TrainingSessionsRepository", "getDistinctDates() called")
+        return trainingSessionDao.getDistinctDates()
+    }
+
 }

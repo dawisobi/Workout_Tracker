@@ -112,7 +112,7 @@ fun ExerciseCard(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = { isExpanded = !isExpanded },
-                //onLongClick = { onExerciseDelete() }
+//                onLongClick = { onExerciseDelete() }
             )
             .animateContentSize(
                 animationSpec = spring(

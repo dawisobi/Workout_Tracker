@@ -12,11 +12,17 @@ import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {
+
+    val distinctDates: StateFlow<List<String>> = trainingSessionRepository.getDistinctDates().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
 
     private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
     val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults

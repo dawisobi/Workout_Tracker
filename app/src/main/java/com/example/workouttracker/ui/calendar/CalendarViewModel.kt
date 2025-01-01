@@ -89,7 +89,6 @@ class CalendarViewModel : ViewModel() {
         Log.d("CalendarViewModel", "Month details updated to selectedMonthNumberOfDays: ${_uiState.value.selectedMonthNumberOfDays}, selectedMonthFirstDay: ${_uiState.value.selectedMonthFirstDay}, selectedMonthFirstDayIndex: ${_uiState.value.selectedMonthFirstDayIndex}")
     }
 
-//    private fun updateIsSessionPerformed(newState: Boolean) {
-//        _uiState.value = _uiState.value.copy(isSessionPerformed = newState)
-//    }
+
+
 }
