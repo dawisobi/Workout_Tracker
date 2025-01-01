@@ -52,8 +52,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel = viewModel(),
+    //workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel
 ) {
     Column(
@@ -83,6 +83,7 @@ fun HomeScreen(
         PerformedExercisesDisplay(
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,
+            //performedExercises = trainingSessionViewModel.todayTrainingSessions.collectAsState(initial = emptyList()).value,
             dateToDisplay = LocalDate.now().toString()
         )
     }

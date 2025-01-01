@@ -60,6 +60,7 @@ import java.time.LocalDate
 fun PerformedExercisesDisplay(
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel,
+//    performedExercises: List<ExerciseTrainingSession>,
     dateToDisplay: String
 ) {
     LaunchedEffect(key1 = dateToDisplay) {
@@ -112,7 +113,7 @@ fun ExerciseCard(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = { isExpanded = !isExpanded },
-//                onLongClick = { onExerciseDelete() }
+                onLongClick = { onExerciseDelete() }
             )
             .animateContentSize(
                 animationSpec = spring(

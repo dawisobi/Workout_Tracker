@@ -21,7 +21,11 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSessionsRepository) : ViewModel() {
 
+//    private val today = LocalDate.now().toString()
+
     val distinctDates: StateFlow<List<String>> = trainingSessionRepository.getDistinctDates().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+//    val todayTrainingSessions: Flow<List<ExerciseTrainingSession>> = trainingSessionRepository.getTrainingSessionsByDate(today).stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
     private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
@@ -37,6 +41,15 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
             }
         }
     }
+
+//    fun getTodayTrainingSessions() {
+//        Log.d("TrainingSessionViewModel", "Getting today's training sessions")
+//        val today = LocalDate.now().toString()
+//        viewModelScope.launch {
+//            trainingSessionRepository.getTrainingSessionsByDate(today).collect { list ->
+//                _searchResults.value = list
+//            }
+//    }
 
     fun insertTrainingSession(trainingSession: ExerciseTrainingSession) {
         Log.d("TrainingSessionViewModel", "Inserting training session for exerciseID: ${trainingSession.idExercise}")

@@ -65,14 +65,17 @@ enum class WorkoutTrackerScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutTrackerApp(
-    navController: NavHostController = rememberNavController(),
-    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
+//    navController: NavHostController = rememberNavController(),
+//    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
     //trainingSessionViewModel: TrainingSessionViewModel
 ) {
+    val navController: NavHostController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
     // Exercise List view model initialization
     val context = LocalContext.current
+
+    val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
 
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
@@ -88,6 +91,7 @@ fun WorkoutTrackerApp(
     val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
 
     val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
+
 
     Scaffold(
         bottomBar = {
@@ -117,9 +121,9 @@ fun WorkoutTrackerApp(
             composable(route = WorkoutTrackerScreen.Home.name) {
                 Log.d("HomeScreen", "Launching the HomeScreen from NavHost")
                 HomeScreen(
-                    workoutTrackerViewModel = workoutTrackerViewModel,
-                    trainingSessionViewModel = homeTrainingSessionViewModel,
-//                    trainingSessionViewModel = trainingSessionViewModel,
+                    //workoutTrackerViewModel = workoutTrackerViewModel,
+//                    trainingSessionViewModel = homeTrainingSessionViewModel,
+                    trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier
                 )
@@ -127,8 +131,9 @@ fun WorkoutTrackerApp(
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 Log.d("CalendarScreen", "Launching the CalendarScreen from NavHost")
                 CalendarScreen(
-                    workoutTrackerViewModel = workoutTrackerViewModel,
-                    trainingSessionViewModel = calendarTrainingSessionViewModel,
+                    //workoutTrackerViewModel = workoutTrackerViewModel,
+//                    trainingSessionViewModel = calendarTrainingSessionViewModel,
+                    trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier,
                 )

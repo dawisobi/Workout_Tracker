@@ -32,4 +32,5 @@ interface TrainingSessionDao {
 
     @Query("SELECT DISTINCT date FROM training_sessions ORDER BY date DESC")
     fun getDistinctDates(): Flow<List<String>>
+
 }

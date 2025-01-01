@@ -44,4 +44,9 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         return trainingSessionDao.getDistinctDates()
     }
 
+//    fun getTodayTrainingSessions(date: String): Flow<List<ExerciseTrainingSession>> {
+//        Log.d("TrainingSessionsRepository", "getTodayTrainingSessions() called")
+//        return trainingSessionDao.getTodayTrainingSessions()
+//    }
+
 }

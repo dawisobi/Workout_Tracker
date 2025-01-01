@@ -68,7 +68,7 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
-    workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
+    //workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel
 ) {
@@ -77,11 +77,12 @@ fun CalendarScreen(
     Log.d("CalendarScreen", "calendarUiState captured... calendarUiState: selected day: ${calendarUiState.selectedDay}, month: ${calendarUiState.selectedMonth}, year: ${calendarUiState.selectedYear}")
 
     val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
+    Log.d("CalendarScreen", "selectedDate: $selectedDate")
 //    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
 
     val dates by trainingSessionViewModel.distinctDates.collectAsState()
     // Preprocess the list into a Set<LocalDate>
-    val trainingDaysSet = processDateList(dates)
+    val trainingDaysSet = processDateList(dates) //Check the logs to make sure its not creating infinite loops
 
 
     Log.d("CalendarScreen", "Selected date: $selectedDate")
@@ -121,6 +122,7 @@ fun CalendarScreen(
         PerformedExercisesDisplay(
             trainingSessionViewModel = trainingSessionViewModel,
             exerciseListViewModel = exerciseListViewModel,
+            //performedExercises = trainingSessionViewModel.searchResults.collectAsState(initial = emptyList()).value,
             dateToDisplay = selectedDate.toString()
         )
 
@@ -304,6 +306,7 @@ private fun DotIcon(isVisible: Boolean = true) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 private fun processDateList(dateList: List<String>): Set<LocalDate> {
+    Log.d("CalendarScreen", "Processing training days list: $dateList")
     return dateList.mapNotNull { dateString ->
         try {
             LocalDate.parse(dateString)
