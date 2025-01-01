@@ -1,4 +1,4 @@
-package com.example.workouttracker.model
+package com.example.workouttracker.data.repository
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-class FileRepository {
+class FileDownloadRepository {
     suspend fun downloadFile(url: String, destination: File): Boolean {
         try {
 
@@ -44,10 +44,6 @@ class FileRepository {
                 }
             }
 
-//            val connection = withContext(Dispatchers.IO) {
-//                URL(url).openConnection()
-//            } as HttpURLConnection
-//            val connection = URL(url).openConnection() as HttpURLConnection
             connection?.inputStream?.use { input ->
                 withContext(Dispatchers.IO) {
                     destination.outputStream().use { output ->
@@ -63,8 +59,6 @@ class FileRepository {
                     }
                 }
             }
-
-
 
             return true
         } catch (e: Exception) {

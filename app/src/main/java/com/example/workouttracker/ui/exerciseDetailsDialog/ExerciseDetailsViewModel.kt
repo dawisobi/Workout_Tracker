@@ -1,10 +1,14 @@
-package com.example.workouttracker.ui
+package com.example.workouttracker.ui.exerciseDetailsDialog
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import com.example.workouttracker.model.SetDetails
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import com.example.workouttracker.data.model.SetDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,11 +16,15 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ExerciseDetailsViewModel {
+class ExerciseDetailsViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExerciseDetailsUiState())
     val uiState: StateFlow<ExerciseDetailsUiState> = _uiState.asStateFlow()
 
+    var duration by mutableStateOf("0")
+        private set
+    var distance by mutableStateOf("0")
+        private set
 
     var setsRepsList = mutableStateListOf<String>("0")
         private set
@@ -50,6 +58,12 @@ class ExerciseDetailsViewModel {
         _uiState.update { currentState -> currentState.copy(setsDetails = currentState.setsDetails.also { it[index] = newSetDetails }) }
     }
 
+    fun updateSetsDetailsOnConfirm() {
+        _uiState.value.setsDetails.forEachIndexed { index, setDetails ->
+            updateSpecificSetDetails(index, SetDetails(setsRepsList[index].toInt(), setsWeightList[index].toDouble()))
+        }
+    }
+
     fun addSet() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -72,6 +86,22 @@ class ExerciseDetailsViewModel {
 
         Log.d("ExerciseDetailsViewModel", "Remove set button clicked")
         Log.d("ExerciseDetailsViewModel", "setsCount: ${_uiState.value.setsCount}, setsDetails: ${_uiState.value.setsDetails}")
+    }
+
+    fun convertRepsToString(setsDetailsList: List<SetDetails>): String {
+        return setsDetailsList.joinToString(",") { it.repsCount.toString() }
+    }
+
+    fun convertWeightToString(setsDetailsList: List<SetDetails>): String {
+        return setsDetailsList.joinToString(",") { it.weight.toString() }
+    }
+
+    fun updateDistance(newDistance: String) {
+        distance = newDistance
+    }
+
+    fun updateDuration(newDuration: String) {
+        duration = newDuration
     }
 
 }
