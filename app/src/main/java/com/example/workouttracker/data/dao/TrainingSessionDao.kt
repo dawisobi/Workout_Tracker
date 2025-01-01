@@ -26,4 +26,10 @@ interface TrainingSessionDao {
     @Delete
     suspend fun deleteTrainingSession(session: ExerciseTrainingSession)
 
+    @Query("DELETE FROM training_sessions WHERE idSession = :id")
+    suspend fun deleteTrainingSessionById(id: Int)
+
+    @Query("SELECT DISTINCT date FROM training_sessions ORDER BY date DESC")
+    fun getDistinctDates(): Flow<List<String>>
+
 }

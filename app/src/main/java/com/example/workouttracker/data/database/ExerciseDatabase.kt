@@ -18,6 +18,7 @@ abstract class ExerciseDatabase : RoomDatabase() {
         private var Instance: ExerciseDatabase? = null
 
         fun getDatabase(context: Context): ExerciseDatabase {
+            Log.d("ExerciseDatabase", "getDatabase() called")
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context.applicationContext, ExerciseDatabase::class.java, "exercise_database")
                     .build()

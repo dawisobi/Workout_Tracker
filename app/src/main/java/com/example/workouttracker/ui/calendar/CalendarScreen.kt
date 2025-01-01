@@ -4,19 +4,25 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,25 +31,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
-import com.example.workouttracker.data.datasource.CalendarMonthsDataSource
+import com.example.workouttracker.ui.PerformedExercisesDisplay
 import com.example.workouttracker.ui.TrainingSessionViewModel
-import com.example.workouttracker.ui.WorkoutTrackerViewModel
-import com.example.workouttracker.ui.exerciseDetailsDialog.ExerciseDetailsDialog
-import com.example.workouttracker.ui.exerciseListDialog.AddExerciseDialog
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.Month
@@ -55,50 +54,46 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
-    workoutTrackerViewModel: WorkoutTrackerViewModel = viewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel = viewModel()
+    trainingSessionViewModel: TrainingSessionViewModel,
+    exerciseListViewModel: ExerciseViewModel
 ) {
-    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
-    val showExerciseListDialog = workoutTrackerUiState.showExerciseListDialog
-    val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
+    val calendarViewModel: CalendarViewModel = viewModel()
+    val calendarUiState by calendarViewModel.uiState.collectAsState()
+    Log.d("CalendarScreen", "calendarUiState captured... calendarUiState: selected day: ${calendarUiState.selectedDay}, month: ${calendarUiState.selectedMonth}, year: ${calendarUiState.selectedYear}")
 
-    var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
-    var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
+    val selectedDate = getDate(calendarUiState.selectedYear, calendarUiState.selectedMonth, calendarUiState.selectedDay)
+    Log.d("CalendarScreen", "selectedDate: $selectedDate")
+
+    val dates by trainingSessionViewModel.distinctDates.collectAsState()
+
+    // Preprocess the list into a Set<LocalDate>
+    val trainingDaysSet = processDateList(dates)
+
+    Log.d("CalendarScreen", "Selected date: $selectedDate")
 
     Column(
         modifier = modifier
     ) {
         CalendarLayout(
-            selectedDay = selectedDay,
-            selectedMonth = selectedMonth,
-            onDaySelected = { day: Int, month: Int ->
-                selectedDay = day
-                selectedMonth = month
-            },
-            onMonthChanged = { day: Int, month: Int ->
-                selectedDay = day
-                selectedMonth = month
-            }
+            currentDate = calendarUiState.currentDate,
+            selectedDay = calendarUiState.selectedDay,
+            selectedMonth = calendarUiState.selectedMonth,
+            selectedYear = calendarUiState.selectedYear,
+            monthNumberOfDays = calendarUiState.selectedMonthNumberOfDays,
+            monthFirstDay = calendarUiState.selectedMonthFirstDay,
+            monthFirstDayIndex = calendarUiState.selectedMonthFirstDayIndex,
+            onDayChanged = { calendarViewModel.updateSelectedDay(it) },
+            onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
+            onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() },
+            trainingDays = trainingDaysSet,
+            onDateReset = { calendarViewModel.resetSelectedDay() }
         )
-        SelectedDayText(selectedDay, selectedMonth)
-//        DayLayout()
-    }
 
-    if(showExerciseListDialog) {
-        AddExerciseDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseListDialogState(false) },
-            workoutTrackerViewModel = workoutTrackerViewModel
-        )
-    }
-    if(showExerciseDetailsDialog) {
-        ExerciseDetailsDialog(
-            onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
-            exercise = workoutTrackerUiState.selectedExercise!!,
-            onConfirmClick = {
-                // Hide both dialogs on confirm
-                workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
-                workoutTrackerViewModel.updateExerciseListDialogState(false) },
-            trainingSessionViewModel = trainingSessionViewModel
+        Log.d("CalendarScreen", "Calling PerformedExercisesDisplay() with date $selectedDate")
+        PerformedExercisesDisplay(
+            trainingSessionViewModel = trainingSessionViewModel,
+            exerciseListViewModel = exerciseListViewModel,
+            dateToDisplay = selectedDate.toString()
         )
     }
 }
@@ -108,49 +103,44 @@ fun CalendarScreen(
 fun SelectedDayText(
     selectedDay: Int,
     selectedMonth: Int,
-    selectedYear: Int = LocalDate.now().year
+    selectedYear: Int
 ){
     val date = getDate(selectedYear, selectedMonth, selectedDay)
-    val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM", Locale.getDefault())
+    val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM uuuu", Locale.getDefault())
 
     Text(
         text = date.format(formatter),
         style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                vertical = dimensionResource(R.dimen.padding_medium)
-            )
+        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarLayout(
+    currentDate: LocalDate,
     selectedDay: Int,
     selectedMonth: Int,
-    onDaySelected: (Int, Int) -> Unit,
-    onMonthChanged: (Int, Int) -> Unit,
+    selectedYear: Int,
+    monthNumberOfDays: Int,
+    monthFirstDay: Int,
+    monthFirstDayIndex: Int,
+    onDayChanged: (Int) -> Unit,
+    onMonthChangedForward: () -> Unit,
+    onMonthChangedBackward: () -> Unit,
+    trainingDays: Set<LocalDate>,
+    onDateReset: () -> Unit
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val monthName = CalendarMonthsDataSource.calendarMonths.keys.elementAt(selectedMonth - 1)
-    val numberOfDays = CalendarMonthsDataSource.calendarMonths.values.elementAt(selectedMonth - 1)
-    val firstDayOfMonth = LocalDate.now().withMonth(selectedMonth).withDayOfMonth(1).dayOfWeek.value
-    val firstDayOfMonthIndex = firstDayOfMonth - 1
-    val today = LocalDate.now().dayOfMonth
-
 
     Column {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = {
-                    onMonthChanged(selectedDay, (selectedMonth - 1).takeIf { it > 0 } ?: 12)
-                },
+                onClick = { onMonthChangedBackward() }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -158,14 +148,15 @@ fun CalendarLayout(
                 )
             }
             Text(
-                text = monthName,
+                //converts the number of the selected month into a lowercase string with capitalized first letter
+                text = "${Month.of(selectedMonth).name.lowercase(Locale.getDefault())
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} $selectedYear",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
             )
             IconButton(
-                onClick = { onMonthChanged(selectedDay, (selectedMonth + 1).takeIf { it < 13 } ?: 1) }
+                onClick = { onMonthChangedForward() }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -176,9 +167,7 @@ fun CalendarLayout(
 
         // Day headers row
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             weekDays.forEach { day ->
@@ -186,9 +175,7 @@ fun CalendarLayout(
                     modifier = Modifier.weight(1f), // Equal weight for each day
                     contentAlignment = Alignment.Center // Center content in the Box
                 ) {
-                    Text(
-                        text = day,
-                        fontWeight = FontWeight.Bold,)
+                    Text(text = day, fontWeight = FontWeight.Bold,)
                 }
             }
         }
@@ -196,51 +183,69 @@ fun CalendarLayout(
         LazyVerticalGrid(
             columns = GridCells.Fixed(7)
         ) {
-            items(numberOfDays + firstDayOfMonthIndex) { index ->
-                if (index >= firstDayOfMonthIndex) {
+            items(monthNumberOfDays + monthFirstDayIndex) { index ->
+                if (index >= monthFirstDayIndex) {
+                    val day = index - monthFirstDayIndex + 1
+
                     Box(
-                        modifier = Modifier
-                            .clickable {
-                                onDaySelected(index - firstDayOfMonthIndex + 1, selectedMonth)
-                            }
+                        modifier = Modifier.clickable { onDayChanged(index - monthFirstDayIndex + 1) }
                     ) {
                         Column {
                             Text(
-                                text = (index - firstDayOfMonthIndex + 1).toString(),
+                                text = (index - monthFirstDayIndex + 1).toString(),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(8.dp)
+                                    .padding(6.dp)
                                     .then(
-//                                      Adding highlight to selected day
-                                        if (index - firstDayOfMonthIndex + 1 == selectedDay) {
+                                        // Adding highlight to selected day
+                                        if (index - monthFirstDayIndex + 1 == selectedDay) {
                                             Log.d("CalendarScreen", "Selected day: $selectedDay")
+                                            Modifier.background(
+                                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                                    shape = MaterialTheme.shapes.large
+                                            )
+                                        }
+                                        // Adding outline to current day
+                                        else if (index - monthFirstDayIndex + 1 == currentDate.dayOfMonth && selectedMonth == currentDate.monthValue && selectedYear == currentDate.year)
                                             Modifier
-                                                .background(
+                                                .border(
+                                                    width = 3.dp,
                                                     color = MaterialTheme.colorScheme.primaryContainer,
                                                     shape = MaterialTheme.shapes.large
                                                 )
-                                        }
-//                                      Adding highlight to current day
-                                        else if (index - firstDayOfMonthIndex + 1 == today && selectedMonth == LocalDate.now().monthValue)
-                                            Modifier
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                                    shape = MaterialTheme.shapes.large
-                                            )
                                         else Modifier
                                     )
                             )
-                            if (index < numberOfDays + firstDayOfMonthIndex) {
+                            DotIcon(isVisible = isTrainingDay(selectedYear, selectedMonth, day, trainingDays))
+
+                            if (index < monthNumberOfDays + monthFirstDayIndex) {
                                 HorizontalDivider(
                                     color = Color.LightGray,
                                     thickness = 1.dp,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                             }
                         }
                     }
+                }
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,//Top,
+            modifier = Modifier.fillMaxWidth()//.padding(vertical = dimensionResource(R.dimen.padding_small))
+        ) {
+            SelectedDayText(selectedDay = selectedDay, selectedMonth = selectedMonth, selectedYear = selectedYear)
+
+            if(currentDate != getDate(selectedYear, selectedMonth, selectedDay)) {
+                Button(
+                    onClick = { onDateReset() },
+                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 16.dp),
+                    modifier = Modifier.height(30.dp)
+                ) {
+                    Text(text = "Today", textAlign = TextAlign.Center)
                 }
             }
         }
@@ -258,15 +263,38 @@ private fun getDate(year: Int, month: Int, day: Int): LocalDate {
     }
 }
 
-@Preview(showBackground = true)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarScreenPreview() {
-    WorkoutTrackerTheme(dynamicColor = false) {
-        CalendarScreen(
+private fun DotIcon(isVisible: Boolean = true) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = 4.dp).fillMaxWidth()
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+                .size(8.dp)
+                .background(
+                    color = if (isVisible) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    shape = CircleShape
+                )
         )
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun processDateList(dateList: List<String>): Set<LocalDate> {
+    Log.d("CalendarScreen", "Processing training days list: $dateList")
+    return dateList.mapNotNull { dateString ->
+        try {
+            LocalDate.parse(dateString)
+        } catch (e: Exception) {
+            null // Skip invalid or unparsable dates
+        }
+    }.toSet()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun isTrainingDay(year: Int, month: Int, day: Int, dateSet: Set<LocalDate>): Boolean {
+    val targetDate = LocalDate.of(year, month, day)
+    return targetDate in dateSet
 }

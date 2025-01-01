@@ -4,12 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(
-    tableName = "training_sessions",
-    //primaryKeys = ["idSession"],
-//    foreignKeys = [ForeignKey(entity = Exercise::class, parentColumns = ["exerciseId"], childColumns = ["idExercise"], onDelete = ForeignKey.CASCADE)],
-//    indices = [Index("idExercise")]
-)
+@Entity(tableName = "training_sessions")
 class ExerciseTrainingSession(
     @PrimaryKey(autoGenerate = true) val idSession: Int = 0,
     val idExercise: Int,

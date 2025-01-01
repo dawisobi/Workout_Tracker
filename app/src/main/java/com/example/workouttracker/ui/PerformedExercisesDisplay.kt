@@ -1,6 +1,8 @@
 package com.example.workouttracker.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -30,65 +32,58 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.workouttracker.R
-import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.model.ExerciseTrainingSession
-import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PerformedExercisesDisplay(
-    exerciseList: MutableList<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
+    exerciseListViewModel: ExerciseViewModel,
+    dateToDisplay: String
 ) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ){
-        exerciseList.forEach { trainingSession ->
-            Column {
-                Row {
-                    Text(
-                        text = trainingSession.time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                ExerciseCard(
-                    exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) }
-                )
-            }
-        }
-        //add space at the bottom of the list so FAB does not block content at the bottom
-        Spacer(Modifier.height(56.dp))
+    LaunchedEffect(key1 = dateToDisplay) {
+        trainingSessionViewModel.getTrainingSessionsByDate(dateToDisplay)
+        Log.d("PerformedExercisesDisplay", "LaunchedEffect triggered for date $dateToDisplay")
     }
+
+    val performedExercises by trainingSessionViewModel.searchResults.collectAsState(initial = emptyList())
+    Log.d("PerformedExercisesDisplay", "Obtaining performed exercises for date $dateToDisplay... ${performedExercises.forEach( {it.idSession.toString() }) }")
+
+    if(performedExercises.isNotEmpty()) {
+        Log.d("PerformedExercisesDisplay", "Calling TrainingSessionsList() with $dateToDisplay")
+
+        TrainingSessionsList(
+            performedExercises = performedExercises,
+            trainingSessionViewModel = trainingSessionViewModel,
+            exerciseListViewModel = exerciseListViewModel,
+        )
+    } else { NoExercisesText() }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExerciseCard(
     exercise: ExerciseTrainingSession,
-    exerciseViewModel: ExerciseViewModel = ExerciseViewModel(ExerciseRepository(ExerciseDatabase.getDatabase(LocalContext.current).exerciseDao())),
+    exerciseViewModel: ExerciseViewModel,
     onExerciseDelete: () -> Unit
-){
+) {
     var exerciseData by remember { mutableStateOf<Exercise?>(null) }
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -156,7 +151,7 @@ fun ExerciseCard(
 @Composable
 fun ExerciseTypeGym(
     exercise: ExerciseTrainingSession
-){
+) {
     exercise.sets?.toInt()?.let {
 
         val repsList = exercise.reps?.split(",")
@@ -215,5 +210,60 @@ fun ExerciseTypeAthletics( exercise: ExerciseTrainingSession ){
         ){
             Text(text = "${exercise.duration} min")
         }
+    }
+}
+
+
+@Composable
+fun NoExercisesText() {
+    Text(
+        text = "No training sessions on this day",
+        color = Color.Gray,
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Italic,
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+    )
+    Log.d("NoExercisesText", "No performed exercises found")
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TrainingSessionsList(
+    performedExercises: List<ExerciseTrainingSession>,
+    trainingSessionViewModel: TrainingSessionViewModel,
+    exerciseListViewModel: ExerciseViewModel,
+){
+    Log.d("TrainingSessionsList", "Obtained performed exercises: $performedExercises")
+
+    Column(
+        modifier = Modifier.verticalScroll(state = rememberScrollState())
+    ) {
+        performedExercises.forEach { trainingSession ->
+            Column {
+                Row {
+                    Text(
+                        text = trainingSession.time,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = dimensionResource(R.dimen.padding_small))
+                    )
+                }
+                ExerciseCard(
+                    exercise = trainingSession,
+                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                    exerciseViewModel = exerciseListViewModel
+                )
+            }
+        }
+        //add space at the bottom of the list so FAB does not block content at the bottom
+        Spacer(Modifier.height(56.dp))
     }
 }

@@ -24,13 +24,13 @@ class MainActivity : ComponentActivity() {
 
     private val fileViewModel : FileViewModel by viewModels {
         Log.d("MainActivity", "FileViewModel created")
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
     }
 
-    private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
-        Log.d("MainActivity", "TrainingSessionViewModel created")
-        ViewModelFactory(FileDownloadRepository(), ExerciseRepository(ExerciseDatabase.getDatabase(this).exerciseDao()), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
-    }
+//    private val trainingSessionViewModel : TrainingSessionViewModel by viewModels {
+//        Log.d("MainActivity", "TrainingSessionViewModel created")
+//        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WorkoutTrackerTheme(dynamicColor = false) {
-                WorkoutTrackerApp(trainingSessionViewModel = trainingSessionViewModel)
+                WorkoutTrackerApp() //trainingSessionViewModel = trainingSessionViewModel)
                 Log.d("MainActivity", "onCreate() called")
             }
         }
@@ -47,19 +47,23 @@ class MainActivity : ComponentActivity() {
         val fileUrl =
             "https://www.dropbox.com/scl/fi/fsbkrvslzei9z0j931hqk/exercise_database1.db?rlkey=6upmlu21idup13pzn6jgo5w7b&st=3rgj82uo&dl=1"
 
-        if (destinationFile.exists()) {
-            // File already exists, no need to download
-            Toast.makeText(this, "File already exists", Toast.LENGTH_SHORT).show()
-        } else {
-            fileViewModel.downloadFile(fileUrl, destinationFile)
+        if(!fileViewModel.isFileChecked) {
+            if (destinationFile.exists()) {
+                // File already exists, no need to download
+                Toast.makeText(this, "File already exists", Toast.LENGTH_SHORT).show()
+                fileViewModel.updateIsFileCheckedFlag(true)
+            } else {
+                fileViewModel.downloadFile(fileUrl, destinationFile)
 
-            fileViewModel.fileDownloadStatus.observe(this) { success ->
-                if (success) {
-                    // File downloaded successfully
-                    Toast.makeText(this, "File downloaded successfully", Toast.LENGTH_SHORT).show()
-                } else {
-                    // File download failed
-                    Toast.makeText(this, "File download failed", Toast.LENGTH_SHORT).show()
+                fileViewModel.fileDownloadStatus.observe(this) { success ->
+                    fileViewModel.updateIsFileCheckedFlag(true)
+                    if (success) {
+                        // File downloaded successfully
+                        Toast.makeText(this, "File downloaded successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // File download failed
+                        Toast.makeText(this, "File download failed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

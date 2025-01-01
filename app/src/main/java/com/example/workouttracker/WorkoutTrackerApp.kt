@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,20 +26,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.workouttracker.data.database.ExerciseDatabase
+import com.example.workouttracker.data.database.TrainingSessionsDatabase
+import com.example.workouttracker.data.repository.ExerciseRepository
+import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import com.example.workouttracker.ui.CalendarTrainingSessionViewModel
+import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
+import com.example.workouttracker.ui.TrainingSessionViewModelFactory
+import com.example.workouttracker.ui.ViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import com.example.workouttracker.ui.calendar.CalendarViewModel
+import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
+import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 
 enum class WorkoutTrackerScreen(
     @StringRes val title: Int,
@@ -52,14 +65,39 @@ enum class WorkoutTrackerScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutTrackerApp(
-    navController: NavHostController = rememberNavController(),
-    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
-    trainingSessionViewModel: TrainingSessionViewModel
+//    navController: NavHostController = rememberNavController(),
+//    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
+    //trainingSessionViewModel: TrainingSessionViewModel
 ) {
+    val navController: NavHostController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
+    // Exercise List view model initialization
+    val context = LocalContext.current
+
+    val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
+
+    val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
+    val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
+    val exerciseViewModelFactory = remember { ExerciseViewModelFactory(exerciseRepository) }
+    val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
+
+    val trainingSessionsDatabase = remember { TrainingSessionsDatabase.getDatabase(context) }
+    val trainingSessionsRepository = remember { TrainingSessionsRepository(trainingSessionsDatabase.trainingSessionDao()) }
+    val trainingSessionViewModelFactory = remember { TrainingSessionViewModelFactory(trainingSessionsRepository) }
+    val trainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory)
+
+    val homeTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "HomeScreen")
+    val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
+
+    val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
+
+
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) },
+        bottomBar = {
+            if(currentRoute.value?.destination?.route != "SelectExerciseScreen")
+                BottomNavigationBar(navController, currentRoute)
+                    },
         floatingActionButton = {
             if(currentRoute.value?.destination?.route == WorkoutTrackerScreen.Home.name
                 || currentRoute.value?.destination?.route == WorkoutTrackerScreen.Calendar.name) {
@@ -67,11 +105,13 @@ fun WorkoutTrackerApp(
                     onClick = {
                         Log.d("FAB", "FAB clicked")
                         workoutTrackerViewModel.resetSearchedExercise()
-                        workoutTrackerViewModel.updateExerciseListDialogState(true)
+                        navController.navigate("SelectExerciseScreen") {
+                            launchSingleTop = true
+                        }
                     },
                 )
             }
-                               },
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -79,28 +119,37 @@ fun WorkoutTrackerApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = WorkoutTrackerScreen.Home.name) {
+                Log.d("HomeScreen", "Launching the HomeScreen from NavHost")
                 HomeScreen(
-                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    //workoutTrackerViewModel = workoutTrackerViewModel,
+//                    trainingSessionViewModel = homeTrainingSessionViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    exerciseListViewModel = exerciseViewModel,
+                    modifier = screensContentModifier
                 )
             }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
+                Log.d("CalendarScreen", "Launching the CalendarScreen from NavHost")
                 CalendarScreen(
-                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    //workoutTrackerViewModel = workoutTrackerViewModel,
+//                    trainingSessionViewModel = calendarTrainingSessionViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    exerciseListViewModel = exerciseViewModel,
+                    modifier = screensContentModifier,
                 )
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {
-                ProfileScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
+                ProfileScreen(modifier = screensContentModifier)
+            }
+            composable(route = "SelectExerciseScreen") {
+                Log.d("SelectExerciseScreen", "Launching the SelectExerciseScreen from NavHost")
+                SelectExerciseScreen(
+                    onDismiss = { navController.navigateUp() },
+                    exerciseListViewModel = exerciseViewModel,
+                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    trainingSessionViewModel = trainingSessionViewModel,
+                    modifier = screensContentModifier
                 )
             }
         }
@@ -111,38 +160,39 @@ fun WorkoutTrackerApp(
 fun ActionButton(
     onClick: () -> Unit,
 ) {
-        FloatingActionButton(
-            onClick = { onClick() },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.secondary
-        ) {
-            Icon(Icons.Filled.Add, "Small floating action button.")
-        }
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondary
+    ) {
+        Icon(Icons.Filled.Add, "Small floating action button.")
+    }
 }
 
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController
+    navController: NavHostController,
+    currentRoute: State<NavBackStackEntry?>
 ) {
     var selectedItem by remember { mutableIntStateOf(0) }
 
-    NavigationBar {
-        val navigationBarColors = NavigationBarItemDefaults.colors(
-            indicatorColor = Color.Transparent,
-            selectedIconColor = MaterialTheme.colorScheme.primary,
-            selectedTextColor = MaterialTheme.colorScheme.primary,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+    val navigationBarColors = NavigationBarItemDefaults.colors(
+        indicatorColor = Color.Transparent,
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 
+    NavigationBar {
         WorkoutTrackerScreen.entries.forEachIndexed { index,item ->
             NavigationBarItem(
                 icon = { Icon(painterResource(item.icon), contentDescription = stringResource(item.title)) },
                 label = { Text(stringResource(item.title)) },
                 onClick = {
                     selectedItem = index
-                    navController.navigate(item.name)
+                    if(currentRoute.value?.destination?.route != item.name) { navController.navigate(item.name) }
                 },
                 selected = selectedItem == index, // Check if this item is selected
                 colors = navigationBarColors
@@ -150,14 +200,3 @@ fun BottomNavigationBar(
         }
     }
 }
-
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview(showBackground = true)
-//@Composable
-//fun WorkoutTrackerAppPreview() {
-//    WorkoutTrackerTheme(dynamicColor = false){
-//        WorkoutTrackerApp()
-//    }
-//}
-
