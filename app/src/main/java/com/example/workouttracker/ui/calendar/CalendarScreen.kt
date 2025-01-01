@@ -9,9 +9,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -108,15 +111,16 @@ fun CalendarScreen(
             onMonthChangedForward = { calendarViewModel.updateSelectedMonthForward() },
             onMonthChangedBackward = { calendarViewModel.updateSelectedMonthBackward() },
             trainingDays = trainingDaysSet,
+            onDateReset = { calendarViewModel.resetSelectedDay() }
 //            trainingDays = trainingDays,
 //            isTrainingDayCheck = {  }
 
         )
-        SelectedDayText(
-            selectedDay = calendarUiState.selectedDay,
-            selectedMonth = calendarUiState.selectedMonth,
-            selectedYear = calendarUiState.selectedYear
-        )
+//        SelectedDayText(
+//            selectedDay = calendarUiState.selectedDay,
+//            selectedMonth = calendarUiState.selectedMonth,
+//            selectedYear = calendarUiState.selectedYear
+//        )
 
         Log.d("CalendarScreen", "Calling PerformedExercisesDisplay() with date $selectedDate")
         PerformedExercisesDisplay(
@@ -152,8 +156,8 @@ fun SelectedDayText(
         text = date.format(formatter),
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = dimensionResource(R.dimen.padding_medium))
+//            .fillMaxWidth()
+            .padding(vertical = dimensionResource(R.dimen.padding_small))
     )
 }
 
@@ -171,7 +175,8 @@ fun CalendarLayout(
     onMonthChangedForward: () -> Unit,
     onMonthChangedBackward: () -> Unit,
 //    trainingDays: List<String>,
-    trainingDays: Set<LocalDate>
+    trainingDays: Set<LocalDate>,
+    onDateReset: () -> Unit
 ) {
     val weekDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
@@ -260,6 +265,7 @@ fun CalendarLayout(
                                     )
                             )
                             DotIcon(isVisible = isTrainingDay(selectedYear, selectedMonth, day, trainingDays))
+
                             if (index < monthNumberOfDays + monthFirstDayIndex) {
                                 HorizontalDivider(
                                     color = Color.LightGray,
@@ -269,6 +275,24 @@ fun CalendarLayout(
                             }
                         }
                     }
+                }
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,//Top,
+            modifier = Modifier.fillMaxWidth()//.padding(vertical = dimensionResource(R.dimen.padding_small))
+        ) {
+            SelectedDayText(selectedDay = selectedDay, selectedMonth = selectedMonth, selectedYear = selectedYear)
+
+            if(currentDate != getDate(selectedYear, selectedMonth, selectedDay)) {
+                Button(
+                    onClick = { onDateReset() },
+                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 16.dp),
+                    modifier = Modifier.height(30.dp)
+                ) {
+                    Text(text = "Today", textAlign = TextAlign.Center)
                 }
             }
         }

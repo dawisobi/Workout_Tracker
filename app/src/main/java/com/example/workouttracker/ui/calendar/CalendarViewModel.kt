@@ -18,6 +18,23 @@ class CalendarViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(CalendarUiState())
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
 
+//    fun setSelectedDate(date: LocalDate) {
+//        _uiState.value = _uiState.value.copy(
+//            selectedDay = date.dayOfMonth,
+//            selectedMonth = date.monthValue,
+//            selectedYear = date.year
+//        )
+//    }
+
+    fun resetSelectedDay() {
+        _uiState.value = _uiState.value.copy(
+            selectedDay = _uiState.value.currentDate.dayOfMonth,
+            selectedMonth = _uiState.value.currentDate.monthValue,
+            selectedYear = _uiState.value.currentDate.year
+        )
+
+        updateMonthDetails()
+    }
 
     fun updateSelectedDay(day: Int) {
         Log.d("CalendarViewModel", "Updating selected day to $day")
