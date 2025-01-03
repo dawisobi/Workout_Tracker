@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.R
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.model.ExerciseTrainingSession
@@ -78,76 +79,7 @@ fun PerformedExercisesDisplay(
     } else { NoExercisesText() }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ExerciseCard(
-    exercise: ExerciseTrainingSession,
-    exerciseViewModel: ExerciseViewModel,
-    onExerciseDelete: () -> Unit
-) {
-    var exerciseData by remember { mutableStateOf<Exercise?>(null) }
-    var isExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(exercise.idExercise) {
-        exerciseData = exerciseViewModel.getExerciseById(exercise.idExercise)
-        Log.d("ExerciseCard", "Exercise data loaded for exercise ID ${exercise.idExercise}")
-    }
-
-
-    Card(
-        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-        shape = RoundedCornerShape(30),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
-        ),
-        modifier = Modifier
-            .offset(y = (-10).dp)
-            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = { isExpanded = !isExpanded },
-                onLongClick = { onExerciseDelete() }
-            )
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                exerciseData?.let {
-                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
-                }
-
-                if(!isExpanded) {
-                    Icon(imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Arrow Down")
-                } else {
-                    Icon(imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Arrow Down")
-                }
-
-            }
-
-            if (isExpanded) {
-                exerciseData?.let {
-                    if(it.type == "Gym") { ExerciseTypeGym(exercise) }
-                    else { ExerciseTypeAthletics(exercise) }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ExerciseTypeGym(
@@ -243,33 +175,104 @@ fun TrainingSessionsList(
         modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
 //        performedExercises.forEach { trainingSession ->
-            Column {
-                for (trainingSession in performedExercises) {
-                    key(trainingSession.idSession) {
-                        Row {
-                            Text(
-                                text = trainingSession.time,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier
-                                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(end = dimensionResource(R.dimen.padding_small))
-                            )
-                        }
-                        ExerciseCard(
-                            exercise = trainingSession,
-                            onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
-                            exerciseViewModel = exerciseListViewModel
+        for (trainingSession in performedExercises) {
+            key(trainingSession.idSession) {
+                Column {
+                    Row {
+                        Text(
+                            text = trainingSession.time,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(end = dimensionResource(R.dimen.padding_small))
                         )
                     }
+                    ExerciseCard(
+                        exercise = trainingSession,
+                        onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                        exerciseViewModel = exerciseListViewModel
+                    )
                 }
             }
-
+        }
 //        }
         //add space at the bottom of the list so FAB does not block content at the bottom
         Spacer(Modifier.height(56.dp))
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExerciseCard(
+    exercise: ExerciseTrainingSession,
+    exerciseViewModel: ExerciseViewModel,
+    onExerciseDelete: () -> Unit
+) {
+    var exerciseData by remember { mutableStateOf<Exercise?>(null) }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(exercise.idExercise) {
+        exerciseData = exerciseViewModel.getExerciseById(exercise.idExercise)
+        Log.d("ExerciseCard", "Exercise data loaded for exercise ID ${exercise.idExercise}")
+    }
+
+
+    Card(
+        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
+        shape = RoundedCornerShape(30),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+        ),
+        modifier = Modifier
+            .offset(y = (-10).dp)
+            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { isExpanded = !isExpanded },
+                onLongClick = { onExerciseDelete() }
+            )
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                exerciseData?.let {
+                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                }
+
+                if(!isExpanded) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "Arrow Down")
+                } else {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "Arrow Down")
+                }
+
+            }
+
+            if (isExpanded) {
+                exerciseData?.let {
+                    if(it.type == "Gym") { ExerciseTypeGym(exercise) }
+                    else { ExerciseTypeAthletics(exercise) }
+                }
+            }
+        }
     }
 }

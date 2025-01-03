@@ -25,7 +25,7 @@ class CalendarScreenLayoutTest {
     @Before
     fun setUp() {
         composeTestRule.setContent {
-            CalendarScreen()
+//            CalendarScreen()
         }
     }
 

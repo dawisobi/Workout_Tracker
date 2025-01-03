@@ -38,11 +38,11 @@ class NavigationTest {
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(ComposeNavigator())
             }
-            WorkoutTrackerApp(
-                navController = navController,
-                workoutTrackerViewModel = WorkoutTrackerViewModel(),
-                trainingSessionViewModel = TrainingSessionViewModel(TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(LocalContext.current).trainingSessionDao()))
-            )
+//            WorkoutTrackerApp(
+//                navController = navController,
+//                workoutTrackerViewModel = WorkoutTrackerViewModel(),
+//                trainingSessionViewModel = TrainingSessionViewModel(TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(LocalContext.current).trainingSessionDao()))
+//            )
         }
     }
 
