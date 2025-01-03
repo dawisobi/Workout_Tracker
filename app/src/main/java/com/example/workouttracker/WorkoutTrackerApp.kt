@@ -40,16 +40,13 @@ import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
-import com.example.workouttracker.ui.CalendarTrainingSessionViewModel
 import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
 import com.example.workouttracker.ui.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.TrainingSessionViewModelFactory
-import com.example.workouttracker.ui.ViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
-import com.example.workouttracker.ui.calendar.CalendarViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 
@@ -64,11 +61,7 @@ enum class WorkoutTrackerScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WorkoutTrackerApp(
-//    navController: NavHostController = rememberNavController(),
-//    workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel(),
-    //trainingSessionViewModel: TrainingSessionViewModel
-) {
+fun WorkoutTrackerApp() {
     val navController: NavHostController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
@@ -87,8 +80,8 @@ fun WorkoutTrackerApp(
     val trainingSessionViewModelFactory = remember { TrainingSessionViewModelFactory(trainingSessionsRepository) }
     val trainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory)
 
-    val homeTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "HomeScreen")
-    val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
+//    val homeTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "HomeScreen")
+//    val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
 
     val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
 

@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -241,28 +242,33 @@ fun TrainingSessionsList(
     Column(
         modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
-        performedExercises.forEach { trainingSession ->
+//        performedExercises.forEach { trainingSession ->
             Column {
-                Row {
-                    Text(
-                        text = trainingSession.time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
+                for (trainingSession in performedExercises) {
+                    key(trainingSession.idSession) {
+                        Row {
+                            Text(
+                                text = trainingSession.time,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier
+                                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .padding(end = dimensionResource(R.dimen.padding_small))
+                            )
+                        }
+                        ExerciseCard(
+                            exercise = trainingSession,
+                            onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
+                            exerciseViewModel = exerciseListViewModel
+                        )
+                    }
                 }
-                ExerciseCard(
-                    exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
-                    exerciseViewModel = exerciseListViewModel
-                )
             }
-        }
+
+//        }
         //add space at the bottom of the list so FAB does not block content at the bottom
         Spacer(Modifier.height(56.dp))
     }
