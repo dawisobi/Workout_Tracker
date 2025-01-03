@@ -174,8 +174,8 @@ fun TrainingSessionsList(
     Column(
         modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
-//        performedExercises.forEach { trainingSession ->
-        for (trainingSession in performedExercises) {
+        performedExercises.forEach { trainingSession ->
+//        for (trainingSession in performedExercises) {
             key(trainingSession.idSession) {
                 Column {
                     Row {
