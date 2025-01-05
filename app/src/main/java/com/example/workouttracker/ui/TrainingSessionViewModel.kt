@@ -40,6 +40,13 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
         }
     }
 
+//    fun deleteTrainingSession(trainingSession: ExerciseTrainingSession, dateToDisplay: String) {
+//        Log.d("TrainingSessionViewModel", "Deleting training session with ID: ${trainingSession.idSession}")
+//        viewModelScope.launch {
+//            trainingSessionRepository.deleteTrainingSession(trainingSession)
+//        }
+////        getTrainingSessionsByDate(dateToDisplay)
+//    }
     fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         Log.d("TrainingSessionViewModel", "Deleting training session with ID: ${trainingSession.idSession}")
         viewModelScope.launch {
