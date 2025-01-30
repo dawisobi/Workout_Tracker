@@ -37,7 +37,7 @@ class TrainingSessionsRepository(private val trainingSessionDao: TrainingSession
         trainingSessionDao.deleteTrainingSessionById(id)
     }
 
-
+    // Obtain list of distinct dates in which training sessions were performed
     fun getDistinctDates(): Flow<List<String>> {
         Log.d("TrainingSessionsRepository", "getDistinctDates() called")
         return trainingSessionDao.getDistinctDates()

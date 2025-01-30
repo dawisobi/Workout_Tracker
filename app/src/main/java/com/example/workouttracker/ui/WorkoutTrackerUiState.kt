@@ -9,7 +9,9 @@ import java.time.LocalDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 data class WorkoutTrackerUiState(
 
-    val showExerciseListDialog: Boolean = false,
+//    val showExerciseListDialog: Boolean = false, // seems redundant after changing the list to separate screen
+
+    // Whether to show the dialog for exercise details or not
     val showExerciseDetailsDialog: Boolean = false,
 
     //Exercise selected from the list to be displayed in the details dialog

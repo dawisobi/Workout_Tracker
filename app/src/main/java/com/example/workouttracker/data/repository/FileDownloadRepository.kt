@@ -7,6 +7,7 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 class FileDownloadRepository {
     suspend fun downloadFile(url: String, destination: File): Boolean {
@@ -26,7 +27,7 @@ class FileDownloadRepository {
             // Open connection
             val connection = withContext(Dispatchers.IO) {
                 Log.d("FileDownload", "Opening connection...")
-                val conn = (parsedUrl.openConnection() as HttpURLConnection).apply {
+                val conn = (parsedUrl.openConnection() as HttpsURLConnection).apply {
                     requestMethod = "GET"
                     connectTimeout = 5000 // 5 seconds timeout
                     readTimeout = 5000 // 5 seconds timeout
@@ -36,7 +37,7 @@ class FileDownloadRepository {
             // Ensure the connection is successful
                 val responseCode = conn.responseCode
                 Log.d("FileDownload", "Response code: $responseCode")
-                if (responseCode == HttpURLConnection.HTTP_OK) {
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
                     conn
                 } else {
                     Log.d("FileDownload", "Failed to connect, Response code: $responseCode")

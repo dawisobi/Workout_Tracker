@@ -31,15 +31,15 @@ class ExerciseDetailsViewModel : ViewModel() {
     var setsWeightList = mutableStateListOf<String>("0")
         private set
 
-    fun resetExerciseDetails() {
-        // Clear the list
-        setsRepsList.clear()
-        setsWeightList.clear()
-
-        // Add a default value
-        setsRepsList.add("0")
-        setsWeightList.add("0")
-    }
+//    fun resetExerciseDetails() {
+//        // Clear the list
+//        setsRepsList.clear()
+//        setsWeightList.clear()
+//
+//        // Add a default value
+//        setsRepsList.add("0")
+//        setsWeightList.add("0")
+//    }
 
     fun updateCurrentDateTime() {
         _uiState.update { currentState -> currentState.copy(currentDateTime = LocalDateTime.now()) }

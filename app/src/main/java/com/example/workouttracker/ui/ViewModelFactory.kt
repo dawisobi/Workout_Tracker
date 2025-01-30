@@ -42,17 +42,17 @@ class TrainingSessionViewModelFactory(
     }
 }
 
-class CalendarTrainingSessionViewModelFactory(
-    private val trainingSessionRepository: TrainingSessionsRepository
-) : ViewModelProvider.Factory {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CalendarTrainingSessionViewModel::class.java)) {
-            return CalendarTrainingSessionViewModel(trainingSessionRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
+//class CalendarTrainingSessionViewModelFactory(
+//    private val trainingSessionRepository: TrainingSessionsRepository
+//) : ViewModelProvider.Factory {
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(CalendarTrainingSessionViewModel::class.java)) {
+//            return CalendarTrainingSessionViewModel(trainingSessionRepository) as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}
 
 class ExerciseViewModelFactory(
     private val exerciseRepository: ExerciseRepository

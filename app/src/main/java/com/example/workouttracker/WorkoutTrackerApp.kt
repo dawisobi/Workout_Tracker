@@ -40,6 +40,7 @@ import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import com.example.workouttracker.ui.ExerciseRepositoryScreen
 import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendar.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
@@ -56,6 +57,7 @@ enum class WorkoutTrackerScreen(
 ) {
     Home(R.string.bottom_navBar_home, R.drawable.icon_home_fill),
     Calendar(R.string.bottom_navBar_calendar, R.drawable.icon_calendar_fill),
+    ExerciseList(R.string.bottom_navBar_exercisesList, R.drawable.icon_dumbbell),
     Profile(R.string.bottom_navBar_profile, R.drawable.icon_profile_fill),
 }
 
@@ -144,6 +146,10 @@ fun WorkoutTrackerApp() {
                     trainingSessionViewModel = trainingSessionViewModel,
                     modifier = screensContentModifier
                 )
+            }
+            composable(route = WorkoutTrackerScreen.ExerciseList.name) {
+                Log.d("ExerciseListScreen", "Launching the ExerciseListScreen from NavHost")
+                ExerciseRepositoryScreen( modifier = screensContentModifier )
             }
         }
     }

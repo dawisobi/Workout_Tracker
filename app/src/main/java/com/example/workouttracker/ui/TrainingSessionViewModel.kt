@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -20,7 +21,8 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
     val distinctDates: StateFlow<List<String>> = trainingSessionRepository.getDistinctDates().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
-    val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
+//    val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
+    val searchResults = _searchResults.asStateFlow()
 
 
     fun getTrainingSessionsByDate(date: String) {
@@ -40,13 +42,6 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
         }
     }
 
-//    fun deleteTrainingSession(trainingSession: ExerciseTrainingSession, dateToDisplay: String) {
-//        Log.d("TrainingSessionViewModel", "Deleting training session with ID: ${trainingSession.idSession}")
-//        viewModelScope.launch {
-//            trainingSessionRepository.deleteTrainingSession(trainingSession)
-//        }
-////        getTrainingSessionsByDate(dateToDisplay)
-//    }
     fun deleteTrainingSession(trainingSession: ExerciseTrainingSession) {
         Log.d("TrainingSessionViewModel", "Deleting training session with ID: ${trainingSession.idSession}")
         viewModelScope.launch {
