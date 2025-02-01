@@ -42,9 +42,9 @@ import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import com.example.workouttracker.ui.ExerciseRepositoryScreen
 import com.example.workouttracker.ui.ExerciseViewModelFactory
-import com.example.workouttracker.ui.calendar.CalendarScreen
+import com.example.workouttracker.ui.calendarScreen.CalendarScreen
 import com.example.workouttracker.ui.homeScreen.HomeScreen
-import com.example.workouttracker.ui.ProfileScreen
+import com.example.workouttracker.ui.profileScreen.ProfileScreen
 import com.example.workouttracker.ui.TrainingSessionViewModel
 import com.example.workouttracker.ui.TrainingSessionViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
@@ -61,7 +61,7 @@ enum class WorkoutTrackerScreen(
     Profile(R.string.bottom_navBar_profile, R.drawable.icon_profile_fill),
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun WorkoutTrackerApp() {
     val navController: NavHostController = rememberNavController()
@@ -149,7 +149,7 @@ fun WorkoutTrackerApp() {
             }
             composable(route = WorkoutTrackerScreen.ExerciseList.name) {
                 Log.d("ExerciseListScreen", "Launching the ExerciseListScreen from NavHost")
-                ExerciseRepositoryScreen( modifier = screensContentModifier )
+                ExerciseRepositoryScreen(modifier = screensContentModifier)
             }
         }
     }
