@@ -1,6 +1,5 @@
 package com.example.workouttracker.ui.profileScreen
 
-import android.app.slice.Slice
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
@@ -26,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,16 +47,31 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(
+    profileScreenViewModel: ProfileScreenViewModel,
+    modifier: Modifier = Modifier
+) {
+
+    val profileScreenUiState by profileScreenViewModel.uiState.collectAsState()
+    val showUserDetailsDialog = profileScreenUiState.showUserDetailsDialog
+
     Column(modifier = modifier){
         ProfileHeader()
-        UserWeightPanel(
+        UserDetailsPanel(
             weightValue = "86",
-            editWeight = { /* TODO */ }
+            heightValue = "180",
+            onEditUserDetailsClick = { profileScreenViewModel.showUserDetailsDialog() }
         )
         Spacer(modifier = Modifier.height(16.dp))
         UserBmiPanel(
-            bmiValue = "23.48"
+            bmiValue = "33"
+        )
+    }
+
+    if(showUserDetailsDialog){
+        EditUserDetailsDialog(
+            onDismiss = { profileScreenViewModel.hideUserDetailsDialog() },
+            onSaveChangesClick = {  }
         )
     }
 }
@@ -74,9 +91,10 @@ fun ProfileHeader() {
 }
 
 @Composable
-fun UserWeightPanel(
-    editWeight: () -> Unit = {},
+fun UserDetailsPanel(
+    onEditUserDetailsClick: () -> Unit,
     weightValue: String,
+    heightValue: String
 ) {
     Card(
         elevation = CardDefaults.elevatedCardElevation(8.dp),
@@ -90,20 +108,31 @@ fun UserWeightPanel(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = buildAnnotatedString {
-                        append("Current weight: ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(weightValue) }
-                        append(" kg") },
+                Column {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Weight: ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(weightValue) }
+                            append(" kg") },
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    )
+                    Text(
+                            text = buildAnnotatedString {
+                                append("Height: ")
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(heightValue) }
+                                append(" cm") },
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                )
-                IconButton(onClick = { editWeight() }) {
+                    )
+                }
+
+                IconButton(onClick = { onEditUserDetailsClick() }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         contentDescription = "Edit weight"
                     )
                 }
             }
+
         }
     }
 }
@@ -114,71 +143,67 @@ fun UserWeightPanel(
 fun UserBmiPanel(
     bmiValue: String,
 ) {
+    val slices = BmiSlices.slices
+
     Card(
         elevation = CardDefaults.elevatedCardElevation(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
         ) {
-            Text(text = "BMI: $bmiValue")
-            BmiChart(bmiValue)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "BMI: $bmiValue")
+                Text(text = getBmiLevel(bmiValue.toFloat(), slices), fontWeight = FontWeight.Bold)
+            }
+            BmiChart(bmiValue, slices)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-private fun BmiChart(bmiValue: String) {
-
-    val slices = listOf(
-        Slice(minValue = 0f, maxValue = 18.4f, color = Color(0xFF007fe0), label = "Underweight"),
-        Slice(minValue = 18.5f, maxValue = 24.9f, color = Color(0xFF00b807), label = "Normal weight"),
-        Slice(minValue = 25.0f, maxValue = 29.9f, color = Color(0xFFe0d400), label = "Overweight"),
-        Slice(minValue = 30.0f, maxValue = 34.9f, color = Color(0xFFdb8114), label = "Obesity I"),
-        Slice(minValue = 35.0f, maxValue = 39.9f, color = Color(0xFFc90202), label = "Obesity II"),
-        Slice(minValue = 40.0f, maxValue = 60.0f, color = Color(0xFF5a0ad1), label = "Obesity III")
-    )
+private fun BmiChart(bmiValue: String, bmiSlices: List<Slice>) {
 
     val bmi = bmiValue.toFloatOrNull() ?: 0f
-    val sliceMatchingBmi = slices.find { it.minValue <= bmi && it.maxValue >= bmi } ?: slices.last()
+    val sliceMatchingBmi = bmiSlices.find { it.minValue <= bmi && it.maxValue >= bmi } ?: bmiSlices.last()
 
-    Column(
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .offset(y = (-6).dp)
+            .padding(horizontal = 12.dp)
+            .fillMaxWidth().offset(y = (-6).dp)
     ) {
-        Row(
-            modifier = Modifier
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = "Edit weight",
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.width(32.dp).height(32.dp).offset(x = 30.dp)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                .fillMaxWidth()
-                .offset(y = (-10).dp)
-                .height(10.dp)
-                .clip(shape = MaterialTheme.shapes.medium)
+        bmiSlices.forEach { slice ->
+            val slicePercentage = getSliceSize(slice)
+            val sliceClipShape = {
+                if(slice.minValue == 0f) RoundedCornerShape(50, 0,0,50)
+                else if(slice.maxValue == 58.4f) RoundedCornerShape(0, 50,50,0)
+                else RoundedCornerShape(0)
+            }
+            val indicatorColor = if(slice == sliceMatchingBmi) MaterialTheme.colorScheme.onSurface else Color.Transparent
 
-        ) {
-            slices.forEach { slice ->
-                val slicePercentage = getSliceSize(slice)
-
+            Column(
+                modifier = Modifier.weight(slicePercentage),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Edit weight",
+                    tint = indicatorColor,
+                    modifier = Modifier.width(32.dp).height(32.dp)
+                )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth().offset(y = (-8).dp)
+                        .clip(shape = sliceClipShape())
                         .background(slice.color)
-                        .weight(slicePercentage)
-                ) {
-                    Text(text = "")
-                }
+                        .height(10.dp)
+                ) { }
             }
         }
     }
@@ -191,6 +216,7 @@ private fun BmiChart(bmiValue: String) {
 fun ProfileScreenPreview() {
     WorkoutTrackerTheme(darkTheme = false) {
         ProfileScreen(
+            profileScreenViewModel = ProfileScreenViewModel(),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
@@ -199,16 +225,38 @@ fun ProfileScreenPreview() {
 }
 
 // Helper function to calculate slice size based on min and max values
-private fun getSliceSize(slice: com.example.workouttracker.ui.profileScreen.Slice): Float {
+private fun getSliceSize(slice: Slice): Float {
     val sliceRange: Float
 
-    if(slice.minValue == 0f || slice.maxValue == 60f) {
+    if(slice.minValue == 0f || slice.maxValue == 58.4f) {
         return 5f
     } else {
         sliceRange = slice.maxValue - slice.minValue
-        return sliceRange / 60 * 100
+        return sliceRange / 58.4f * 100
+    }
+}
+
+private fun getBmiLevel(bmi: Float, slices: List<Slice>): String {
+    return when(bmi) {
+        in 0f..18.4f -> slices[0].label
+        in 18.5f..24.9f -> slices[1].label
+        in 25.0f..29.9f -> slices[2].label
+        in 30.0f..34.9f -> slices[3].label
+        in 35.0f..39.9f -> slices[4].label
+        else -> slices[5].label
     }
 }
 
 // Data class for BMI chart slices
 data class Slice(val minValue: Float, val maxValue: Float, val color: Color, val label: String)
+
+object BmiSlices {
+    val slices = listOf(
+        Slice(minValue = 0f, maxValue = 18.4f, color = Color(0xFF007fe0), label = "Underweight"),
+        Slice(minValue = 18.5f, maxValue = 24.9f, color = Color(0xFF00b807), label = "Normal weight"),
+        Slice(minValue = 25.0f, maxValue = 29.9f, color = Color(0xFFe0d400), label = "Overweight"),
+        Slice(minValue = 30.0f, maxValue = 34.9f, color = Color(0xFFdb8114), label = "Obesity I"),
+        Slice(minValue = 35.0f, maxValue = 39.9f, color = Color(0xFFc90202), label = "Obesity II"),
+        Slice(minValue = 40.0f, maxValue = 58.4f, color = Color(0xFF5a0ad1), label = "Obesity III")
+    )
+}

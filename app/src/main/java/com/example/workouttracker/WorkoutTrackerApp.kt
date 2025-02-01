@@ -50,6 +50,7 @@ import com.example.workouttracker.ui.TrainingSessionViewModelFactory
 import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
+import com.example.workouttracker.ui.profileScreen.ProfileScreenViewModel
 
 enum class WorkoutTrackerScreen(
     @StringRes val title: Int,
@@ -135,7 +136,9 @@ fun WorkoutTrackerApp() {
             }
             composable(route = WorkoutTrackerScreen.Profile.name) {
                 Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
-                ProfileScreen(modifier = screensContentModifier)
+                ProfileScreen(
+                    profileScreenViewModel = ProfileScreenViewModel(),
+                    modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {
                 Log.d("SelectExerciseScreen", "Launching the SelectExerciseScreen from NavHost")
