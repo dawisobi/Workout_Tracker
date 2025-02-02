@@ -22,14 +22,6 @@ class UserDetailsDataStore(
         preferences[heightKey] ?: 0
     }
 
-//    suspend fun getUserHeight(): Int {
-//        val heightUser = context.dataStore.data.map { preferences ->
-//            preferences[heightKey] ?: 0
-//        }
-//
-//        return heightUser.first()
-//    }
-
 
     companion object{
         val heightKey = intPreferencesKey("heightKey")

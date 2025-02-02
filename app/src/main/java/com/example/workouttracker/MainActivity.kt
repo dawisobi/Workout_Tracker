@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 //        ViewModelFactory(FileDownloadRepository(), TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(this).trainingSessionDao()))
 //    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

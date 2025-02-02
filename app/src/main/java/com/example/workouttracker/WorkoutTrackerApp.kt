@@ -38,9 +38,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
-import com.example.workouttracker.data.datastore.UserDetailsDataStore
+import com.example.workouttracker.data.database.UserWeightDatabase
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
+import com.example.workouttracker.data.repository.UserWeightRepository
 import com.example.workouttracker.ui.ExerciseRepositoryScreen
 import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendarScreen.CalendarScreen
@@ -71,10 +72,12 @@ fun WorkoutTrackerApp() {
 
     // Exercise List view model initialization
     val context = LocalContext.current
-//    val dataStore = remember { UserDetailsDataStore(context = context) }
 
     val workoutTrackerViewModel = WorkoutTrackerViewModel()
-    val profileScreenViewModel = ProfileScreenViewModel()
+
+//    val userWeightDatabase = remember { UserWeightDatabase.getDatabase(context) }
+//    val userWeightRepository = remember { UserWeightRepository(userWeightDatabase.userWeightDataDao()) }
+    val profileScreenViewModel = ProfileScreenViewModel(context)
 
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
@@ -85,9 +88,6 @@ fun WorkoutTrackerApp() {
     val trainingSessionsRepository = remember { TrainingSessionsRepository(trainingSessionsDatabase.trainingSessionDao()) }
     val trainingSessionViewModelFactory = remember { TrainingSessionViewModelFactory(trainingSessionsRepository) }
     val trainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory)
-
-//    val homeTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "HomeScreen")
-//    val calendarTrainingSessionViewModel: TrainingSessionViewModel = viewModel(factory = trainingSessionViewModelFactory, key = "CalendarScreen")
 
     val screensContentModifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.padding_medium))
 
@@ -120,8 +120,6 @@ fun WorkoutTrackerApp() {
             composable(route = WorkoutTrackerScreen.Home.name) {
                 Log.d("HomeScreen", "Launching the HomeScreen from NavHost")
                 HomeScreen(
-                    //workoutTrackerViewModel = workoutTrackerViewModel,
-//                    trainingSessionViewModel = homeTrainingSessionViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier
@@ -130,8 +128,6 @@ fun WorkoutTrackerApp() {
             composable(route = WorkoutTrackerScreen.Calendar.name) {
                 Log.d("CalendarScreen", "Launching the CalendarScreen from NavHost")
                 CalendarScreen(
-                    //workoutTrackerViewModel = workoutTrackerViewModel,
-//                    trainingSessionViewModel = calendarTrainingSessionViewModel,
                     trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
                     modifier = screensContentModifier,
@@ -142,7 +138,6 @@ fun WorkoutTrackerApp() {
                 ProfileScreen(
                     profileScreenViewModel = profileScreenViewModel,
                     context = context,
-//                    dataStore = dataStore,
                     modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {

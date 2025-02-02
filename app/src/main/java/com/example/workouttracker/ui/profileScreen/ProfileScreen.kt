@@ -50,8 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
+import com.example.workouttracker.data.model.UserWeightData
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -69,7 +71,12 @@ fun ProfileScreen(
     val showUserDetailsDialog = profileScreenUiState.showUserDetailsDialog
 
     Log.d("ProfileScreen", "Calling updateUserDetails with weight: ${profileScreenUiState.userWeight} and height: $userHeight")
-    profileScreenViewModel.updateUserDetails(weight = profileScreenUiState.userWeight, height = userHeight.toString())
+    //profileScreenViewModel.updateUserDetails(weight = profileScreenUiState.userWeight, height = userHeight.toString())
+
+    LaunchedEffect(Unit) {
+        profileScreenViewModel.updateUserDetails(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
+    }
+
 
     Log.d("ProfileScreen", "uiState weight: ${profileScreenUiState.userWeight} and height: ${profileScreenUiState.userHeight}")
     Log.d("ProfileScreen", "viewModel weight: ${profileScreenViewModel.weightInput} and height: ${profileScreenViewModel.heightInput}")
@@ -95,6 +102,7 @@ fun ProfileScreen(
             onDismiss = { profileScreenViewModel.hideUserDetailsDialog() },
             onSaveChangesClick = { profileScreenViewModel.saveUserDetails()
                 coroutineScope.launch { dataStore.saveUserDetails(profileScreenViewModel.heightInput.toInt())}
+                profileScreenViewModel.insertUserWeightData()
                                  },
             userHeight = profileScreenViewModel.heightInput,
             userWeight = profileScreenViewModel.weightInput,
@@ -244,9 +252,8 @@ private fun BmiChart(bmiValue: String, bmiSlices: List<Slice>) {
 fun ProfileScreenPreview() {
     WorkoutTrackerTheme(darkTheme = false) {
         ProfileScreen(
-            profileScreenViewModel = ProfileScreenViewModel(),
+            profileScreenViewModel = ProfileScreenViewModel(context = LocalContext.current),
             context = LocalContext.current,
-//            dataStore = UserDetailsDataStore(context = LocalContext.current),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))

@@ -1,16 +1,43 @@
 package com.example.workouttracker.ui.profileScreen
 
+import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.workouttracker.data.database.UserWeightDatabase
+import com.example.workouttracker.data.model.ExerciseTrainingSession
+import com.example.workouttracker.data.model.UserWeightData
+import com.example.workouttracker.data.repository.UserWeightRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class ProfileScreenViewModel : ViewModel() {
+@RequiresApi(Build.VERSION_CODES.O)
+class ProfileScreenViewModel(context: Context) : ViewModel() {
 
+    private val userWeightRepository = UserWeightRepository(UserWeightDatabase.getDatabase(context).userWeightDataDao())
+
+    // current user weight from database
+    val currentUserWeight: StateFlow<UserWeightData> = userWeightRepository.getRecentUserWeightData().stateIn(viewModelScope, SharingStarted.Eagerly, UserWeightData(0, "", 0.0))
+
+    // user weight from database
+    private val _userWeightData = MutableStateFlow<List<UserWeightData>>(emptyList())
+    val userWeightData = _userWeightData.asStateFlow()
+
+    // UI State for Profile screen and EditUserDetails dialog
     private val _uiState = MutableStateFlow(ProfileScreenUiState())
     val uiState: StateFlow<ProfileScreenUiState> = _uiState.asStateFlow()
 
@@ -62,7 +89,7 @@ class ProfileScreenViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(userHeight = height)
     }
 
-    private fun updateBmi() {
+    fun updateBmi() {
         Log.d("ProfileScreenViewModel", "updateBmi called")
         val weight = _uiState.value.userWeight.toDoubleOrNull() ?: 0.0
         val height = _uiState.value.userHeight.toDoubleOrNull() ?: 0.0
@@ -80,4 +107,25 @@ class ProfileScreenViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(showUserDetailsDialog = true)
     }
 
+
+    fun getAllUserWeightData() {
+        viewModelScope.launch {
+            userWeightRepository.getAllUserWeightData().collect { list ->
+                _userWeightData.value = list
+            }
+        }
+    }
+
+//    fun insertUserWeightData(userWeightData: UserWeightData) {
+//        viewModelScope.launch {
+//            userWeightRepository.insertUserWeightData(userWeightData)
+//        }
+//    }
+
+    fun insertUserWeightData() {
+        val userWeightToInsert = UserWeightData(date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()).toString(), userWeight = _uiState.value.userWeight.toDouble())
+        viewModelScope.launch {
+            userWeightRepository.insertUserWeightData(userWeightToInsert)
+        }
+    }
 }
