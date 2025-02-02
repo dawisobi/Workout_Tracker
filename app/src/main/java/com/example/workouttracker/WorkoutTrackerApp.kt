@@ -38,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
+import com.example.workouttracker.data.datastore.UserDetailsDataStore
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import com.example.workouttracker.ui.ExerciseRepositoryScreen
@@ -70,8 +71,9 @@ fun WorkoutTrackerApp() {
 
     // Exercise List view model initialization
     val context = LocalContext.current
+//    val dataStore = remember { UserDetailsDataStore(context = context) }
 
-    val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
+    val workoutTrackerViewModel = WorkoutTrackerViewModel()
     val profileScreenViewModel = ProfileScreenViewModel()
 
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
@@ -139,6 +141,8 @@ fun WorkoutTrackerApp() {
                 Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
                 ProfileScreen(
                     profileScreenViewModel = profileScreenViewModel,
+                    context = context,
+//                    dataStore = dataStore,
                     modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {
