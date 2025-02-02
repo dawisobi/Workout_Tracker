@@ -72,6 +72,7 @@ fun WorkoutTrackerApp() {
     val context = LocalContext.current
 
     val workoutTrackerViewModel: WorkoutTrackerViewModel = WorkoutTrackerViewModel()
+    val profileScreenViewModel = ProfileScreenViewModel()
 
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
@@ -137,7 +138,7 @@ fun WorkoutTrackerApp() {
             composable(route = WorkoutTrackerScreen.Profile.name) {
                 Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
                 ProfileScreen(
-                    profileScreenViewModel = ProfileScreenViewModel(),
+                    profileScreenViewModel = profileScreenViewModel,
                     modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {

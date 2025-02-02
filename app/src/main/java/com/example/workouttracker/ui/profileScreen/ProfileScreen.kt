@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workouttracker.R
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
@@ -58,20 +59,24 @@ fun ProfileScreen(
     Column(modifier = modifier){
         ProfileHeader()
         UserDetailsPanel(
-            weightValue = "86",
-            heightValue = "180",
+            weightValue = profileScreenUiState.userWeight,
+            heightValue = profileScreenUiState.userHeight,
             onEditUserDetailsClick = { profileScreenViewModel.showUserDetailsDialog() }
         )
         Spacer(modifier = Modifier.height(16.dp))
         UserBmiPanel(
-            bmiValue = "33"
+            bmiValue = profileScreenUiState.userBmi
         )
     }
 
     if(showUserDetailsDialog){
         EditUserDetailsDialog(
             onDismiss = { profileScreenViewModel.hideUserDetailsDialog() },
-            onSaveChangesClick = {  }
+            onSaveChangesClick = { profileScreenViewModel.saveUserDetails() },
+            userHeight = profileScreenViewModel.heightInput,
+            userWeight = profileScreenViewModel.weightInput,
+            onUserHeightChange = { profileScreenViewModel.updateHeightInput(it) },
+            onUserWeightChange = { profileScreenViewModel.updateWeightInput(it) }
         )
     }
 }
@@ -128,7 +133,7 @@ fun UserDetailsPanel(
                 IconButton(onClick = { onEditUserDetailsClick() }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit weight"
+                        contentDescription = "Edit user details"
                     )
                 }
             }
