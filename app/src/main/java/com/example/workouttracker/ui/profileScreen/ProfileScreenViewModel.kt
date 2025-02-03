@@ -46,9 +46,9 @@ class ProfileScreenViewModel(context: Context) : ViewModel() {
     var heightInput by mutableStateOf(_uiState.value.userHeight)
         private set
 
-    init {
-        updateBmi()
-    }
+//    init {
+//        updateBmi()
+//    }
 
     fun updateUserDetails(weight: String, height: String) {
         Log.d("ProfileScreenViewModel", "updateUserDetails called with weight: $weight and height: $height")
@@ -93,9 +93,11 @@ class ProfileScreenViewModel(context: Context) : ViewModel() {
         Log.d("ProfileScreenViewModel", "updateBmi called")
         val weight = _uiState.value.userWeight.toDoubleOrNull() ?: 0.0
         val height = _uiState.value.userHeight.toDoubleOrNull() ?: 0.0
+        Log.d("ProfileScreenViewModel", "UpdateBmi: Weight: $weight, Height: $height")
         val bmi = weight / ((height / 100) * (height / 100))
+        Log.d("ProfileScreenViewModel", "UpdateBmi: BMI: $bmi")
         val truncatedBmi = "%.2f".format(bmi)
-
+        Log.d("ProfileScreenViewModel", "UpdateBmi: Truncated BMI: $truncatedBmi")
         _uiState.value = _uiState.value.copy(userBmi = truncatedBmi)
     }
 

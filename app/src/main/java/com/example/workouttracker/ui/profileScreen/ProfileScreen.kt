@@ -60,14 +60,16 @@ import java.time.LocalDate
 @Composable
 fun ProfileScreen(
     profileScreenViewModel: ProfileScreenViewModel,
+    dataStore: UserDetailsDataStore,
+    userHeight: Int,
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    val dataStore = remember { UserDetailsDataStore(context = context) }
-    val userHeight by dataStore.height.collectAsStateWithLifecycle(0)
+//    val dataStore = remember { UserDetailsDataStore(context = context) }
+//    val userHeight by dataStore.height.collectAsStateWithLifecycle(0)
     val coroutineScope = rememberCoroutineScope()
 
-    val profileScreenUiState by profileScreenViewModel.uiState.collectAsState()
+    val profileScreenUiState by profileScreenViewModel.uiState.collectAsStateWithLifecycle()
     val showUserDetailsDialog = profileScreenUiState.showUserDetailsDialog
 
     Log.d("ProfileScreen", "Calling updateUserDetails with weight: ${profileScreenUiState.userWeight} and height: $userHeight")
@@ -75,8 +77,8 @@ fun ProfileScreen(
 
     LaunchedEffect(Unit) {
         profileScreenViewModel.updateUserDetails(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
+//        profileScreenViewModel.updateUserDetailsInput(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
     }
-
 
     Log.d("ProfileScreen", "uiState weight: ${profileScreenUiState.userWeight} and height: ${profileScreenUiState.userHeight}")
     Log.d("ProfileScreen", "viewModel weight: ${profileScreenViewModel.weightInput} and height: ${profileScreenViewModel.heightInput}")
@@ -194,7 +196,11 @@ fun UserBmiPanel(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "BMI: $bmiValue")
+//                Text(text = "BMI: $bmiValue")
+                Text(text = buildAnnotatedString {
+                    append("BMI: ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(bmiValue) } },
+                )
                 Text(text = getBmiLevel(bmiValue.toFloat(), slices), fontWeight = FontWeight.Bold)
             }
             BmiChart(bmiValue, slices)
@@ -254,6 +260,8 @@ fun ProfileScreenPreview() {
         ProfileScreen(
             profileScreenViewModel = ProfileScreenViewModel(context = LocalContext.current),
             context = LocalContext.current,
+            userHeight = 180,
+            dataStore = UserDetailsDataStore(context = LocalContext.current),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))

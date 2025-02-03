@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -39,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.database.UserWeightDatabase
+import com.example.workouttracker.data.datastore.UserDetailsDataStore
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import com.example.workouttracker.data.repository.UserWeightRepository
@@ -72,6 +74,9 @@ fun WorkoutTrackerApp() {
 
     // Exercise List view model initialization
     val context = LocalContext.current
+
+    val dataStore = remember { UserDetailsDataStore(context = context) }
+    val userHeight by dataStore.height.collectAsStateWithLifecycle(0)
 
     val workoutTrackerViewModel = WorkoutTrackerViewModel()
 
@@ -137,6 +142,8 @@ fun WorkoutTrackerApp() {
                 Log.d("ProfileScreen", "Launching the ProfileScreen from NavHost")
                 ProfileScreen(
                     profileScreenViewModel = profileScreenViewModel,
+                    dataStore = dataStore,
+                    userHeight = userHeight,
                     context = context,
                     modifier = screensContentModifier)
             }
