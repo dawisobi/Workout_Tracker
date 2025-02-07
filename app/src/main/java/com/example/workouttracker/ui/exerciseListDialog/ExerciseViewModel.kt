@@ -10,9 +10,6 @@ import com.example.workouttracker.data.repository.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
-import java.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : ViewModel() {
 
@@ -35,9 +32,6 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     suspend fun getExerciseById(id: Int) : Exercise {
         Log.d("ExerciseViewModel", "getExerciseById(): Getting exercise with id: '$id'")
         return exerciseRepository.getExerciseById(id)
-//        viewModelScope.launch {
-//            exerciseRepository.getExerciseById(id)
-//        }
     }
 
     fun getAllExercises() {

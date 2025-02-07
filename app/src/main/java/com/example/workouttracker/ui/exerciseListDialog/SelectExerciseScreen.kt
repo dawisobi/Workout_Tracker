@@ -58,8 +58,8 @@ fun SelectExerciseScreen(
 ){
     val focusManager = LocalFocusManager.current
 
-    // Used to trigger dialog popup
     val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
+    //state of the dialog
     val showExerciseDetailsDialog = workoutTrackerUiState.showExerciseDetailsDialog
 
     LaunchedEffect(key1 = Unit) {
@@ -101,7 +101,7 @@ fun SelectExerciseScreen(
             onDismiss = { workoutTrackerViewModel.updateExerciseDetailsDialogState(false) },
             exercise = workoutTrackerUiState.selectedExercise!!,
             onConfirmClick = {
-                // Hide both dialogs on confirm
+                // Hide the dialog on confirm
                 workoutTrackerViewModel.updateExerciseDetailsDialogState(false)
                 onDismiss()
             },

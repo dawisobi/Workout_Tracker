@@ -127,7 +127,13 @@ fun WorkoutTrackerApp() {
                 HomeScreen(
                     trainingSessionViewModel = trainingSessionViewModel,
                     exerciseListViewModel = exerciseViewModel,
-                    modifier = screensContentModifier
+                    modifier = screensContentModifier,
+                    onAddExerciseClick = {
+                        workoutTrackerViewModel.resetSearchedExercise()
+                        navController.navigate("SelectExerciseScreen") {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable(route = WorkoutTrackerScreen.Calendar.name) {
@@ -144,7 +150,6 @@ fun WorkoutTrackerApp() {
                     profileScreenViewModel = profileScreenViewModel,
                     dataStore = dataStore,
                     userHeight = userHeight,
-                    context = context,
                     modifier = screensContentModifier)
             }
             composable(route = "SelectExerciseScreen") {

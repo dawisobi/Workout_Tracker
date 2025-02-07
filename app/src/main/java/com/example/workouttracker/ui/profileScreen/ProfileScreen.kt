@@ -1,8 +1,6 @@
 package com.example.workouttracker.ui.profileScreen
 
-import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,9 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
-import com.example.workouttracker.data.model.UserWeightData
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -62,26 +56,16 @@ fun ProfileScreen(
     profileScreenViewModel: ProfileScreenViewModel,
     dataStore: UserDetailsDataStore,
     userHeight: Int,
-    context: Context,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
-//    val dataStore = remember { UserDetailsDataStore(context = context) }
-//    val userHeight by dataStore.height.collectAsStateWithLifecycle(0)
     val coroutineScope = rememberCoroutineScope()
 
     val profileScreenUiState by profileScreenViewModel.uiState.collectAsStateWithLifecycle()
     val showUserDetailsDialog = profileScreenUiState.showUserDetailsDialog
 
-    Log.d("ProfileScreen", "Calling updateUserDetails with weight: ${profileScreenUiState.userWeight} and height: $userHeight")
-    //profileScreenViewModel.updateUserDetails(weight = profileScreenUiState.userWeight, height = userHeight.toString())
-
     LaunchedEffect(Unit) {
         profileScreenViewModel.updateUserDetails(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
-//        profileScreenViewModel.updateUserDetailsInput(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
     }
-
-    Log.d("ProfileScreen", "uiState weight: ${profileScreenUiState.userWeight} and height: ${profileScreenUiState.userHeight}")
-    Log.d("ProfileScreen", "viewModel weight: ${profileScreenViewModel.weightInput} and height: ${profileScreenViewModel.heightInput}")
 
     Column(modifier = modifier){
         ProfileHeader()
@@ -102,7 +86,8 @@ fun ProfileScreen(
     if(showUserDetailsDialog){
         EditUserDetailsDialog(
             onDismiss = { profileScreenViewModel.hideUserDetailsDialog() },
-            onSaveChangesClick = { profileScreenViewModel.saveUserDetails()
+            onSaveChangesClick = {
+                profileScreenViewModel.saveUserDetails()
                 coroutineScope.launch { dataStore.saveUserDetails(profileScreenViewModel.heightInput.toInt())}
                 profileScreenViewModel.insertUserWeightData()
                                  },
@@ -122,8 +107,7 @@ fun ProfileHeader() {
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -196,7 +180,6 @@ fun UserBmiPanel(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                Text(text = "BMI: $bmiValue")
                 Text(text = buildAnnotatedString {
                     append("BMI: ")
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(bmiValue) } },
@@ -259,7 +242,6 @@ fun ProfileScreenPreview() {
     WorkoutTrackerTheme(darkTheme = false) {
         ProfileScreen(
             profileScreenViewModel = ProfileScreenViewModel(context = LocalContext.current),
-            context = LocalContext.current,
             userHeight = 180,
             dataStore = UserDetailsDataStore(context = LocalContext.current),
             modifier = Modifier

@@ -21,7 +21,6 @@ class TrainingSessionViewModel(private val trainingSessionRepository: TrainingSe
     val distinctDates: StateFlow<List<String>> = trainingSessionRepository.getDistinctDates().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _searchResults = MutableStateFlow<List<ExerciseTrainingSession>>(emptyList())
-//    val searchResults: Flow<List<ExerciseTrainingSession>> = _searchResults
     val searchResults = _searchResults.asStateFlow()
 
 

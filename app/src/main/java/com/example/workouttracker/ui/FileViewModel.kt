@@ -1,9 +1,5 @@
 package com.example.workouttracker.ui
 
-import android.app.Application
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +21,6 @@ class FileViewModel(private val fileDownloadRepository: FileDownloadRepository) 
         viewModelScope.launch {
             val success = fileDownloadRepository.downloadFile(url, destination)
             _fileDownloadStatus.postValue(success)
-//            isFileChecked = true
         }
     }
 

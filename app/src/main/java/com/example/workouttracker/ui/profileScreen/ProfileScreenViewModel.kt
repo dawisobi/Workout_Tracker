@@ -7,15 +7,11 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workouttracker.data.database.UserWeightDatabase
-import com.example.workouttracker.data.model.ExerciseTrainingSession
 import com.example.workouttracker.data.model.UserWeightData
 import com.example.workouttracker.data.repository.UserWeightRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -46,9 +42,6 @@ class ProfileScreenViewModel(context: Context) : ViewModel() {
     var heightInput by mutableStateOf(_uiState.value.userHeight)
         private set
 
-//    init {
-//        updateBmi()
-//    }
 
     fun updateUserDetails(weight: String, height: String) {
         Log.d("ProfileScreenViewModel", "updateUserDetails called with weight: $weight and height: $height")
@@ -79,25 +72,19 @@ class ProfileScreenViewModel(context: Context) : ViewModel() {
         updateBmi()
     }
 
-    fun updateWeight(weight: String) {
-        Log.d("ProfileScreenViewModel", "updateWeight called with weight: $weight")
+    private fun updateWeight(weight: String) {
         _uiState.value = _uiState.value.copy(userWeight = weight)
     }
 
-    fun updateHeight(height: String) {
-        Log.d("ProfileScreenViewModel", "updateHeight called with height: $height")
+    private fun updateHeight(height: String) {
         _uiState.value = _uiState.value.copy(userHeight = height)
     }
 
-    fun updateBmi() {
-        Log.d("ProfileScreenViewModel", "updateBmi called")
+    private fun updateBmi() {
         val weight = _uiState.value.userWeight.toDoubleOrNull() ?: 0.0
         val height = _uiState.value.userHeight.toDoubleOrNull() ?: 0.0
-        Log.d("ProfileScreenViewModel", "UpdateBmi: Weight: $weight, Height: $height")
         val bmi = weight / ((height / 100) * (height / 100))
-        Log.d("ProfileScreenViewModel", "UpdateBmi: BMI: $bmi")
         val truncatedBmi = "%.2f".format(bmi)
-        Log.d("ProfileScreenViewModel", "UpdateBmi: Truncated BMI: $truncatedBmi")
         _uiState.value = _uiState.value.copy(userBmi = truncatedBmi)
     }
 
@@ -117,12 +104,6 @@ class ProfileScreenViewModel(context: Context) : ViewModel() {
             }
         }
     }
-
-//    fun insertUserWeightData(userWeightData: UserWeightData) {
-//        viewModelScope.launch {
-//            userWeightRepository.insertUserWeightData(userWeightData)
-//        }
-//    }
 
     fun insertUserWeightData() {
         val userWeightToInsert = UserWeightData(date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()).toString(), userWeight = _uiState.value.userWeight.toDouble())
