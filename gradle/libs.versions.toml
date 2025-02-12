@@ -1,8 +1,9 @@
 [versions]
 agp = "8.7.3"
-androidxJunit = "1.1.5"
-composeBomVersion = "2023.05.01"
+#androidxJunit = "1.1.5"
+#composeBomVersion = "2023.05.01"
 datastorePreferences = "1.1.2"
+junitBom = "5.11.4"
 kotlin = "2.1.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -16,13 +17,14 @@ navigationCompose = "2.8.1"
 navigationTesting = "2.8.1"
 roomRuntime = "2.6.1"
 runtimeLivedata = "1.7.5"
+junitJupiter = "5.11.4"
 
 [libraries]
-androidx-compose-bom-v20230501 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+#androidx-compose-bom-v20230501 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoCore" }
-androidx-junit-v115 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+#androidx-junit-v115 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
@@ -47,8 +49,13 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
+#junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+#ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+junit-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
