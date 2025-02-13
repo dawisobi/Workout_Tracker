@@ -56,7 +56,6 @@ dependencies {
     //Room-related dependencies implementation
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.runtime.livedata)
-    androidTestImplementation(libs.junit.junit.jupiter)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.rxjava2)
@@ -80,7 +79,6 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.jupiter.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
 
     androidTestImplementation(libs.androidx.junit)

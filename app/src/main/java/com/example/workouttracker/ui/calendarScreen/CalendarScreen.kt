@@ -253,7 +253,7 @@ fun CalendarLayout(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun getDate(year: Int, month: Int, day: Int): LocalDate {
+internal fun getDate(year: Int, month: Int, day: Int): LocalDate {
     return try {
         LocalDate.of(year, month, day)
     } catch (e: DateTimeException) {
@@ -282,8 +282,7 @@ private fun DotIcon(isVisible: Boolean = true) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun processDateList(dateList: List<String>): Set<LocalDate> {
-    Log.d("CalendarScreen", "Processing training days list: $dateList")
+internal fun processDateList(dateList: List<String>): Set<LocalDate> {
     return dateList.mapNotNull { dateString ->
         try {
             LocalDate.parse(dateString)
@@ -294,7 +293,7 @@ private fun processDateList(dateList: List<String>): Set<LocalDate> {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun isTrainingDay(year: Int, month: Int, day: Int, dateSet: Set<LocalDate>): Boolean {
+internal fun isTrainingDay(year: Int, month: Int, day: Int, dateSet: Set<LocalDate>): Boolean {
     val targetDate = LocalDate.of(year, month, day)
     return targetDate in dateSet
 }

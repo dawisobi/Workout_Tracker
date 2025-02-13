@@ -263,13 +263,13 @@ private fun getSliceSize(slice: Slice): Float {
     }
 }
 
-private fun getBmiLevel(bmi: Float, slices: List<Slice>): String {
+internal fun getBmiLevel(bmi: Float, slices: List<Slice>): String {
     return when(bmi) {
-        in 0f..18.4f -> slices[0].label
-        in 18.5f..24.9f -> slices[1].label
-        in 25.0f..29.9f -> slices[2].label
-        in 30.0f..34.9f -> slices[3].label
-        in 35.0f..39.9f -> slices[4].label
+        in 0f..18.49f -> slices[0].label
+        in 18.5f..24.99f -> slices[1].label
+        in 25.0f..29.99f -> slices[2].label
+        in 30.0f..34.99f -> slices[3].label
+        in 35.0f..39.99f -> slices[4].label
         else -> slices[5].label
     }
 }
@@ -279,11 +279,11 @@ data class Slice(val minValue: Float, val maxValue: Float, val color: Color, val
 
 object BmiSlices {
     val slices = listOf(
-        Slice(minValue = 0f, maxValue = 18.4f, color = Color(0xFF007fe0), label = "Underweight"),
-        Slice(minValue = 18.5f, maxValue = 24.9f, color = Color(0xFF00b807), label = "Normal weight"),
-        Slice(minValue = 25.0f, maxValue = 29.9f, color = Color(0xFFe0d400), label = "Overweight"),
-        Slice(minValue = 30.0f, maxValue = 34.9f, color = Color(0xFFdb8114), label = "Obesity I"),
-        Slice(minValue = 35.0f, maxValue = 39.9f, color = Color(0xFFc90202), label = "Obesity II"),
+        Slice(minValue = 0f, maxValue = 18.49f, color = Color(0xFF007fe0), label = "Underweight"),
+        Slice(minValue = 18.5f, maxValue = 24.99f, color = Color(0xFF00b807), label = "Normal weight"),
+        Slice(minValue = 25.0f, maxValue = 29.99f, color = Color(0xFFe0d400), label = "Overweight"),
+        Slice(minValue = 30.0f, maxValue = 34.99f, color = Color(0xFFdb8114), label = "Obesity I"),
+        Slice(minValue = 35.0f, maxValue = 39.99f, color = Color(0xFFc90202), label = "Obesity II"),
         Slice(minValue = 40.0f, maxValue = 58.4f, color = Color(0xFF5a0ad1), label = "Obesity III")
     )
 }

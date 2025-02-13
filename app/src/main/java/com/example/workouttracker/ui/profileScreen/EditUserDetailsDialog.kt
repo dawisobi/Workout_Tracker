@@ -73,14 +73,8 @@ fun EditUserDetailsDialog (
                         onValueChange = onUserWeightChange,
                         label = { Text("Weight") },
                         suffix = { Text("kg") },
-//                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-//                    trailingIcon = {
-//                        if(searchedExerciseName.isNotEmpty()){
-//                            IconButton(onClick = { onSearchClear() }) {
-//                                Icon(Icons.Filled.Clear, contentDescription = "Clear") } } },
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
-                            //.fillMaxWidth()
                             .padding(vertical = 4.dp).weight(1f),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
@@ -89,31 +83,6 @@ fun EditUserDetailsDialog (
                             }
                         )
                     )
-//                    IconButton( onClick = {  }, modifier = Modifier.weight(0.3f)) {
-//                        Icon(
-//                            painter = painterResource(R.drawable.icon_minus_circle),
-//                            contentDescription = "Increase by one",
-//                            tint = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.height(32.dp).width(32.dp)
-//                        )
-//                    }
-//                    IconButton( onClick = {  }, modifier = Modifier.weight(0.3f)) {
-//                        Icon(
-//                            imageVector = Icons.Rounded.AddCircle,
-//                            contentDescription = "Increase by one",
-//                            tint = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.height(32.dp).width(32.dp)
-//                        )
-//                    }
-//                    IconButton( onClick = {  }, modifier = Modifier.weight(0.4f)) {
-//                        Icon(
-//                            imageVector = Icons.Rounded.CheckCircle,
-//                            contentDescription = "Increase by one",
-//                            tint = Color(0xFF087525),
-//                            modifier = Modifier.height(32.dp).width(32.dp)
-//                        )
-//                    }
-
                 }
 
 
@@ -123,11 +92,6 @@ fun EditUserDetailsDialog (
                     onValueChange = onUserHeightChange,
                     label = { Text("Height") },
                     suffix = { Text("cm") },
-//                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-//                    trailingIcon = {
-//                        if(searchedExerciseName.isNotEmpty()){
-//                            IconButton(onClick = { onSearchClear() }) {
-//                                Icon(Icons.Filled.Clear, contentDescription = "Clear") } } },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
                         .fillMaxWidth()
