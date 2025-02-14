@@ -68,8 +68,10 @@ enum class WorkoutTrackerScreen(
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun WorkoutTrackerApp() {
-    val navController: NavHostController = rememberNavController()
+fun WorkoutTrackerApp(
+    navController: NavHostController = rememberNavController()
+) {
+
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
     // Exercise List view model initialization

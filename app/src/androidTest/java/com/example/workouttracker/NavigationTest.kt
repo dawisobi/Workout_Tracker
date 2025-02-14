@@ -38,11 +38,7 @@ class NavigationTest {
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(ComposeNavigator())
             }
-//            WorkoutTrackerApp(
-//                navController = navController,
-//                workoutTrackerViewModel = WorkoutTrackerViewModel(),
-//                trainingSessionViewModel = TrainingSessionViewModel(TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(LocalContext.current).trainingSessionDao()))
-//            )
+            WorkoutTrackerApp(navController = navController)
         }
     }
 
@@ -52,16 +48,16 @@ class NavigationTest {
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Home.name)
     }
 
-//    @Test
-//    fun workoutTrackerNavHost_navigateToTodayScreen() {
-//        navigateToTodayScreen()
-//        navController.assertCurrentRouteName(WorkoutTrackerScreen.Today.name)
-//    }
-
     @Test
     fun workoutTrackerNavHost_navigateToCalendarScreen() {
         navigateToCalendarScreen()
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Calendar.name)
+    }
+
+    @Test
+    fun workoutTrackerNavHost_navigateToExerciseListScreen() {
+        navigateToExerciseListScreen()
+        navController.assertCurrentRouteName(WorkoutTrackerScreen.ExerciseList.name)
     }
 
     @Test
@@ -72,25 +68,26 @@ class NavigationTest {
 
     @Test
     fun workoutTrackerNavHost_navigateToHomeScreen() {
+        navigateToProfileScreen()
         navigateToHomeScreen()
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Home.name)
     }
 
-
-
-    private fun navigateToTodayScreen() {
-        composeTestRule.onNodeWithContentDescription("Today", useUnmergedTree = true).performClick()
+    private fun navigateToHomeScreen() {
+        composeTestRule.onNodeWithContentDescription("Home", useUnmergedTree = true).performClick()
     }
 
     private fun navigateToCalendarScreen() {
         composeTestRule.onNodeWithContentDescription("Calendar", useUnmergedTree = true).performClick()
     }
 
+    private fun navigateToExerciseListScreen() {
+        composeTestRule.onNodeWithContentDescription("Exercises", useUnmergedTree = true).performClick()
+    }
+
     private fun navigateToProfileScreen() {
         composeTestRule.onNodeWithContentDescription("Profile", useUnmergedTree = true).performClick()
     }
 
-    private fun navigateToHomeScreen() {
-        composeTestRule.onNodeWithContentDescription("Home", useUnmergedTree = true).performClick()
-    }
+
 }

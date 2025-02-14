@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workouttracker.R
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
+import com.example.workouttracker.data.model.UserWeightData
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
 
@@ -64,7 +65,9 @@ fun ProfileScreen(
     val showUserDetailsDialog = profileScreenUiState.showUserDetailsDialog
 
     LaunchedEffect(Unit) {
-        profileScreenViewModel.updateUserDetails(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
+        val userWeightString = profileScreenViewModel.currentUserWeight.value?.userWeight?.toString() ?: "0"
+        profileScreenViewModel.updateUserDetails(weight = userWeightString, height = userHeight.toString())
+//        profileScreenViewModel.updateUserDetails(weight = profileScreenViewModel.currentUserWeight.value.userWeight.toString(), height = userHeight.toString())
     }
 
     Column(modifier = modifier){
@@ -165,6 +168,7 @@ fun UserDetailsPanel(
 fun UserBmiPanel(
     bmiValue: String,
 ) {
+    val bmiValueCheck = bmiValue.toFloatOrNull() ?: 0f
     val slices = BmiSlices.slices
 
     Card(
@@ -196,7 +200,7 @@ fun UserBmiPanel(
 private fun BmiChart(bmiValue: String, bmiSlices: List<Slice>) {
 
     val bmi = bmiValue.toFloatOrNull() ?: 0f
-    val sliceMatchingBmi = bmiSlices.find { it.minValue <= bmi && it.maxValue >= bmi } ?: bmiSlices.last()
+    val sliceMatchingBmi = bmiSlices.find { it.minValue <= bmi && it.maxValue >= bmi } //bmiSlices.last()
 
     Row(
         modifier = Modifier
@@ -270,7 +274,8 @@ internal fun getBmiLevel(bmi: Float, slices: List<Slice>): String {
         in 25.0f..29.99f -> slices[2].label
         in 30.0f..34.99f -> slices[3].label
         in 35.0f..39.99f -> slices[4].label
-        else -> slices[5].label
+        in 40.0f..58.40f -> slices[5].label
+        else -> "Unknown level"
     }
 }
 

@@ -49,6 +49,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="Pixel_8_Pro_API_35" value="120" />
                   <entry key="Pixel_Tablet_API_35" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="Xiaomi M2101K7BNY" value="120" />
@@ -63,6 +64,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="Pixel_8_Pro_API_35" value="120" />
                   <entry key="Pixel_Tablet_API_35" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
@@ -89,6 +91,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="Pixel_8_Pro_API_35" value="120" />
                   <entry key="Pixel_Tablet_API_35" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="Xiaomi M2101K7BNY" value="120" />
