@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package com.example.workouttracker.uiTests
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
@@ -8,6 +8,8 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.workouttracker.WorkoutTrackerApp
+import com.example.workouttracker.WorkoutTrackerScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

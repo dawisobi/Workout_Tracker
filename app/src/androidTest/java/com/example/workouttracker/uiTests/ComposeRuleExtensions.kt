@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package com.example.workouttracker.uiTests
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes

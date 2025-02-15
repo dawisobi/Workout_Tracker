@@ -56,6 +56,8 @@ dependencies {
     //Room-related dependencies implementation
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.core.ktx)
+//    implementation(libs.androidx.media3.test.utils)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.rxjava2)

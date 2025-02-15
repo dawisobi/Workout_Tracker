@@ -10,7 +10,7 @@ import java.time.LocalDate
 class CalendarUnitTests {
 
     // Verify that the date is correctly set to the last day of the month if the input date is invalid
-    // Example: when switching month when 31st day is selected
+    // Example: switching months when 31st day is selected
     @Test
     fun calendarInvalidDate_isLastDaySet_NotLeapYear() {
         val actualDate = getDate(2025, 2, 30)
@@ -24,7 +24,7 @@ class CalendarUnitTests {
     }
 
     @Test
-    fun calendarValidDate_isLastDayNotSet() {
+    fun calendarValidDate_isSelectedDateRemained() {
         val actualDate = getDate(2025, 3, 20)
         assertEquals(getDate(2025, 3, 20), actualDate)
     }
