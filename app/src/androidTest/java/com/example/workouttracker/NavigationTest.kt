@@ -2,18 +2,12 @@ package com.example.workouttracker
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.workouttracker.data.database.TrainingSessionsDatabase
-import com.example.workouttracker.data.repository.TrainingSessionsRepository
-import com.example.workouttracker.ui.TrainingSessionViewModel
-import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -73,6 +67,12 @@ class NavigationTest {
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Home.name)
     }
 
+    @Test
+    fun openExercisesListWithFab() {
+        navigateToExerciseListScreenWithFab()
+        navController.assertCurrentRouteName("SelectExerciseScreen")
+    }
+
     private fun navigateToHomeScreen() {
         composeTestRule.onNodeWithContentDescription("Home", useUnmergedTree = true).performClick()
     }
@@ -89,5 +89,8 @@ class NavigationTest {
         composeTestRule.onNodeWithContentDescription("Profile", useUnmergedTree = true).performClick()
     }
 
+    private fun navigateToExerciseListScreenWithFab() {
+        composeTestRule.onNodeWithContentDescription("Small floating action button.", useUnmergedTree = true).performClick()
+    }
 
 }

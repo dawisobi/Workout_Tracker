@@ -16,10 +16,16 @@
       <SelectionState runConfigName="NavigationTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="CalendarScreenLayoutTest">
+      <SelectionState runConfigName="verifyStartDestination()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="verifyStartDestination()">
+      <SelectionState runConfigName="openExercisesList()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="selectExercise()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="openExercisesListWithFab()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
