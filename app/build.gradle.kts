@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.workouttracker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.workouttracker"
@@ -78,6 +78,10 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.views)
 
     testImplementation(libs.junit)
     testImplementation(platform(libs.junit.bom))

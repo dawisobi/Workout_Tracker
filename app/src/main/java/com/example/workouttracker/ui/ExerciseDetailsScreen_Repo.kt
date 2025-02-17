@@ -21,7 +21,6 @@ import com.example.workouttracker.data.model.Exercise
 @Composable
 fun ExerciseDetailsScreen_Repo(
     exerciseToDisplay: Exercise,
-    onCloseButtonClicked: () -> Unit,
     contentModifier: Modifier
 ) {
     Column(
@@ -35,7 +34,7 @@ fun ExerciseDetailsScreen_Repo(
             modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
         ) {
             Text(
-                text = exerciseToDisplay.name,//"Exercise Details",
+                text = exerciseToDisplay.name,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -74,7 +73,5 @@ fun ExerciseDetailsScreen_Repo(
                 }
             }
         }
-
-
     }
 }

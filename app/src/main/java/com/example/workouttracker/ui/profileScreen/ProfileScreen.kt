@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,25 @@ import com.example.workouttracker.R
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
 import com.example.workouttracker.data.model.UserWeightData
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.point
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.coroutines.launch
 
 
@@ -84,6 +104,8 @@ fun ProfileScreen(
         UserBmiPanel(
             bmiValue = profileScreenUiState.userBmi
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        UserWeightHistoryPanel()
     }
 
     if(showUserDetailsDialog){
@@ -235,6 +257,72 @@ private fun BmiChart(bmiValue: String, bmiSlices: List<Slice>) {
                 ) { }
             }
         }
+    }
+}
+
+@Composable
+fun UserWeightHistoryPanel(
+    userWeightData: List<UserWeightData> = emptyList()
+) {
+    val xLegend = listOf("2025-02-12", "2025-02-13", "2025-02-14", "2025-02-15", "2025-02-16", "2025-02-17")
+    val yValues = listOf<Number>(10f, 40f, 25f, 67f, 60f, 78f)
+//    val yValues = listOf<Number>(89.0f, 89.2f, 88.5f, 88.1f, 87.7f, 88.3f)
+
+    val modelProducer = remember { CartesianChartModelProducer() }
+    LaunchedEffect(Unit) {
+        modelProducer.runTransaction {
+            lineSeries { series(yValues) }
+        }
+    }
+
+    Card(
+        elevation = CardDefaults.elevatedCardElevation(8.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val lineColor = MaterialTheme.colorScheme.primary
+
+        CartesianChartHost(
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lineProvider = LineCartesianLayer.LineProvider.series(
+                        LineCartesianLayer.rememberLine(
+                            fill = LineCartesianLayer.LineFill.single(fill(lineColor)),
+                            areaFill = LineCartesianLayer.AreaFill.single(
+                                fill(
+                                    ShaderProvider.verticalGradient(
+                                        arrayOf(lineColor.copy(alpha = 0.4f), Color.Transparent)
+                                    )
+                                )
+                            ),
+                            pointProvider = LineCartesianLayer.PointProvider.single(
+                                LineCartesianLayer.point(
+                                    rememberShapeComponent(
+                                        fill = fill(Color.White),
+                                        shape = CorneredShape.Pill,
+                                        strokeFill = fill(lineColor),
+                                        strokeThickness = 2.dp
+                                    )
+                                )
+                            ),
+                            pointConnector = LineCartesianLayer.PointConnector.cubic()
+                        )
+                    ),
+                ),
+                startAxis = VerticalAxis.rememberStart(
+                    valueFormatter = { _, value, _ -> "$value kg"},
+                ),
+                bottomAxis = HorizontalAxis.rememberBottom(
+                    label = rememberAxisLabelComponent(
+
+                    ),
+                    labelRotationDegrees = (-30f),
+                    valueFormatter = { _, date, _ -> "02-0${date.toInt() + 1}" }
+                ),
+            ),
+            modelProducer,
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 

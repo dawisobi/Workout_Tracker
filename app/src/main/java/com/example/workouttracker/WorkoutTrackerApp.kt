@@ -40,12 +40,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
-import com.example.workouttracker.data.database.UserWeightDatabase
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
 import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
-import com.example.workouttracker.data.repository.UserWeightRepository
 import com.example.workouttracker.ui.ExerciseDetailsScreen_Repo
 import com.example.workouttracker.ui.ExerciseRepositoryScreen
 import com.example.workouttracker.ui.ExerciseViewModelFactory
@@ -180,9 +178,7 @@ fun WorkoutTrackerApp(
             }
             composable(route = "ExerciseDetailsScreen") {
                 ExerciseDetailsScreen_Repo(
-//                    workoutTrackerViewModel = workoutTrackerViewModel,
                     exerciseToDisplay = workoutTrackerUiState.selectedExercise!!,
-                    onCloseButtonClicked = { navController.navigateUp() },
                     contentModifier = screensContentModifier
                 )
             }
