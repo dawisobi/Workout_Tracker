@@ -29,11 +29,10 @@ class NavigationTest {
     private lateinit var navController: TestNavHostController
 
     @Before
-    fun setupWorkoutTrackerNavHost() {
+    fun setUpNavHost() {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current).apply {
-                navigatorProvider.addNavigator(ComposeNavigator())
-            }
+                navigatorProvider.addNavigator(ComposeNavigator()) }
             WorkoutTrackerApp(navController = navController)
         }
     }

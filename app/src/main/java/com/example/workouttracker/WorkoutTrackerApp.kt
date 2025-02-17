@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -55,6 +56,7 @@ import com.example.workouttracker.ui.WorkoutTrackerViewModel
 import com.example.workouttracker.ui.exerciseListDialog.ExerciseViewModel
 import com.example.workouttracker.ui.exerciseListDialog.SelectExerciseScreen
 import com.example.workouttracker.ui.profileScreen.ProfileScreenViewModel
+import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 enum class WorkoutTrackerScreen(
     @StringRes val title: Int,
@@ -90,6 +92,8 @@ fun WorkoutTrackerApp(
     val exerciseRepository = remember { ExerciseRepository(exerciseDatabase.exerciseDao()) }
     val exerciseViewModelFactory = remember { ExerciseViewModelFactory(exerciseRepository) }
     val exerciseViewModel: ExerciseViewModel = viewModel(factory = exerciseViewModelFactory)
+
+    val foundExercisesList by exerciseViewModel.searchResults.collectAsState(initial = emptyList())
 
     val trainingSessionsDatabase = remember { TrainingSessionsDatabase.getDatabase(context) }
     val trainingSessionsRepository = remember { TrainingSessionsRepository(trainingSessionsDatabase.trainingSessionDao()) }
@@ -166,7 +170,11 @@ fun WorkoutTrackerApp(
             }
             composable(route = WorkoutTrackerScreen.ExerciseList.name) {
                 Log.d("ExerciseListScreen", "Launching the ExerciseListScreen from NavHost")
-                ExerciseRepositoryScreen(modifier = screensContentModifier)
+                ExerciseRepositoryScreen(
+                    exerciseList = foundExercisesList,
+                    onScreenLoad = { exerciseViewModel.getAllExercises() },
+                    modifier = screensContentModifier
+                )
             }
         }
     }
@@ -184,7 +192,6 @@ fun ActionButton(
         Icon(Icons.Filled.Add, "Small floating action button.")
     }
 }
-
 
 @Composable
 fun BottomNavigationBar(
@@ -213,6 +220,37 @@ fun BottomNavigationBar(
                 selected = selectedItem == index, // Check if this item is selected
                 colors = navigationBarColors
             )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NavBarPreview() {
+    WorkoutTrackerTheme(darkTheme = false) {
+        NavigationBar {
+            var selectedItem by remember { mutableIntStateOf(0) }
+
+            val navigationBarColors = NavigationBarItemDefaults.colors(
+                indicatorColor = Color.Transparent,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            WorkoutTrackerScreen.entries.forEachIndexed { index,item ->
+                NavigationBarItem(
+                    icon = { Icon(painterResource(item.icon), contentDescription = stringResource(item.title)) },
+                    label = { Text(stringResource(item.title)) },
+                    onClick = {
+                        selectedItem = index
+                        //if(currentRoute.value?.destination?.route != item.name) { navController.navigate(item.name) }
+                    },
+                    selected = selectedItem == index, // Check if this item is selected
+                    colors = navigationBarColors
+                )
+            }
         }
     }
 }

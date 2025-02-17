@@ -23,7 +23,7 @@ class DatabaseTest {
     private lateinit var trainingSessionDao: TrainingSessionDao
     private lateinit var trainingSessionDb: TrainingSessionsDatabase
 
-
+    // Create dummy database in memory
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -31,6 +31,7 @@ class DatabaseTest {
         trainingSessionDao = trainingSessionDb.trainingSessionDao()
     }
 
+    // Remove dummy database from memory
     @After
     @Throws(IOException::class)
     fun closeDb() {
