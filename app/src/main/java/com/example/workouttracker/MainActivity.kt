@@ -45,7 +45,8 @@ class MainActivity : ComponentActivity() {
 
         val destinationFile = File(getDatabasePath("exercise_database").parentFile, "exercise_database")
         val fileUrl =
-            "https://www.dropbox.com/scl/fi/fsbkrvslzei9z0j931hqk/exercise_database1.db?rlkey=6upmlu21idup13pzn6jgo5w7b&st=3rgj82uo&dl=1"
+            //"https://www.dropbox.com/scl/fi/fsbkrvslzei9z0j931hqk/exercise_database1.db?rlkey=6upmlu21idup13pzn6jgo5w7b&st=3rgj82uo&dl=1" // Exercises without description
+            "https://www.dropbox.com/scl/fi/jf243ades6ur42m081z2q/exercise_database_v3.db?rlkey=mu5k0bgb77nqotlu754v6i2rq&st=bs06bue2&dl=1" // Five exercises with description
 
         if(!fileViewModel.isFileChecked) {
             if (destinationFile.exists()) {

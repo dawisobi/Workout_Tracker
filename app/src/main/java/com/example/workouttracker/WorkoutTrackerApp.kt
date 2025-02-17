@@ -42,9 +42,11 @@ import com.example.workouttracker.data.database.ExerciseDatabase
 import com.example.workouttracker.data.database.TrainingSessionsDatabase
 import com.example.workouttracker.data.database.UserWeightDatabase
 import com.example.workouttracker.data.datastore.UserDetailsDataStore
+import com.example.workouttracker.data.model.Exercise
 import com.example.workouttracker.data.repository.ExerciseRepository
 import com.example.workouttracker.data.repository.TrainingSessionsRepository
 import com.example.workouttracker.data.repository.UserWeightRepository
+import com.example.workouttracker.ui.ExerciseDetailsScreen_Repo
 import com.example.workouttracker.ui.ExerciseRepositoryScreen
 import com.example.workouttracker.ui.ExerciseViewModelFactory
 import com.example.workouttracker.ui.calendarScreen.CalendarScreen
@@ -73,7 +75,6 @@ enum class WorkoutTrackerScreen(
 fun WorkoutTrackerApp(
     navController: NavHostController = rememberNavController()
 ) {
-
     val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
     // Exercise List view model initialization
@@ -83,9 +84,8 @@ fun WorkoutTrackerApp(
     val userHeight by dataStore.height.collectAsStateWithLifecycle(0)
 
     val workoutTrackerViewModel = WorkoutTrackerViewModel()
+    val workoutTrackerUiState by workoutTrackerViewModel.uiState.collectAsState()
 
-//    val userWeightDatabase = remember { UserWeightDatabase.getDatabase(context) }
-//    val userWeightRepository = remember { UserWeightRepository(userWeightDatabase.userWeightDataDao()) }
     val profileScreenViewModel = ProfileScreenViewModel(context)
 
     val exerciseDatabase = remember { ExerciseDatabase.getDatabase(context) }
@@ -169,11 +169,21 @@ fun WorkoutTrackerApp(
                 )
             }
             composable(route = WorkoutTrackerScreen.ExerciseList.name) {
-                Log.d("ExerciseListScreen", "Launching the ExerciseListScreen from NavHost")
                 ExerciseRepositoryScreen(
                     exerciseList = foundExercisesList,
                     onScreenLoad = { exerciseViewModel.getAllExercises() },
+                    onExerciseSelected = { selectedExercise: Exercise ->
+                        workoutTrackerViewModel.updateSelectedExercise(selectedExercise)
+                        navController.navigate("ExerciseDetailsScreen") },
                     modifier = screensContentModifier
+                )
+            }
+            composable(route = "ExerciseDetailsScreen") {
+                ExerciseDetailsScreen_Repo(
+//                    workoutTrackerViewModel = workoutTrackerViewModel,
+                    exerciseToDisplay = workoutTrackerUiState.selectedExercise!!,
+                    onCloseButtonClicked = { navController.navigateUp() },
+                    contentModifier = screensContentModifier
                 )
             }
         }

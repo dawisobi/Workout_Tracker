@@ -27,6 +27,7 @@ import com.example.workouttracker.data.model.Exercise
 fun ExerciseRepositoryScreen(
     exerciseList: List<Exercise>,
     onScreenLoad: () -> Unit,
+    onExerciseSelected: (Exercise) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -71,7 +72,7 @@ fun ExerciseRepositoryScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { }
+                            .clickable { onExerciseSelected(exercise) }
                     ) {
                         Text(
                             text = exercise.name,
