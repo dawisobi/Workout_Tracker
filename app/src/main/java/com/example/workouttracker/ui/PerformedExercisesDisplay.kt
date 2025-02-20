@@ -14,13 +14,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -77,76 +78,7 @@ fun PerformedExercisesDisplay(
     } else { NoExercisesText() }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ExerciseCard(
-    exercise: ExerciseTrainingSession,
-    exerciseViewModel: ExerciseViewModel,
-    onExerciseDelete: () -> Unit
-) {
-    var exerciseData by remember { mutableStateOf<Exercise?>(null) }
-    var isExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(exercise.idExercise) {
-        exerciseData = exerciseViewModel.getExerciseById(exercise.idExercise)
-        Log.d("ExerciseCard", "Exercise data loaded for exercise ID ${exercise.idExercise}")
-    }
-
-
-    Card(
-        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-        shape = RoundedCornerShape(30),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
-        ),
-        modifier = Modifier
-            .offset(y = (-10).dp)
-            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = { isExpanded = !isExpanded },
-                onLongClick = { onExerciseDelete() }
-            )
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                exerciseData?.let {
-                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
-                }
-
-                if(!isExpanded) {
-                    Icon(imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Arrow Down")
-                } else {
-                    Icon(imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Arrow Down")
-                }
-
-            }
-
-            if (isExpanded) {
-                exerciseData?.let {
-                    if(it.type == "Gym") { ExerciseTypeGym(exercise) }
-                    else { ExerciseTypeAthletics(exercise) }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ExerciseTypeGym(
@@ -235,35 +167,125 @@ fun TrainingSessionsList(
     performedExercises: List<ExerciseTrainingSession>,
     trainingSessionViewModel: TrainingSessionViewModel,
     exerciseListViewModel: ExerciseViewModel,
-){
+) {
     Log.d("TrainingSessionsList", "Obtained performed exercises: $performedExercises")
 
-    Column(
-        modifier = Modifier.verticalScroll(state = rememberScrollState())
+    LazyColumn(
+        modifier = Modifier.fillMaxHeight()
     ) {
-        performedExercises.forEach { trainingSession ->
-            Column {
-                Row {
-                    Text(
-                        text = trainingSession.time,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                ExerciseCard(
-                    exercise = trainingSession,
-                    onExerciseDelete = { trainingSessionViewModel.deleteTrainingSession(trainingSession) },
-                    exerciseViewModel = exerciseListViewModel
+        items(
+            items = performedExercises,
+            key = { session -> session.idSession }
+        ) { session ->
+            TrainingSessionItem(
+                trainingSession = session,
+                exerciseListViewModel = exerciseListViewModel,
+                onExerciseDelete = { trainingSessionViewModel.deleteTrainingSessionById(session.idSession) }
+            )
+        }
+
+        //add space at the bottom of the list so FAB does not block content at the bottom
+        item { Spacer(modifier = Modifier.height(56.dp)) }
+    }
+
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TrainingSessionItem(
+    trainingSession: ExerciseTrainingSession,
+    exerciseListViewModel: ExerciseViewModel,
+    onExerciseDelete: () -> Unit
+) {
+    Column {
+        Row {
+            Text(
+                text = trainingSession.time,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
+            )
+            HorizontalDivider(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = dimensionResource(R.dimen.padding_small))
+            )
+        }
+        ExerciseCard(
+            exercise = trainingSession,
+            onExerciseDelete = { onExerciseDelete() },
+            exerciseViewModel = exerciseListViewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExerciseCard(
+    exercise: ExerciseTrainingSession,
+    exerciseViewModel: ExerciseViewModel,
+    onExerciseDelete: () -> Unit
+) {
+    var exerciseData by remember { mutableStateOf<Exercise?>(null) }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(exercise.idExercise) {
+        exerciseData = exerciseViewModel.getExerciseById(exercise.idExercise)
+        Log.d("ExerciseCard", "Exercise data loaded for exercise ID ${exercise.idExercise}")
+    }
+
+
+    Card(
+        border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
+        shape = RoundedCornerShape(30),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+        ),
+        modifier = Modifier
+            .offset(y = (-10).dp)
+            .padding(start = 52.dp, end = dimensionResource(R.dimen.padding_medium))
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { isExpanded = !isExpanded },
+                onLongClick = { onExerciseDelete() }
+            )
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessLow
                 )
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                exerciseData?.let {
+                    Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                }
+
+                if(!isExpanded) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "Arrow Down")
+                } else {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "Arrow Down")
+                }
+
+            }
+
+            if (isExpanded) {
+                exerciseData?.let {
+                    if(it.type == "Gym") { ExerciseTypeGym(exercise) }
+                    else { ExerciseTypeAthletics(exercise) }
+                }
             }
         }
-        //add space at the bottom of the list so FAB does not block content at the bottom
-        Spacer(Modifier.height(56.dp))
     }
 }

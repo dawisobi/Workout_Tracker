@@ -1,19 +1,15 @@
-package com.example.workouttracker
+package com.example.workouttracker.uiTests
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.workouttracker.data.database.TrainingSessionsDatabase
-import com.example.workouttracker.data.repository.TrainingSessionsRepository
-import com.example.workouttracker.ui.TrainingSessionViewModel
-import com.example.workouttracker.ui.WorkoutTrackerViewModel
+import com.example.workouttracker.WorkoutTrackerApp
+import com.example.workouttracker.WorkoutTrackerScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,16 +29,11 @@ class NavigationTest {
     private lateinit var navController: TestNavHostController
 
     @Before
-    fun setupWorkoutTrackerNavHost() {
+    fun setUpNavHost() {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current).apply {
-                navigatorProvider.addNavigator(ComposeNavigator())
-            }
-            WorkoutTrackerApp(
-                navController = navController,
-                workoutTrackerViewModel = WorkoutTrackerViewModel(),
-                trainingSessionViewModel = TrainingSessionViewModel(TrainingSessionsRepository(TrainingSessionsDatabase.getDatabase(LocalContext.current).trainingSessionDao()))
-            )
+                navigatorProvider.addNavigator(ComposeNavigator()) }
+            WorkoutTrackerApp(navController = navController)
         }
     }
 
@@ -52,16 +43,16 @@ class NavigationTest {
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Home.name)
     }
 
-//    @Test
-//    fun workoutTrackerNavHost_navigateToTodayScreen() {
-//        navigateToTodayScreen()
-//        navController.assertCurrentRouteName(WorkoutTrackerScreen.Today.name)
-//    }
-
     @Test
     fun workoutTrackerNavHost_navigateToCalendarScreen() {
         navigateToCalendarScreen()
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Calendar.name)
+    }
+
+    @Test
+    fun workoutTrackerNavHost_navigateToExerciseListScreen() {
+        navigateToExerciseListScreen()
+        navController.assertCurrentRouteName(WorkoutTrackerScreen.ExerciseList.name)
     }
 
     @Test
@@ -72,25 +63,35 @@ class NavigationTest {
 
     @Test
     fun workoutTrackerNavHost_navigateToHomeScreen() {
+        navigateToProfileScreen()
         navigateToHomeScreen()
         navController.assertCurrentRouteName(WorkoutTrackerScreen.Home.name)
     }
 
+    @Test
+    fun openExercisesListWithFab() {
+        navigateToExerciseListScreenWithFab()
+        navController.assertCurrentRouteName("SelectExerciseScreen")
+    }
 
-
-    private fun navigateToTodayScreen() {
-        composeTestRule.onNodeWithContentDescription("Today", useUnmergedTree = true).performClick()
+    private fun navigateToHomeScreen() {
+        composeTestRule.onNodeWithContentDescription("Home", useUnmergedTree = true).performClick()
     }
 
     private fun navigateToCalendarScreen() {
         composeTestRule.onNodeWithContentDescription("Calendar", useUnmergedTree = true).performClick()
     }
 
+    private fun navigateToExerciseListScreen() {
+        composeTestRule.onNodeWithContentDescription("Exercises", useUnmergedTree = true).performClick()
+    }
+
     private fun navigateToProfileScreen() {
         composeTestRule.onNodeWithContentDescription("Profile", useUnmergedTree = true).performClick()
     }
 
-    private fun navigateToHomeScreen() {
-        composeTestRule.onNodeWithContentDescription("Home", useUnmergedTree = true).performClick()
+    private fun navigateToExerciseListScreenWithFab() {
+        composeTestRule.onNodeWithContentDescription("Small floating action button.", useUnmergedTree = true).performClick()
     }
+
 }

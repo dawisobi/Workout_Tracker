@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package com.example.workouttracker.uiTests
 
 import androidx.navigation.NavController
 import org.junit.Assert.assertEquals

@@ -15,5 +15,4 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercises WHERE exerciseId = :id")
     suspend fun getExerciseById(id: Int): Exercise
-
 }
